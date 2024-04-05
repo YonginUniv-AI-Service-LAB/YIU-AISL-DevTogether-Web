@@ -5,10 +5,10 @@ function App() {
     <div className="App background">
       <div className='display-header'>
         <header className='element2'>
-          DevTogether하하하하하하하하하 이게 뭐노
+          DevTogetherzlzlzlzlzl
         </header>
         <div className='display-menu element3'>  
-          <span>내 정보</span>
+          <span>내 정보 고럼 여기는 가능?</span>
           <span>학생 찾기 / 선생님 찾기</span>
           <span>자유게시판</span>
           <span>공지사항</span>
