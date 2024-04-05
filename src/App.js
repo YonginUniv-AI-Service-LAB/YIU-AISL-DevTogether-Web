@@ -5,7 +5,7 @@ function App() {
     <div className="App background">
       <div className='display-header'>
         <header className='element2'>
-          DevTogether하하하하하하하하하
+          DevTogether하하하하하하하하하 이게 뭐노
         </header>
         <div className='display-menu element3'>  
           <span>내 정보</span>
