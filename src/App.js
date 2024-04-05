@@ -5,7 +5,7 @@ function App() {
     <div className="App background">
       <div className='display-header'>
         <header className='element2'>
-          DevTogetherzlzlzlzlzl
+          DevTogetherzlzlzlzlzl그럼 여기 수정 못함?
         </header>
         <div className='display-menu element3'>  
           <span>내 정보 고럼 여기는 가능?</span>
