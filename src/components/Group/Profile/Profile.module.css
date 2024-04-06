@@ -1,0 +1,38 @@
+.background{
+    background-color:#f8f9fa;
+    margin-top: 120px;
+    padding-bottom: 280px;
+    margin-bottom: 550px;
+    margin-left: 30px;
+    padding-right: 300px;
+    text-align: left;
+    border-radius: 30px;
+    position: relative;
+}
+
+.information{
+    margin-left: 30px; 
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin-bottom: 25px;
+    line-height: 2.2;
+}
+
+.circle{
+    position: absolute;
+    top: -70px; /* 원형 영역을 body4 위쪽으로 이동 */
+    left: 50%; /* 가운데 정렬 */
+    width: 150px; /* 원의 지름 */
+    height: 150px; /* 원의 지름 */
+    background-color: #ccc; /* 배경색 */
+    border-radius: 50%; /* 원형으로 만들기 */
+    transform: translateX(-50%); /* 가운데 정렬을 위한 이동 */
+    overflow: hidden; /* 넘치는 부분을 잘라냅니다. */
+}
+
+.circle img {
+    width: 100%; /* 이미지의 너비를 100%로 설정합니다. */
+    height: 100%; /* 이미지의 높이를 100%로 설정합니다. */
+    object-fit: cover; /* 이미지를 원형 영역에 맞게 조절합니다. */
+}
