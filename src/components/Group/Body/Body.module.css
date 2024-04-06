@@ -1,0 +1,38 @@
+.background{
+    background-color:#ffffff;
+    padding-top: 30px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 50px;
+    border-top-right-radius: 350px;
+}
+
+.body{
+    margin-top: 30px;
+    margin-right: 430px;
+    margin-left: 200px;
+    margin-bottom: 50px;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+}
+
+.element{
+  color: #495057;
+  text-align: left;
+}
+
+.text{
+  font-size: 30px;
+  font-weight: 500;
+  opacity: 0.7;
+  color:#495057;
+  line-height: 2;
+}
+
+.title{
+  font-size: 40px;
+  font-weight: 800;
+}
+
+  
