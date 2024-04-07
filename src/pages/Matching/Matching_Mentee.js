@@ -5,7 +5,7 @@ import Sidebar from '../../components/Group/Sidebar/Sidebar';
 import FillterButton from '../../components/Button/FillterButton';
 import Profile from '../../components/Group/Profile/Profile';
 
-const Matching_Menti = (props) => {
+const Matching_Mentee = (props) => {
     return (
         <div className={style.color}>
             <div className={style.line}></div>
@@ -35,4 +35,4 @@ const Matching_Menti = (props) => {
         </div>
     );
 }
-export default  Matching_Menti;
+export default  Matching_Mentee;

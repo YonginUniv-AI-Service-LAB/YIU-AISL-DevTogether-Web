@@ -12,7 +12,7 @@ const Profile = (props) => {
         <div className={style.information}>
             <span style={{fontWeight:'900'}}>{props.name}</span><br/>
             {props.subject}<br/>
-            {props.gender}<span style={{opacity:'0.3'}}>|</span> {props.age} <br/>
+            {props.gender}<span style={{opacity:'0.3'}}> | </span> {props.age} <br/>
             {props.location}
         </div>
     </div>
