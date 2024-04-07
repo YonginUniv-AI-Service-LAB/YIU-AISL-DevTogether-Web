@@ -11,7 +11,7 @@ const Matching_Mentee = (props) => {
             <div className={style.line}></div>
             <div className={style.background}>
                 <Sidebar title1="학생 찾기" title2="선생님 찾기"/>
-                <div style={{marginTop:'40px', marginLeft:'130px', marginRight:'180px'}}>
+                <div style={{marginTop:'40px', marginLeft:'80px', marginRight:'180px'}}>
                   <div className={style.background}>
                     <div className={style.head}>학생 목록</div>
                     <div className={style.search}>닉네임으로 검색</div>
