@@ -1,11 +1,11 @@
 import React from 'react';
 import style from "./Matching.module.css";
 
-import Sidebar from '../../components/Group/Sidebar/Sidebar';
 import FillterButton from '../../components/Button/FillterButton';
 import Profile from '../../components/Group/Profile/Profile';
+import Sidebar from '../../components/Group/Sidebar/Sidebar';
 
-const Matching_Mento = (props) => {
+const MatchingMentorList = (props) => {
     return (
         <div className={style.color}>
             <div className={style.line}></div>
@@ -35,4 +35,4 @@ const Matching_Mento = (props) => {
         </div>
     );
 }
-export default  Matching_Mento;
+export default  MatchingMentorList;
