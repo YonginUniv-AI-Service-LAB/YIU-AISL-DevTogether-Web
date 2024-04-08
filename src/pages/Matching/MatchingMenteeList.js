@@ -1,38 +1,82 @@
-import React from 'react';
-import style from "./Matching.module.css";
 
-import FillterButton from '../../components/Button/FillterButton';
+import React, { useState, useEffect } from 'react';
+import style from './Matching.module.css';
+import FilterButton from '../../components/Button/FilterButton';
 import Profile from '../../components/Group/Profile/Profile';
 import Sidebar from '../../components/Group/Sidebar/Sidebar';
+import Searchbar from '../../components/Group/Searchbar/Searchbar';
+import FilterModal from '../../components/Modal/FilterModal';
 
-const MatchingMenteeList = (props) => {
+// 임시 데이터
+import { data_mentee } from '../../assets/data/mentee'; // 임시 데이터를 불러옵니다.
+
+const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
+    // 프로필 목록 상태와 검색 텍스트 상태를 정의합니다.
+    const [profiles, setProfiles] = useState([]);
+    const [searchText, setSearchText] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태 추가
+
+    // 검색어가 변경될 때마다 프로필 목록을 필터링합니다.
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            // 검색어를 이용하여 필터링합니다.
+            const filteredProfiles = data_mentee.filter(profile => profile.name.includes(searchText));
+            // 필터링된 결과를 상태에 반영합니다.
+            setProfiles(filteredProfiles);
+        }, 300); // 300밀리초(0.3초) 후에 검색을 실행합니다.
+
+        return () => clearTimeout(timer); // 컴포넌트가 언마운트되거나 검색어가 변경될 때마다 타이머를 해제합니다.
+    }, [searchText]);
+
+    const openModal = () => {
+      setIsModalOpen(true);
+    };
+
+     // 모달 닫기 함수
+    const closeModal = () => {
+      setIsModalOpen(false);
+    };
+
+
     return (
         <div className={style.color}>
             <div className={style.line}></div>
             <div className={style.background}>
-                <Sidebar title1="학생 찾기" title2="선생님 찾기"/>
-                <div style={{marginTop:'40px', marginLeft:'130px', marginRight:'180px'}}>
-                  <div className={style.background}>
-                    <div className={style.head}>학생 목록</div>
-                    <div className={style.search}>닉네임으로 검색</div>
-                  </div>
-                  <div className={style.background} style={{marginTop:'80px', justifyContent:'space-between'}}>
-                      <FillterButton name="과목"/>
-                      <FillterButton name="지역"/>
-                      <FillterButton name="성별"/>
-                      <FillterButton name="나이"/>
-                      <FillterButton name="과외방식"/>
-                      <FillterButton name="수업료"/>
-                  </div>
-                  <div className={style.background}> 
-                    <Profile name="쿠로미쨩" subject="리액트" gender="여자" age="24살" location="경기 용인시 처인구 삼가동" imagepath="./kuromi.png" imagetext="쿠로미쨩 이미지"/>
-                    <Profile name="m_iiin_u" subject="자바스크립트" gender="남자" age="24살" location="경기 용인시 처인구 남동" imagepath="./keroro.png" imagetext="m_iiin_u 이미지"/>
-                    <Profile name="달디단 갱갱갱" subject="C++" gender="여자" age="21살" location="충남 천안시 서북구 두정동" imagepath="./basic-user.png" imagetext="달디단 갱갱갱 이미지"/>
-                    <Profile name="안영환" subject="플러터" gender="남자" age="24살" location="경기 용인시 처인구 역북동" imagepath="./youngman.png" imagetext="안영환 이미지"/>
-                  </div>
+                <Sidebar onClick={handleSidebarButtonClick} title1="학생 찾기" title2="선생님 찾기"/>
+                <div style={{flex: '1', marginTop:'40px', marginLeft:'150px', marginRight:'350px'}}>
+                    <div className={style.background}>
+                        <div className={style.head}>학생 목록</div>
+                        <Searchbar onSearch={setSearchText} />
+                    </div>
+                    <div className={style.background} style={{marginTop:'80px', justifyContent:'space-between'}}>
+                        {/* 필터 버튼에 클릭 이벤트 핸들러를 추가합니다. */}
+                        <FilterButton name="과목" onClick={openModal} />
+                        <FilterButton name="지역" onClick={openModal} />
+                        <FilterButton name="성별" onClick={openModal} />
+                        <FilterButton name="나이" onClick={openModal} />
+                        <FilterButton name="과외방식" onClick={openModal} />
+                        <FilterButton name="수업료" onClick={openModal} />
+                    </div>
+                    <div className={style.background} style={{ display: 'flex', flexWrap: 'wrap' }}>
+                        {/* 프로필 목록을 렌더링합니다. */}
+                        {profiles.map(profile => (
+                            <Profile
+                                key={profile.id}
+                                name={profile.name}
+                                subject={profile.subject.join(", ")}
+                                gender={profile.gender === 0 ? "남자" : "여자"}
+                                age={profile.age}
+                                location={profile.location1}
+                                imagepath={profile.img}
+                                imagetext="프로필 이미지"
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
+            <FilterModal isOpen={isModalOpen} closeModal={closeModal} />
         </div>
     );
 }
-export default  MatchingMenteeList;
+
+export default MatchingMenteeList;
