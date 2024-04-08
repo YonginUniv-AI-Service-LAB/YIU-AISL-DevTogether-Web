@@ -57,12 +57,12 @@ export const data_mentor = [
         {
     id: 4,
 
-    name: "잘 알려드림yo",
+    name: "잘 R려dream yo",
     email: "bmh2038@naver.com",
     role: 2, // 1은 멘티, 2은 멘토
     gender: 0, // 0은 남자, 1은 여자
     img: "./flying.png",
-    age: 24,
+    age: 32,
     method: 1, // 0은 대면, 1은 비대면
     fee: 1000000,
     location1: "부산 해운대구",
@@ -81,7 +81,7 @@ export const data_mentor = [
     role: 2, // 1은 멘티, 2은 멘토
     gender: 1, // 0은 남자, 1은 여자
     img: "./blackcat.png",
-    age: 24,
+    age: 26,
     method: 1, // 0은 대면, 1은 비대면
     fee: 1000000,
     location1: "제주 서귀포시",
