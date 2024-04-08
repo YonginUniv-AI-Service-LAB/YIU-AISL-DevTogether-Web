@@ -1,6 +1,7 @@
 export const data_mentee = [
   {
     id: 1,
+
     name: "쿠로미",
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
@@ -14,10 +15,12 @@ export const data_mentee = [
     updatedAt: "2024-04-05",
     subject: [
       "Java", "React"
+
     ]
   },
     {
     id: 1,
+
     name: "하나도 모르겠어요",
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
@@ -31,10 +34,12 @@ export const data_mentee = [
     updatedAt: "2024-04-05",
     subject: [
       "Spring", "Mysql", "AWS"
+
     ]
   },
       {
     id: 1,
+
     name: "m_iiin_u",
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
@@ -44,6 +49,7 @@ export const data_mentee = [
     method: 0, // 0은 대면, 1은 비대면
     fee: 400000,
     location1: "인천 서구",
+
     createdAt: "2023-05-21",
     updatedAt: "2024-04-05",
     subject: [
@@ -56,6 +62,7 @@ export const data_mentee = [
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
     gender: 0, // 0은 남자, 1은 여자
+
     img: "./min.png",
     age: 24,
     method: 0, // 0은 대면, 1은 비대면
@@ -65,19 +72,23 @@ export const data_mentee = [
     updatedAt: "2024-04-05",
     subject: [
       "Ruby"
+
     ]
   },
           {
     id: 1,
+
     name: "김승진",
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
     gender: 0, // 0은 남자, 1은 여자
     img: "./spongebob.jpg",
+
     age: 24,
     method: 0, // 0은 대면, 1은 비대면
     fee: 400000,
     location1: "경기 수원시 권선구",
+
     createdAt: "2023-05-21",
     updatedAt: "2024-04-05",
     subject: [
@@ -94,10 +105,12 @@ export const data_mentee = [
     age: 23,
     method: 0, // 0은 대면, 1은 비대면
     fee: 400000,
+
     location1: "경기 수원시 영통구",
     createdAt: "2023-05-21",
     updatedAt: "2024-04-05",
     subject: [
+
       "AWS", "Docker"
     ]
   },
@@ -116,6 +129,7 @@ export const data_mentee = [
     updatedAt: "2024-04-05",
     subject: [
      "Spring"
+
     ]
   },
 ];

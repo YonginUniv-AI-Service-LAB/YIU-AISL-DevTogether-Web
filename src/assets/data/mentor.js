@@ -9,15 +9,18 @@ export const data_mentor = [
     age: 24,
     method: 1, // 0은 대면, 1은 비대면
     fee: 1000000,
+
     location1: "대전 유성구",
     createdAt: "2023-05-21",
     updatedAt: "2024-04-05",
     subject: [
       "React", "JavaScript"
+
     ]
   },
     {
     id: 2,
+
     name: "김예서",
     email: "bmh2038@naver.com",
     role: 2, // 1은 멘티, 2은 멘토
@@ -48,10 +51,12 @@ export const data_mentor = [
     updatedAt: "2024-04-05",
     subject: [
       "Python"
+
     ]
   },
         {
     id: 4,
+
     name: "잘 알려드림yo",
     email: "bmh2038@naver.com",
     role: 2, // 1은 멘티, 2은 멘토
@@ -65,10 +70,12 @@ export const data_mentor = [
     updatedAt: "2024-04-05",
     subject: [
       "Fluter", "Dart"
+
     ]
   },
           {
     id: 5,
+
     name: "못말리는 아가씨",
     email: "bmh2038@naver.com",
     role: 2, // 1은 멘티, 2은 멘토
@@ -82,6 +89,7 @@ export const data_mentor = [
     updatedAt: "2024-04-05",
     subject: [
       "C", "C++", "C#"
+
     ]
   },
 ];
