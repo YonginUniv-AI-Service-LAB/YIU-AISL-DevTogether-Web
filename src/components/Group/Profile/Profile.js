@@ -1,7 +1,5 @@
-
 import React from "react";
 import style from "./Profile.module.css"
-
 import MoreButton from "../../Button/MoreButton";
 
 const Profile = (props) => {

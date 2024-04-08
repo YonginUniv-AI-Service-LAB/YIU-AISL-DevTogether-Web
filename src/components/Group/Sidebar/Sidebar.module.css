@@ -20,8 +20,10 @@
     color: #495057;
     font-size: 18px;
     font-weight: 800;
+    display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .body:hover {

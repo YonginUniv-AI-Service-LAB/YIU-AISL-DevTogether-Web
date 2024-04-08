@@ -2,11 +2,11 @@
     background-color:#ffffff
 }
 
-.background{
+.background {
     display: flex;
 }
 
-.search{
+.search {
     background-color:#f0f0f0;
     padding-top: 20px;
     padding-bottom: 20px;
@@ -16,18 +16,20 @@
     margin-right: 100px;
     border-radius: 20px;
     justify-content: center;
+    cursor: text;
 }
 
-.head{
+.head {
     color: #495057;
     opacity: 1;
     font-size: 25px;
     font-weight: 600;
+    margin-left: 45px;
 }
 
 .line {
     border-bottom: 0.5px solid #d1d1d1; /* 수평선의 두께와 색상을 설정합니다. */
-    width: 70%;
+    width: 65%;
     opacity: 0.8;
-    margin-left: 320px;
+    margin-left: 400px;
 }
