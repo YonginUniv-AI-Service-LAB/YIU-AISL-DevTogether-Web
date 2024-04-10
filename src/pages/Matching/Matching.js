@@ -1,22 +1,26 @@
-import React from "react";
-import { useMediaQuery } from "react-responsive";
-import { useNavigate } from "react-router-dom";
 
-const MatchingPage = () => {
-  // 반응형 화면
-  const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
-  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
-  const isMobile = useMediaQuery({ maxWidth: 767 });
-  const isNotMobile = useMediaQuery({ minWidth: 768 });
+import React, { useState } from 'react';
+import MatchingMenteeList from './MatchingMenteeList';
+import MatchingMentorList from './MatchingMentorList';
 
-  // 페이지 이동
-  const navigate = useNavigate();
+const Matching = () => {
+    const [currentPage, setCurrentPage] = useState("mentee"); // 현재 페이지 상태 추가
 
-  return (
-    <div>
-      <h1>매칭</h1>
-    </div>
-  );
+    const handleSidebarButtonClick = (page) => {
+      if (currentPage !== page) {
+          setCurrentPage(page);
+      }
+    };
+
+    return (
+        <div>
+            {currentPage === "mentee" ? (
+                <MatchingMenteeList handleSidebarButtonClick={handleSidebarButtonClick} />
+            ) : (
+                <MatchingMentorList handleSidebarButtonClick={handleSidebarButtonClick} />
+            )}
+        </div>
+    );
 };
 
-export default MatchingPage;
+export default Matching;

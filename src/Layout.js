@@ -3,6 +3,10 @@ import Header from './components/Group/Header/Header';
 import styles from './Layout.css';
 // import Layout from './components/Group/Layout/Layout';
 
+
+import Matching from "./pages/Matching/Matching";
+
+
 const Layout = (props) => {
    const { className, children } = props;
   return ( 
@@ -10,6 +14,7 @@ const Layout = (props) => {
     <div>
       <Header/>
       <div className={styles.main_container}>{children}</div>
+
     </div>
   );
 }
