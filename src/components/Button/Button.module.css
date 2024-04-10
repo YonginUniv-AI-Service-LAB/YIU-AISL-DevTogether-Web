@@ -31,3 +31,8 @@
     padding: 10px;
     height: 40px;
 }
+
+.notice_category_btn :hover {
+  background-color: var(--main-color);
+  color: white;
+}
