@@ -1,3 +1,7 @@
-.background {
-    background: linear-gradient(to right bottom, #68568e, #9f5d83);
+.main_container {
+    min-height: 30em;
+}
+
+.background{
+  background: linear-gradient(to right bottom, #68568e, #9f5d83);
 }
