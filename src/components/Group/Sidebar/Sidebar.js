@@ -1,7 +1,7 @@
 import React from "react";
 import style from "./Sidebar.module.css";
 
-const Sidebar = ({ title1, title2, title3, title4, currentPage, onClick }) => {
+const Sidebar = ({ title1, title2, onClick }) => {
     return (
         <div className={style.background}>
             {/* 학생 찾기 버튼 클릭 시 학생 페이지로 이동 */}

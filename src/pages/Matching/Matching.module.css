@@ -6,17 +6,14 @@
     display: flex;
 }
 
+.background_head{
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1; /* 새로 추가한 부분 */
+}
+
 .search {
-    background-color:#f0f0f0;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    padding-right: 300px;
-    padding-left: 300px;
-    margin-left: 170px;
-    margin-right: 100px;
-    border-radius: 20px;
-    justify-content: center;
-    cursor: text;
+    min-width: 300px; 
 }
 
 .head {
@@ -28,8 +25,8 @@
 }
 
 .line {
-    border-bottom: 0.5px solid #d1d1d1; /* 수평선의 두께와 색상을 설정합니다. */
-    width: 65%;
-    opacity: 0.8;
+    border-bottom: 0.5px solid #474747; /* 수평선의 두께와 색상을 설정합니다. */
+    width: 64%;
+    opacity: 0.9;
     margin-left: 400px;
 }

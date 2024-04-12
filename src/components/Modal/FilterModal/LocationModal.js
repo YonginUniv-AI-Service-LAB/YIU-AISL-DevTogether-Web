@@ -1,82 +1,101 @@
 import React, { useState } from 'react';
 import style from './Modal.module.css';
+import { AutoComplete } from 'antd';
+import { data_location } from '../../../assets/data/location';
+
+const { Option } = AutoComplete;
 
 const LocationModal = ({ isOpen, closeModal, applyFilter }) => {
     const [selectedLocations, setSelectedLocations] = useState([]); // 선택된 지역을 관리하는 상태
-    const [showLocationList, setShowLocationList] = useState(false); // 지역 목록을 보이게 할지 여부를 관리하는 상태
-    const [showAddLocationdiv, setShowAddLocationdiv] = useState(true); // 지역 추가 버튼을 보이게 할지 여부를 관리하는 상태
+    const [additionalDropdowns, setAdditionalDropdowns] = useState(0); // 추가 드롭다운 박스의 수를 관리하는 상태
 
-    const locations = ['충남 천안시 서북구', '충남 천안시 동남구', '인천 부평구', '인천 서구', '경기 용인시 처인구', '경기 수원시 권선구', '경기 수원시 영통구', '대전 유성구', '강원 고성군', '부산 해운대구', '제주 서귀포시']; // 지역 목록입니다.
-
-    // 지역을 선택했을 때 실행되는 함수
-    const handleLocationSelect = (location) => {
-        // 이미 선택된 지역인지 확인
-        if (!selectedLocations.includes(location)) {
-            setSelectedLocations([...selectedLocations, location]); // 선택된 지역에 새로운 지역 추가
-            setShowLocationList(false); // 지역을 선택한 후에는 지역 목록을 숨깁니다.
-            setShowAddLocationdiv(true); // 지역을 선택한 후에는 지역 추가 버튼을 다시 보이게 합니다.
-        }
+    const handleLocationSelect = (value, index) => {
+        const updatedLocations = [...selectedLocations];
+        updatedLocations[index] = value;
+        setSelectedLocations(updatedLocations);
     };
 
-    // 지역 목록을 토글하는 함수
-    const toggleLocationList = () => {
-        setShowLocationList(!showLocationList); // 지역 목록의 보이기/숨기기 상태를 토글합니다.
-    };
-
-    // 지역 추가 버튼을 눌렀을 때 실행되는 함수
-    const handleAddLocationdivClick = () => {
-        setShowAddLocationdiv(false); // 지역 추가 버튼을 누르면 해당 버튼을 숨깁니다.
-        setShowLocationList(true); // 지역 추가 버튼을 누르면 지역 목록을 보이게 합니다.
-    };
-
-    // 필터 초기화 함수
-    const resetFilter = () => {
-        setSelectedLocations([]); // 선택된 지역 초기화
+    const removeDropdown = (index) => {
+        const updatedLocations = [...selectedLocations];
+        updatedLocations.splice(index, 1);
+        setSelectedLocations(updatedLocations);
+        setAdditionalDropdowns(Math.max(0, additionalDropdowns - 1));
     };
 
     const handleApplyFilter = () => {
-        applyFilter(selectedLocations);
-        closeModal(); // 필터 적용 후 모달 닫기
+        applyFilter(selectedLocations.filter(location => location));
+        closeModal();
+    };
+
+    const handleAddDropdown = () => {
+        if (additionalDropdowns < 2) {
+            setAdditionalDropdowns(additionalDropdowns + 1);
+        }
+    };
+
+    const resetFilter = () => {
+        setSelectedLocations([]);
+        setAdditionalDropdowns(0);
+        applyFilter([]);
+    };
+
+    const handleResetDropdown = () => {
+        setSelectedLocations([]);
+    };
+
+    const mockOptions = data_location;
+
+    const handleSearch = (value) => {
+        const filteredOptions = mockOptions.filter(option => option.includes(value));
+        return filteredOptions.map(option => (
+            <Option key={option} value={option}>
+                {option}
+            </Option>
+        ));
     };
 
     return (
         <div className={style.background} style={{ display: isOpen ? 'block' : 'none' }}>
-            <div>
-                <div className={style.head}>
-                    <div className={style.title}>지역 필터</div>
-                    {/* 닫는 버튼 */}
-                    <div onClick={closeModal} className={style.close}>x</div>
+            <div className={style.flex}>
+                <div className={style.text_title}>지역 필터</div>
+                <div onClick={closeModal} className={style.close}>x</div>
+            </div>
+            <div className={style.add} onClick={handleAddDropdown}>필터 추가</div>
+            <div className={style.flex}>
+                <AutoComplete
+                    style={{ width: '100%' }}
+                    placeholder="지역 선택"
+                    onSelect={(value) => handleLocationSelect(value, 0)}
+                    dataSource={handleSearch('')}
+                    filterOption={(inputValue, option) =>
+                        option.props.children.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1
+                    }
+                    value={selectedLocations[0]}
+                    onChange={() => handleResetDropdown()}
+                />
+                {additionalDropdowns > 0 && (
+                    <div className={style.remove} onClick={() => removeDropdown(0)}>X</div>
+                )}
+            </div>
+            {Array.from({ length: additionalDropdowns }).map((_, index) => (
+                <div className={style.flex} key={index} style={{ marginTop: '10px' }}>
+                    <AutoComplete
+                        style={{ width: '100%' }}
+                        placeholder={`지역 선택 ${index + 2}`}
+                        onSelect={(value) => handleLocationSelect(value, index + 1)}
+                        dataSource={handleSearch('')}
+                        filterOption={(inputValue, option) =>
+                            option.props.children.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1
+                        }
+                        value={selectedLocations[index + 1]}
+                        onChange={() => handleResetDropdown()}
+                    />
+                    <div className={style.remove} onClick={() => removeDropdown(index + 1)}>X</div>
                 </div>
-                
-                {/* 선택된 지역을 표시하는 버튼 */}
-                {selectedLocations.map((location, index) => (
-                    <div className={style.text} key={index}>{location}</div>
-                ))}
-                {/* 지역 선택 버튼 */}
-                {!showLocationList && selectedLocations.length === 0 && (
-                    <div className={style.text} onClick={toggleLocationList}>지역을 선택하세요</div>
-                )}
-                {/* 지역 추가 버튼 */}
-                {showAddLocationdiv && selectedLocations.length < locations.length && (
-                    <div className={style.text} onClick={handleAddLocationdivClick}>+</div>
-                )}
-                {/* 지역 목록 */}
-                {showLocationList && (
-                    <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
-                        {/* 지역 목록을 표시하고 클릭할 때마다 해당 지역을 선택하는 버튼을 생성합니다. */}
-                        {locations.map((location, index) => (
-                            // 이미 선택된 지역은 선택 목록에 없으므로 선택 목록에 있는 지역만 보여줍니다.
-                            selectedLocations.includes(location) ? null : (
-                                <div className={style.select} key={index} onClick={() => handleLocationSelect(location)}>{location}</div>
-                            )
-                        ))}
-                    </div>
-                )}
-                <div style={{display:'flex'}}>
-                    <div className={style.apply} onClick={handleApplyFilter}>적용</div>
-                    <div className={style.reset} onClick={resetFilter}>초기화</div>
-                </div>
-                
+            ))}
+            <div className={style.foot}>
+                <div className={style.apply} onClick={handleApplyFilter}>적용</div>
+                <div className={style.reset} onClick={resetFilter}>초기화</div>
             </div>
         </div>
     );

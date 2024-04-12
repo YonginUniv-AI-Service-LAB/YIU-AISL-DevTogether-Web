@@ -11,7 +11,6 @@ import AgeModal from '../../components/Modal/FilterModal/AgeModal';
 import MethodModal from '../../components/Modal/FilterModal/MethodModal';
 import FeeModal from '../../components/Modal/FilterModal/FeeModal';
 
-// 임시 데이터
 import { data_mentee } from '../../assets/data/mentee';
 
 const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
@@ -30,8 +29,7 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
     const [selectedAges, setSelectedAges] = useState([]);
     const [selectedMethods, setSelectedMethods] = useState([]);
     const [selectedFees, setSelectedFees] = useState([]);
-    const [isSearchApplied, setIsSearchApplied] = useState(false); // 검색이 적용되었는지 여부를 나타내는 상태 변수 추가
-    const [isEnterPressed, setIsEnterPressed] = useState(false); // 엔터 키 입력 상태를 나타내는 상태 변수 추가
+    const [isSearchApplied] = useState(false);
 
     useEffect(() => {
         const applyFilters = () => {
@@ -42,10 +40,10 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
                         profile.location1.some(location => selectedLocations.includes(location)) : 
                         selectedLocations.includes(profile.location1));
                 const genderFilter = selectedGenders.length === 0 || selectedGenders.includes(profile.gender === 0 ? "남자" : "여자");
-                const ageFilter = selectedAges.length === 0 || selectedAges.includes(parseInt(profile.age));
+                const ageFilter = selectedAges.min === undefined || selectedAges.max === undefined || (parseInt(profile.age) >= selectedAges.min && parseInt(profile.age) <= selectedAges.max);
                 const methodFilter = selectedMethods.length === 0 || selectedMethods.every(method => profile.method.includes(method));
                 const feeFilter = selectedFees.length === 0 || selectedFees.every(fee => profile.fee.includes(fee));
-                const searchFilter = isEnterPressed || profile.name.includes(searchText); // 검색이 적용되었거나 검색어가 포함된 경우에만 검색 필터 적용
+                const searchFilter = isSearchApplied || profile.name.includes(searchText); // 검색이 적용되었거나 검색어가 포함된 경우에만 검색 필터 적용
         
                 return subjectFilter && locationFilter && genderFilter && ageFilter && methodFilter && feeFilter && searchFilter;
             });
@@ -54,7 +52,7 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
         };
 
         applyFilters();
-    }, [selectedSubjects, selectedLocations, selectedGenders, selectedAges, selectedMethods, selectedFees, searchText, isEnterPressed]); // isEnterPressed도 의존성으로 추가
+    }, [selectedSubjects, selectedLocations, selectedGenders, selectedAges, selectedMethods, selectedFees, searchText, isSearchApplied]);
 
     const applySelectedSubjectFilter = (selectedSubjects) => {
         setSelectedSubjects(selectedSubjects);
@@ -68,10 +66,10 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
         setSelectedGenders(selectedGenders);
     };
 
-    const applySelectedAgeFilter = (selectedAges) => {
-        setSelectedAges(selectedAges);
+    const applySelectedAgeFilter = (minAge, maxAge) => {
+        setSelectedAges({ min: minAge, max: maxAge });
     };
-
+    
     const applySelectedMethodFilter = (selectedMethods) => {
         setSelectedMethods(selectedMethods);
     };
@@ -113,43 +111,28 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
         setIsFeeModalOpen(false);
     };
 
-    // 검색어 입력 시 호출되는 함수
     const handleSearch = (searchValue) => {
         setSearchText(searchValue);
-        setIsEnterPressed(false); // 엔터 키 입력 상태 초기화
     };
 
-    // 엔터 키 이벤트 처리 함수
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter') {
-            setIsEnterPressed(true); // 엔터 키 입력 상태 변경
-        }
-    };
-
-    // 다른 영역을 클릭하면 검색이 풀리도록 설정
-    const handleOutsideClick = () => {
-        if (!isEnterPressed) {
-            setIsSearchApplied(false);
-        }
-    };
 
     return (
-        <div className={style.color} onClick={handleOutsideClick}>
+        <div className={style.color}>
             <div className={style.line}></div>
             <div className={style.background}>
                 <Sidebar onClick={handleSidebarButtonClick} title1="학생 찾기" title2="선생님 찾기"/>
                 <div style={{flex: '1', marginTop:'40px', marginLeft:'150px', marginRight:'350px'}}>
-                    <div className={style.background}>
+                    <div className={style.background_head}>
                         <div className={style.head}>학생 목록</div>
-                        <Searchbar onSearch={handleSearch} onKeyPress={handleKeyPress} />
+                        <Searchbar onSearch={handleSearch}/>
                     </div>
                     <div className={style.background} style={{marginTop:'80px', justifyContent:'space-between'}}>
-                        <FilterButton name="과목" onClick={openSubjectModal} />
-                        <FilterButton name="지역" onClick={openLocationModal} />
-                        <FilterButton name="성별" onClick={openGenderModal} />
-                        <FilterButton name="나이" onClick={openAgeModal} />
-                        <FilterButton name="과외방식" onClick={openMethodModal} />
-                        <FilterButton name="수업료" onClick={openFeeModal} />
+                    <FilterButton name="과목" onClick={openSubjectModal} isFilterApplied={selectedSubjects.length > 0} />
+                        <FilterButton name="지역" onClick={openLocationModal} isFilterApplied={selectedLocations.length > 0} />
+                        <FilterButton name="성별" onClick={openGenderModal} isFilterApplied={selectedGenders.length > 0} />
+                        <FilterButton name="나이" onClick={openAgeModal} isFilterApplied={selectedAges.length > 0} />
+                        <FilterButton name="과외방식" onClick={openMethodModal} isFilterApplied={selectedMethods.length > 0} />
+                        <FilterButton name="수업료" onClick={openFeeModal} isFilterApplied={selectedFees.length > 0} />
                     </div>
                     <div className={style.background} style={{ display: 'flex', flexWrap: 'wrap' }}>
                         {profiles.map(profile => (

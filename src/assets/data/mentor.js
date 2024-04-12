@@ -25,7 +25,7 @@ export const data_mentor = [
     email: "bmh2038@naver.com",
     role: 2, // 1은 멘티, 2은 멘토
     gender: 1, // 0은 남자, 1은 여자
-    img: "./calcifer.png",
+    img: "./Calcifer.png",
     age: 24,
     method: 1, // 0은 대면, 1은 비대면
     fee: 1000000,

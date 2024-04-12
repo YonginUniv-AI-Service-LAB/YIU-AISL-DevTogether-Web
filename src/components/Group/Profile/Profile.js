@@ -1,11 +1,14 @@
 import React from "react";
 import style from "./Profile.module.css"
 import MoreButton from "../../Button/MoreButton";
+import ScarpButton from "../../Button/ScrapButton";
 
 const Profile = (props) => {
   return (
+
     <div className={style.background}>
         <div className={`${style.circle} ${style.circleImage}`}><img src={props.imagepath}  alt={props.imagetext}/></div>
+        <ScarpButton/>
         <MoreButton/>
         <div className={style.information}>
             <span style={{fontWeight:'900'}}>{props.name}</span><br/>

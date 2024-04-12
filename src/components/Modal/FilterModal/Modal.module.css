@@ -4,21 +4,24 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border-radius: 30px;
-  border: 1px solid #495057;
+  border-radius: 20px;
   padding: 30px;
   opacity: 1;
-  padding: 200px;
 }
 
-.title {
-  color:#495057;
-  font-size: 25px;
-  font-weight: 900;
-  position: fixed;
-  top: 5%;
-  left: 5%;
+.flex {
+  display: flex;
 }
+
+.text_title {
+  color:#495057;
+  position: fixed;
+  top: 20px; 
+  left: 35px; 
+  font-weight: 600;
+  font-size: 25px;
+}
+
 
 .close {
   color:#495057;
@@ -31,15 +34,15 @@
   cursor: pointer;
 }
 
-.select {
+.add {
   background-color:#f0f0f0;
   padding-top: 10px;
-  margin-top: 10px;
   padding-bottom: 10px;
-  margin-bottom: 10px;
-  padding-right: 35px;
-  padding-left: 35px;
-  margin-left: 20px;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-top: 150px;
+  margin-right: 350px;
+  margin-bottom: 30px;
   border-radius: 15px;
   display: flex;
   justify-content: center;
@@ -47,29 +50,22 @@
   cursor: pointer;
 }
 
-.select:hover {
-  background-color: #eeeeee; 
-  color: #9f5d83; 
-}
 
-.text {
-  background-color:#f0f0f0;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-right: 20px;
-  padding-left: 20px;
-  margin-top: 50px;
-  border-radius: 15px;
-  width: 200px;
+.remove {
+  margin-left: 10px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   cursor: pointer;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
-.subject:hover {
-  background-color: #eeeeee; 
-  color: #9f5d83; 
+.foot {
+  display: flex;
+  justify-content: space-between;
 }
 
 .apply {
@@ -83,9 +79,6 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  position: fixed;
-  bottom: 20px;
-  right: 35px;
 }
 
 .apply:hover {
@@ -104,12 +97,27 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  position: fixed;
-  bottom: 20px;
-  left: 35px;
 }
 
 .reset:hover {
   background-color: #eeeeee; 
   color: #9f5d83; 
+}
+
+.age_background {
+  margin-top: 150px;
+  margin-bottom: 10px;
+}
+
+.age {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-left: 7px;
+  padding-right: 7px;
+  border-radius: 10px;
+}
+
+.dash {
+  margin-left: 10px;
+  margin-right: 10px;
 }
