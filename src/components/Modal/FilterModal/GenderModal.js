@@ -1,82 +1,88 @@
 import React, { useState } from 'react';
 import style from './Modal.module.css';
+import { Select } from 'antd';
+
+const { Option } = Select;
 
 const GenderModal = ({ isOpen, closeModal, applyFilter }) => {
     const [selectedGenders, setSelectedGenders] = useState([]); // 선택된 성별을 관리하는 상태
-    const [showGenderList, setShowGenderList] = useState(false); // 성별 목록을 보이게 할지 여부를 관리하는 상태
-    const [showAddGenderdiv, setShowAddGenderdiv] = useState(true); // 성별 추가 버튼을 보이게 할지 여부를 관리하는 상태
-
-    const Genders = ['남자', '여자']; // 성별 목록입니다.
+    const [additionalDropdowns, setAdditionalDropdowns] = useState(0); // 추가 드롭다운 박스의 수를 관리하는 상태
 
     // 성별을 선택했을 때 실행되는 함수
-    const handleGenderSelect = (gender) => {
-        // 이미 선택된 성별인지 확인
-        if (!selectedGenders.includes(gender)) {
-            setSelectedGenders([...selectedGenders, gender]); // 선택된 성별에 새로운 성별 추가
-            setShowGenderList(false); // 성별을 선택한 후에는 성별 목록을 숨깁니다.
-            setShowAddGenderdiv(true); // 성별을 선택한 후에는 성별 추가 버튼을 다시 보이게 합니다.
-        }
+    const handleGenderSelect = (gender, dropdownIndex) => {
+        const updatedGenders = [...selectedGenders]; // 현재 선택된 성별 복사
+        updatedGenders[dropdownIndex] = gender; // 새로운 성별으로 업데이트
+        setSelectedGenders(updatedGenders); // 선택된 성별 업데이트
     };
 
-    // 성별 목록을 토글하는 함수
-    const toggleGenderList = () => {
-        setShowGenderList(!showGenderList); // 성별 목록의 보이기/숨기기 상태를 토글합니다.
-    };
-
-    // 성별 추가 버튼을 눌렀을 때 실행되는 함수
-    const handleAddGenderdivClick = () => {
-        setShowAddGenderdiv(false); // 성별 추가 버튼을 누르면 해당 버튼을 숨깁니다.
-        setShowGenderList(true); // 성별 추가 버튼을 누르면 성별 목록을 보이게 합니다.
-    };
-
-    // 필터 초기화 함수
-    const resetFilter = () => {
-        setSelectedGenders([]); // 선택된 성별 초기화
+    // 드롭다운 제거 함수
+    const removeDropdown = (index) => {
+        const updatedGenders = [...selectedGenders]; // 현재 선택된 성별 복사
+        updatedGenders.splice(index, 1); // 해당 인덱스의 드롭다운 제거
+        setSelectedGenders(updatedGenders); // 선택된 성별 업데이트
+        setAdditionalDropdowns(Math.max(0, additionalDropdowns - 1)); // 추가 드롭다운 박스 수 감소 (최소값 0으로 설정)
     };
 
     const handleApplyFilter = () => {
-        applyFilter(selectedGenders);
+        applyFilter(selectedGenders.filter(gender => gender)); // 선택된 성별 필터링 후 적용
         closeModal(); // 필터 적용 후 모달 닫기
+    };
+
+    const handleAddDropdown = () => {
+        setAdditionalDropdowns(additionalDropdowns + 1); // 추가 버튼을 클릭할 때마다 추가 드롭다운 박스의 수를 증가
+    };
+
+    const resetFilter = () => {
+        setSelectedGenders([]); // 선택된 성별 초기화
+        setAdditionalDropdowns(0); // 추가 드롭다운 박스 수 초기화
+        applyFilter([]); // 필터 초기화 후 적용 함수 호출
     };
 
     return (
         <div className={style.background} style={{ display: isOpen ? 'block' : 'none' }}>
-            <div>
-                <div className={style.head}>
-                    <div className={style.title}>성별 필터</div>
-                    {/* 닫는 버튼 */}
-                    <div onClick={closeModal} className={style.close}>x</div>
-                </div>
-                
-                {/* 선택된 성별을 표시하는 버튼 */}
-                {selectedGenders.map((gender, index) => (
-                    <div className={style.text} key={index}>{gender}</div>
-                ))}
-                {/* 성별 선택 버튼 */}
-                {!showGenderList && selectedGenders.length === 0 && (
-                    <div className={style.text} onClick={toggleGenderList}>성별을 선택하세요</div>
+            <div className={style.flex}>
+                <div className={style.text_title}>성별 필터</div>
+                <div onClick={closeModal} className={style.close}>x</div>
+            </div>
+            {/* 추가 버튼 */}
+            <div className={style.add} onClick={handleAddDropdown}>필터 추가</div>
+            <div className={style.flex}>
+                <Select
+                    mode="single" // 한 번에 하나의 항목만 선택 가능한 드롭다운 박스
+                    className={style.select}
+                    style={{ width: '100%'}}
+                    placeholder="성별 선택"
+                    onChange={(value) => handleGenderSelect(value, 0)} // 첫 번째 드롭다운 선택
+                    value={selectedGenders[0]}
+                >
+                    {['남자','여자'].map(gender => (
+                        <Option key={gender} value={gender}>{gender}</Option>
+                    ))}
+                </Select>
+                {additionalDropdowns > 0 && (
+                    <div className={style.remove} onClick={() => removeDropdown(0)}>X</div>
                 )}
-                {/* 성별 추가 버튼 */}
-                {showAddGenderdiv && selectedGenders.length < Genders.length && (
-                    <div className={style.text} onClick={handleAddGenderdivClick}>+</div>
-                )}
-                {/* 성별 목록 */}
-                {showGenderList && (
-                    <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
-                        {/* 성별 목록을 표시하고 클릭할 때마다 해당 성별을 선택하는 버튼을 생성합니다. */}
-                        {Genders.map((gender, index) => (
-                            // 이미 선택된 성별은 선택 목록에 없으므로 선택 목록에 있는 성별만 보여줍니다.
-                            selectedGenders.includes(gender) ? null : (
-                                <div className={style.select} key={index} onClick={() => handleGenderSelect(gender)}>{gender}</div>
-                            )
+            </div>
+            {/* 추가 드롭다운 박스들 */}
+            {Array.from({ length: additionalDropdowns }).map((_, index) => (
+                <div className={style.flex} key={index} style={{ marginTop: '10px' }}>
+                    <Select
+                        mode="single"
+                        style={{ width: '100%' }}
+                        placeholder={`성별 선택 ${index + 2}`}
+                        onChange={(value) => handleGenderSelect(value, index + 1)} // 추가 드롭다운 선택
+                        value={selectedGenders[index + 1]}
+                    >
+                        {['남자','여자'].map(gender => (
+                            <Option key={gender} value={gender}>{gender}</Option>
                         ))}
-                    </div>
-                )}
-                <div style={{display:'flex'}}>
-                    <div className={style.apply} onClick={handleApplyFilter}>적용</div>
-                    <div className={style.reset} onClick={resetFilter}>초기화</div>
+                    </Select>
+                    <div className={style.remove} onClick={() => removeDropdown(index + 1)}>X</div>
                 </div>
-                
+            ))}
+            <div className={style.foot}>
+                <div className={style.apply} onClick={handleApplyFilter}>적용</div>
+                <div className={style.reset} onClick={resetFilter}>초기화</div>
             </div>
         </div>
     );

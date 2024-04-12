@@ -3,8 +3,7 @@ import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 
 import Body from "../../components/Group/Body/Body";
-// import Layout from './components/Group/Layout/Layout';
-import Matching_Mentee from "../../pages/Matching/MatchingMenteeList";
+import Matching from "../../pages/Matching/Matching"
 
 const MainPage = () => {
   // 반응형 화면
@@ -25,7 +24,7 @@ const MainPage = () => {
           sentence2="DevTogether에서 더 나은 매칭 선택"
           title="학생 찾기 / 선생님 찾기"
         />
-        <Matching_Mentee />
+        <Matching/>
       </div>
     </div>
   );

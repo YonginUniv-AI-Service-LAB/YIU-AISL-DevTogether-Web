@@ -1,12 +1,15 @@
-import React, { useState, useRef, useEffect } from "react";
-import style from "./Searchbar.module.css";
+import React, { useState, useEffect, useRef } from 'react';
+import { Input } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+import style from './Searchbar.module.css'
 
 const Searchbar = ({ onSearch }) => {
     const [searchText, setSearchText] = useState("닉네임으로 검색");
     const inputRef = useRef(null);
 
     const handleInputChange = (event) => {
-        setSearchText(event.target.value);
+        const searchTextValue = event.target.value;
+        setSearchText(searchTextValue);
     };
 
     const handleInputClick = () => {
@@ -15,37 +18,33 @@ const Searchbar = ({ onSearch }) => {
         }
     };
 
-    const handleClickOutside = (event) => {
-        if (!inputRef.current || !inputRef.current.contains(event.target)) {
-            setSearchText("닉네임으로 검색");
-        }
-    };
-
     useEffect(() => {
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
-    useEffect(() => {
-        // 검색어가 "닉네임으로 검색"일 때는 모든 프로필을 보여줍니다.
-        if (searchText === "닉네임으로 검색") {
-            onSearch(""); // 빈 문자열을 전달하여 모든 프로필을 보여줍니다.
-        } else {
-            // 검색어가 변경될 때 검색 콜백 함수 호출
-            onSearch(searchText);
+        if (searchText === "닉네임으로 검색" || searchText === "") {
+            // 검색어가 "닉네임으로 검색"일 때 모든 프로필을 보여줌
+            onSearch("");
         }
     }, [searchText, onSearch]);
 
+    const handleKeyPress = (event) => {
+        if (event.key === "Enter" && searchText !== "") {
+            onSearch(searchText);
+        }
+    };
+
     return (
-        <input
-            ref={inputRef}
+        <Input
+            style={{ width:"30%",fontWeight: 800 }}
             className={style.body}
+            ref={inputRef}
+            size="large"
+            placeholder="닉네임으로 검색"
+            prefix={<SearchOutlined style={{ marginRight: "20px" }} />}
+            suffix={searchText !== "닉네임으로 검색" && searchText !== "" && <div className={style.clearButton} onClick={() => setSearchText("")}>X</div>}
             type="text"
             value={searchText}
             onChange={handleInputChange}
             onClick={handleInputClick}
+            onKeyPress={handleKeyPress}
         />
     );
 };

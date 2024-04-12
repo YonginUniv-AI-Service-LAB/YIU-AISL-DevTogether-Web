@@ -1,82 +1,88 @@
 import React, { useState } from 'react';
 import style from './Modal.module.css';
+import { Select } from 'antd';
+
+const { Option } = Select;
 
 const MethodModal = ({ isOpen, closeModal, applyFilter }) => {
-    const [selectedMethods, setSelectedMethods] = useState([]); // 선택된 방식을 관리하는 상태
-    const [showMethodList, setShowMethodList] = useState(false); // 방식 목록을 보이게 할지 여부를 관리하는 상태
-    const [showAddMethoddiv, setShowAddMethoddiv] = useState(true); // 방식 추가 버튼을 보이게 할지 여부를 관리하는 상태
+    const [selectedMethods, setSelectedMethods] = useState([]); // 선택된 과목을 관리하는 상태
+    const [additionalDropdowns, setAdditionalDropdowns] = useState(0); // 추가 드롭다운 박스의 수를 관리하는 상태
 
-    const Methods = ['대면','비대면']; // 방식 목록입니다.
-
-    // 방식을 선택했을 때 실행되는 함수
-    const handleMethodSelect = (Method) => {
-        // 이미 선택된 방식인지 확인
-        if (!selectedMethods.includes(Method)) {
-            setSelectedMethods([...selectedMethods, Method]); // 선택된 방식에 새로운 방식 추가
-            setShowMethodList(false); // 방식을 선택한 후에는 방식 목록을 숨깁니다.
-            setShowAddMethoddiv(true); // 방식을 선택한 후에는 방식 추가 버튼을 다시 보이게 합니다.
-        }
+    // 과목을 선택했을 때 실행되는 함수
+    const handleMethodSelect = (method, dropdownIndex) => {
+        const updatedMethods = [...selectedMethods]; // 현재 선택된 과목 복사
+        updatedMethods[dropdownIndex] = method; // 새로운 과목으로 업데이트
+        setSelectedMethods(updatedMethods); // 선택된 과목 업데이트
     };
 
-    // 방식 목록을 토글하는 함수
-    const toggleMethodList = () => {
-        setShowMethodList(!showMethodList); // 방식 목록의 보이기/숨기기 상태를 토글합니다.
-    };
-
-    // 방식 추가 버튼을 눌렀을 때 실행되는 함수
-    const handleAddMethoddivClick = () => {
-        setShowAddMethoddiv(false); // 방식 추가 버튼을 누르면 해당 버튼을 숨깁니다.
-        setShowMethodList(true); // 방식 추가 버튼을 누르면 방식 목록을 보이게 합니다.
-    };
-
-    // 필터 초기화 함수
-    const resetFilter = () => {
-        setSelectedMethods([]); // 선택된 방식 초기화
+    // 드롭다운 제거 함수
+    const removeDropdown = (index) => {
+        const updatedMethods = [...selectedMethods]; // 현재 선택된 과목 복사
+        updatedMethods.splice(index, 1); // 해당 인덱스의 드롭다운 제거
+        setSelectedMethods(updatedMethods); // 선택된 과목 업데이트
+        setAdditionalDropdowns(Math.max(0, additionalDropdowns - 1)); // 추가 드롭다운 박스 수 감소 (최소값 0으로 설정)
     };
 
     const handleApplyFilter = () => {
-        applyFilter(selectedMethods);
+        applyFilter(selectedMethods.filter(method => method)); // 선택된 과목 필터링 후 적용
         closeModal(); // 필터 적용 후 모달 닫기
+    };
+
+    const handleAddDropdown = () => {
+        setAdditionalDropdowns(additionalDropdowns + 1); // 추가 버튼을 클릭할 때마다 추가 드롭다운 박스의 수를 증가
+    };
+
+    const resetFilter = () => {
+        setSelectedMethods([]); // 선택된 과목 초기화
+        setAdditionalDropdowns(0); // 추가 드롭다운 박스 수 초기화
+        applyFilter([]); // 필터 초기화 후 적용 함수 호출
     };
 
     return (
         <div className={style.background} style={{ display: isOpen ? 'block' : 'none' }}>
-            <div>
-                <div className={style.head}>
-                    <div className={style.title}>방식 필터</div>
-                    {/* 닫는 버튼 */}
-                    <div onClick={closeModal} className={style.close}>x</div>
-                </div>
-                
-                {/* 선택된 방식을 표시하는 버튼 */}
-                {selectedMethods.map((Method, index) => (
-                    <div className={style.text} key={index}>{Method}</div>
-                ))}
-                {/* 방식 선택 버튼 */}
-                {!showMethodList && selectedMethods.length === 0 && (
-                    <div className={style.text} onClick={toggleMethodList}>방식을 선택하세요</div>
+            <div className={style.flex}>
+                <div className={style.text_title}>과외 방식 필터</div>
+                <div onClick={closeModal} className={style.close}>x</div>
+            </div>
+            {/* 추가 버튼 */}
+            <div className={style.add} onClick={handleAddDropdown}>필터 추가</div>
+            <div className={style.flex}>
+                <Select
+                    mode="single" // 한 번에 하나의 항목만 선택 가능한 드롭다운 박스
+                    className={style.select}
+                    style={{ width: '100%'}}
+                    placeholder="과외 방식 선택"
+                    onChange={(value) => handleMethodSelect(value, 0)} // 첫 번째 드롭다운 선택
+                    value={selectedMethods[0]}
+                >
+                    {['대면','비대면','블렌딩'].map(method => (
+                        <Option key={method} value={method}>{method}</Option>
+                    ))}
+                </Select>
+                {additionalDropdowns > 0 && (
+                    <div className={style.remove} onClick={() => removeDropdown(0)}>X</div>
                 )}
-                {/* 방식 추가 버튼 */}
-                {showAddMethoddiv && selectedMethods.length < Methods.length && (
-                    <div className={style.text} onClick={handleAddMethoddivClick}>+</div>
-                )}
-                {/* 방식 목록 */}
-                {showMethodList && (
-                    <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
-                        {/* 방식 목록을 표시하고 클릭할 때마다 해당 방식을 선택하는 버튼을 생성합니다. */}
-                        {Methods.map((Method, index) => (
-                            // 이미 선택된 방식은 선택 목록에 없으므로 선택 목록에 있는 방식만 보여줍니다.
-                            selectedMethods.includes(Method) ? null : (
-                                <div className={style.select} key={index} onClick={() => handleMethodSelect(Method)}>{Method}</div>
-                            )
+            </div>
+            {/* 추가 드롭다운 박스들 */}
+            {Array.from({ length: additionalDropdowns }).map((_, index) => (
+                <div className={style.flex} key={index} style={{ marginTop: '10px' }}>
+                    <Select
+                        mode="single"
+                        style={{ width: '100%' }}
+                        placeholder={`과외 방식 선택 ${index + 2}`}
+                        onChange={(value) => handleMethodSelect(value, index + 1)} // 추가 드롭다운 선택
+                        value={selectedMethods[index + 1]}
+                    >
+                        {['대면','비대면','블렌딩'].map(method => (
+                            <Option key={method} value={method}>{method}</Option>
                         ))}
-                    </div>
-                )}
-                <div style={{display:'flex'}}>
-                    <div className={style.apply} onClick={handleApplyFilter}>적용</div>
-                    <div className={style.reset} onClick={resetFilter}>초기화</div>
+                    </Select>
+                    <div className={style.remove} onClick={() => removeDropdown(index + 1)}>X</div>
                 </div>
-                
+            ))}
+            <div className={style.foot}>
+                <div className={style.apply} onClick={handleApplyFilter}>적용</div>
+                <div className={style.reset} onClick={resetFilter}>초기화</div>
             </div>
         </div>
     );

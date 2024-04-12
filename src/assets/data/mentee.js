@@ -131,4 +131,61 @@ export const data_mentee = [
 
     ]
   },
+  {
+    id: 8,
+
+    name: "쿠로미2",
+    email: "bmh2038@naver.com",
+    role: 1, // 1은 멘티, 2은 멘토
+    gender: 1, // 0은 남자, 1은 여자
+    img: "./kuromi.png",
+    age: 21,
+    method: 0, // 0은 대면, 1은 비대면
+    fee: 400000,
+    location1: "충남 천안시 서북구",
+    createdAt: "2023-05-21",
+    updatedAt: "2024-04-05",
+    subject: [
+      "Java", "React"
+
+    ]
+  },
+  {
+    id: 9,
+
+    name: "쿠로미3",
+    email: "bmh2038@naver.com",
+    role: 1, // 1은 멘티, 2은 멘토
+    gender: 1, // 0은 남자, 1은 여자
+    img: "./kuromi.png",
+    age: 21,
+    method: 0, // 0은 대면, 1은 비대면
+    fee: 400000,
+    location1: "충남 천안시 서북구",
+    createdAt: "2023-05-21",
+    updatedAt: "2024-04-05",
+    subject: [
+      "Java", "React"
+
+    ]
+  },
+  {
+    id: 10,
+
+    name: "쿠로미4",
+    email: "bmh2038@naver.com",
+    role: 1, // 1은 멘티, 2은 멘토
+    gender: 1, // 0은 남자, 1은 여자
+    img: "./kuromi.png",
+    age: 21,
+    method: 0, // 0은 대면, 1은 비대면
+    fee: 400000,
+    location1: "충남 천안시 서북구",
+    createdAt: "2023-05-21",
+    updatedAt: "2024-04-05",
+    subject: [
+      "Java", "React"
+
+    ]
+  },
 ];
