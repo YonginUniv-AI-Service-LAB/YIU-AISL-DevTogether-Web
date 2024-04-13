@@ -127,7 +127,7 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
                         <Searchbar onSearch={handleSearch}/>
                     </div>
                     <div className={style.background} style={{marginTop:'80px', justifyContent:'space-between'}}>
-                    <FilterButton name="과목" onClick={openSubjectModal} isFilterApplied={selectedSubjects.length > 0} />
+                        <FilterButton name="과목" onClick={openSubjectModal} isFilterApplied={selectedSubjects.length > 0} />
                         <FilterButton name="지역" onClick={openLocationModal} isFilterApplied={selectedLocations.length > 0} />
                         <FilterButton name="성별" onClick={openGenderModal} isFilterApplied={selectedGenders.length > 0} />
                         <FilterButton name="나이" onClick={openAgeModal} isFilterApplied={selectedAges.length > 0} />

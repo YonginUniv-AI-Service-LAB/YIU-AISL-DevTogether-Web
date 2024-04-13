@@ -9,7 +9,16 @@ const AgeModal = ({ isOpen, closeModal, applyFilter }) => {
         const min = parseInt(minAge);
         const max = parseInt(maxAge);
 
-        if (!isNaN(min) && !isNaN(max) && min <= max) {
+        if (!isNaN(min) && isNaN(max)) {
+            // 최소 나이만 입력된 경우
+            applyFilter(min, Infinity); // 최대 나이를 Infinity로 설정하여 상한 제한을 없앰
+            closeModal();
+        } else if (isNaN(min) && !isNaN(max)) {
+            // 최대 나이만 입력된 경우
+            applyFilter(0, max); // 최소 나이를 0으로 설정하여 하한 제한을 없앰
+            closeModal();
+        } else if ((!isNaN(min) && !isNaN(max)) && min <= max) {
+            // 최소나이와 최대 나이가 모두 입력된 경우, 그리고 최소 나이가 최대 나이보다 작거나 같은 경우
             applyFilter(min, max); // 최소와 최대 나이를 applyFilter 함수로 전달
             closeModal();
         } else {
