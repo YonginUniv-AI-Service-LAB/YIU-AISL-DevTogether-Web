@@ -32,3 +32,8 @@
     color: #9f5d83; 
 }
   
+.fix {
+    position: sticky; /* 이 부분만 추가 */
+    top: 10px;
+    z-index: 100;
+}
