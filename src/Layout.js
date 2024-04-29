@@ -1,5 +1,6 @@
 import "./App.css";
 import Header from "./components/Group/Header/Header";
+import Footer from "./components/Group/Footer/Footer";
 import styles from "./Layout.css";
 // import Layout from './components/Group/Layout/Layout';
 
@@ -10,6 +11,7 @@ const Layout = (props) => {
     <div>
       <Header />
       <div className={styles.main_container}>{children}</div>
+      <Footer />
     </div>
   );
 };
