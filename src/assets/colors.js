@@ -1,6 +1,12 @@
 export const colors = {
-  main: "#595c86",
-  sub: "#696c96",
+  main: "#68568E",
+  sub: "#A499BB",
+  light: "#D1CCDD",
+  background: "#F0F0F0",
+
+  text_black_color: "#424242",
+  text_body_color: "#666666",
+  text_disable_color: "#D5D5D5",
 
   gray_dark: "#424242",
   gray_mid: "#666666",
