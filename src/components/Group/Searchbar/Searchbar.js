@@ -3,8 +3,8 @@ import { Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import style from './Searchbar.module.css'
 
-const Searchbar = ({ onSearch }) => {
-    const [searchText, setSearchText] = useState("닉네임으로 검색");
+const Searchbar = ({ defaultSearchText, onSearch }) => {
+    const [searchText, setSearchText] = useState(defaultSearchText);
     const inputRef = useRef(null);
 
     const handleInputChange = (event) => {
@@ -13,17 +13,17 @@ const Searchbar = ({ onSearch }) => {
     };
 
     const handleInputClick = () => {
-        if (searchText === "닉네임으로 검색") {
+        if (searchText === defaultSearchText) {
             setSearchText("");
         }
     };
 
     useEffect(() => {
-        if (searchText === "닉네임으로 검색" || searchText === "") {
-            // 검색어가 "닉네임으로 검색"일 때 모든 프로필을 보여줌
+        if (searchText === defaultSearchText || searchText === "") {
+            // 검색어가 defaultSearchText일 때 모든 프로필을 보여줌
             onSearch("");
         }
-    }, [searchText, onSearch]);
+    }, [searchText, onSearch, defaultSearchText]);
 
     const handleKeyPress = (event) => {
         if (event.key === "Enter" && searchText !== "") {
@@ -37,9 +37,9 @@ const Searchbar = ({ onSearch }) => {
             className={style.body}
             ref={inputRef}
             size="large"
-            placeholder="닉네임으로 검색"
+            placeholder={defaultSearchText} // placeholder를 defaultSearchText로 변경
             prefix={<SearchOutlined style={{ marginRight: "20px" }} />}
-            suffix={searchText !== "닉네임으로 검색" && searchText !== "" && <div className={style.clearButton} onClick={() => setSearchText("")}>X</div>}
+            suffix={searchText !== defaultSearchText && searchText !== "" && <div className={style.clearButton} onClick={() => setSearchText("")}>X</div>}
             type="text"
             value={searchText}
             onChange={handleInputChange}

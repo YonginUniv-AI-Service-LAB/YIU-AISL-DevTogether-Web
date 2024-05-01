@@ -8,7 +8,7 @@ const Layout = (props) => {
   const { className, children } = props;
   return (
     // <div className='background'>
-    <div>
+    <div className={styles.background}>
       <Header />
       <div style={{ minHeight: 700 }}>{children}</div>
       <Footer />

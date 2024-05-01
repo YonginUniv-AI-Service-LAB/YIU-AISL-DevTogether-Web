@@ -1,0 +1,35 @@
+.background{
+    background-color:#f0f0f0;
+    margin-top: 50px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+    margin-left: 30px;
+    border-radius: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1300px;
+    max-height: 180px;
+}
+
+.contents{
+    /* display: flex; */
+    line-height: 2.2;
+    margin-left: 30px;
+    flex: 1;
+}
+
+.file{
+    display: flex;
+    display: flex;
+    justify-content: space-between; /* 요소들 사이에 공간을 동일하게 배분합니다. */
+    align-items: center; /* 요소들을 수직 방향으로 중앙에 배치합니다. */
+}
+
+.img {
+    max-width: 100%; /* 이미지의 최대 너비를 부모 요소의 너비에 맞게 조정 */
+    max-height: 100%; /* 이미지의 최대 높이를 부모 요소의 높이에 맞게 조정 */
+    object-fit: contain;; /* 이미지를 확대 또는 축소하여 해당 영역을 채우도록 설정 */
+    margin-left: auto; /* 이미지를 영역의 오른쪽에 위치시킵니다. */
+}

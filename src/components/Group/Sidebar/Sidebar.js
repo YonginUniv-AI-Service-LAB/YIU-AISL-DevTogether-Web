@@ -1,7 +1,7 @@
 import React from "react";
 import style from "./Sidebar.module.css";
 
-const Sidebar = ({ title1, title2, onClick }) => {
+const Sidebar = ({ title1, title2, title3, title4, title5, onClick }) => {
     return (
         <div className={style.background}>
             <div className={style.fix}>
@@ -9,6 +9,9 @@ const Sidebar = ({ title1, title2, onClick }) => {
                 <div className={style.body} onClick={() => onClick("mentee")}>{title1}</div>
                 {/* 선생님 찾기 버튼 클릭 시 선생님 페이지로 이동 */}
                 <div className={style.body} onClick={() => onClick("mentor")}>{title2}</div>
+                <div className={style.body} onClick={() => onClick("mentor")}>{title3}</div>
+                <div className={style.body} onClick={() => onClick("mentor")}>{title4}</div>
+                <div className={style.body} onClick={() => onClick("mentor")}>{title5}</div>
             </div>
         </div>
     );

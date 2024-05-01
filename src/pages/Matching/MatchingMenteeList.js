@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import style from './Matching.module.css';
+import Body from '../../components/Group/Body/Body';
 import FilterButton from '../../components/Button/FilterButton';
 import Profile from '../../components/Group/Profile/Profile';
 import Sidebar from '../../components/Group/Sidebar/Sidebar';
@@ -119,6 +120,12 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
 
     return (
         <div className={style.color}>
+            {/* <Body
+            sentence1="보다 쉬운 코딩 과외 매칭을 위해"
+            sentence2="DevTogether에서 더 나은 매칭 선택"
+            title="학생 찾기/ 선생님 찾기"
+            imageSrc='/matching2.png' // 이미지 경로를 전달합니다.
+            /> */}
             <div className={style.background}>
                 <Sidebar onClick={handleSidebarButtonClick} title1="학생 찾기" title2="선생님 찾기"/>
                 <div style={{flex: '1', marginTop:'40px', marginLeft:'80px', marginRight:'80px'}}>
@@ -126,7 +133,7 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
                         <div className={style.line}></div>
                         <div className={style.background_head}>
                             <div className={style.head}>학생 목록</div>
-                            <Searchbar onSearch={handleSearch}/>
+                            <Searchbar defaultSearchText="닉네임으로 검색" onSearch={handleSearch}/>
                         </div>
                         <div className={style.background} style={{marginTop:'50px', marginRight:'10px', justifyContent:'space-between'}}>
                             <FilterButton name="과목" onClick={openSubjectModal} isFilterApplied={selectedSubjects.length > 0} />
