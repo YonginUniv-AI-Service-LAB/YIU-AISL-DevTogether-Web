@@ -188,4 +188,24 @@ export const data_mentee = [
 
     ]
   },
+
+  {
+    id: 11,
+
+    name: "잘생긴 과외오빠",
+    email: "bmh2038@naver.com",
+    role: 1, // 1은 멘티, 2은 멘토
+    gender: 0, // 0은 남자, 1은 여자
+    img: "./dicafrio.png",
+    age: 24,
+    method: 0, // 0은 대면, 1은 비대면
+    fee: 400000,
+    location1: "USA-California-Hollywood",
+    createdAt: "2023-05-21",
+    updatedAt: "2024-04-05",
+    subject: [
+      "Java", "React"
+
+    ]
+  },
 ];

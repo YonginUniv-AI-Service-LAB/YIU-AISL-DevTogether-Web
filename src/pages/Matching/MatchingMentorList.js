@@ -4,6 +4,7 @@ import FilterButton from '../../components/Button/FilterButton';
 import Profile from '../../components/Group/Profile/Profile';
 import Sidebar from '../../components/Group/Sidebar/Sidebar';
 import Searchbar from '../../components/Group/Searchbar/Searchbar';
+import FilterTag from '../../components/Group/Filtertag/Filtertag';
 import SubjectModal from '../../components/Modal/FilterModal/SubjectModal';
 import LocationModal from '../../components/Modal/FilterModal/LocationModal';
 import GenderModal from '../../components/Modal/FilterModal/GenderModal';
@@ -29,7 +30,7 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
     const [selectedAges, setSelectedAges] = useState([]);
     const [selectedMethods, setSelectedMethods] = useState([]);
     const [selectedFees, setSelectedFees] = useState([]);
-    const [isSearchApplied] = useState(false);
+    const [isSearchApplied, setIsSearchApplied] = useState(false);
 
     useEffect(() => {
         const applyFilters = () => {
@@ -118,21 +119,23 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
 
     return (
         <div className={style.color}>
-            <div className={style.line}></div>
             <div className={style.background}>
                 <Sidebar onClick={handleSidebarButtonClick} title1="학생 찾기" title2="선생님 찾기"/>
-                <div style={{flex: '1', marginTop:'40px', marginLeft:'150px', marginRight:'350px'}}>
-                    <div className={style.background_head}>
-                        <div className={style.head}>선생님 목록</div>
-                        <Searchbar onSearch={handleSearch}/>
-                    </div>
-                    <div className={style.background} style={{marginTop:'80px', justifyContent:'space-between'}}>
-                        <FilterButton name="과목" onClick={openSubjectModal} isFilterApplied={selectedSubjects.length > 0} />
-                        <FilterButton name="지역" onClick={openLocationModal} isFilterApplied={selectedLocations.length > 0} />
-                        <FilterButton name="성별" onClick={openGenderModal} isFilterApplied={selectedGenders.length > 0} />
-                        <FilterButton name="나이" onClick={openAgeModal} isFilterApplied={selectedAges.length > 0} />
-                        <FilterButton name="과외방식" onClick={openMethodModal} isFilterApplied={selectedMethods.length > 0} />
-                        <FilterButton name="수업료" onClick={openFeeModal} isFilterApplied={selectedFees.length > 0} />
+                <div style={{flex: '1', marginTop:'40px', marginLeft:'80px', marginRight:'80px'}}>
+                    <div className={style.fix}>
+                        <div className={style.line}></div>
+                        <div className={style.background_head}>
+                            <div className={style.head}>선생님 목록</div>
+                            <Searchbar onSearch={handleSearch}/>
+                        </div>
+                        <div className={style.background} style={{marginTop:'50px', marginRight:'10px', justifyContent:'space-between'}}>
+                            <FilterButton name="과목" onClick={openSubjectModal} isFilterApplied={selectedSubjects.length > 0} />
+                            <FilterButton name="지역" onClick={openLocationModal} isFilterApplied={selectedLocations.length > 0} />
+                            <FilterButton name="성별" onClick={openGenderModal} isFilterApplied={selectedGenders.length > 0} />
+                            <FilterButton name="나이" onClick={openAgeModal} isFilterApplied={selectedAges.min !== undefined || selectedAges.max !== undefined} />
+                            <FilterButton name="과외방식" onClick={openMethodModal} isFilterApplied={selectedMethods.length > 0} />
+                            <FilterButton name="수업료" onClick={openFeeModal} isFilterApplied={selectedFees.length > 0} />
+                        </div>
                     </div>
                     <div className={style.background} style={{ display: 'flex', flexWrap: 'wrap' }}>
                         {profiles.map(profile => (
@@ -149,6 +152,7 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
                         ))}
                     </div>
                 </div>
+                <div className={style.situation}><FilterTag selectedSubjects={selectedSubjects} selectedLocations={selectedLocations} selectedGenders={selectedGenders} selectedAges={selectedAges} selectedMethods={selectedMethods} selectedFees={selectedFees} /></div>
             </div>
             <SubjectModal isOpen={isSubjectModalOpen} closeModal={closeModal} applyFilter={applySelectedSubjectFilter} />
             <LocationModal isOpen={isLocationModalOpen} closeModal={closeModal} applyFilter={applySelectedLocationFilter} />

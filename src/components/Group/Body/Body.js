@@ -15,7 +15,7 @@ const Body = (props) => {
                     </div>
                     <div className={style.title}>{props.title}</div>
                 </div>
-                <img src="./matching.png" alt="매칭게시판 이미지"></img>
+                <img src={props.imageSrc} alt="이미지" style={{ width: '550px', height: '400px' }} />
             </div>
         </div>
     );
