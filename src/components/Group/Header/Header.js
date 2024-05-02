@@ -95,16 +95,7 @@ const Header = (props) => {
         }}
       >
         {/* 랩실 로고 */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <span style={{ marginRight: 10 }}>
-            <Image width={70} src={LOGO} />
-          </span>
+        <div>
           <a
             href="/"
             style={{
@@ -112,8 +103,14 @@ const Header = (props) => {
               fontWeight: "bold",
               fontSize: 30,
               color: colors.main,
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
             }}
           >
+            <span style={{ marginRight: 10 }}>
+              <Image width={70} src={LOGO} preview={false} />
+            </span>
             <span style={{}}>DevTogether</span>
           </a>
         </div>
