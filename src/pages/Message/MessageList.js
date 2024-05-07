@@ -1,6 +1,16 @@
 import React from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
+import { Tabs, ConfigProvider } from "antd";
+import { colors } from "../../assets/colors";
+import ReceiveList from "./ReceivedList";
+import SendList from "./SentList";
+import { MessageAtom, MessageStatusAtom } from "../../recoil/atoms/message";
+import {
+  ReceivedMessagesSelector,
+  SentMessagesSelector,
+} from "../../recoil/selectors/messageSelector";
 
 const MessageList = () => {
   // 반응형 화면
@@ -12,9 +22,58 @@ const MessageList = () => {
   // 페이지 이동
   const navigate = useNavigate();
 
+  // recoil 현재 쪽지
+  const [curMessage, setCurMessage] = useRecoilState(MessageAtom);
+  // 쪽지 상태 변경(받은 쪽지함 / 보낸 쪽지함)
+  const [messageStatus, setMessageStatus] = useRecoilState(MessageStatusAtom);
+
+  const receivedMessages = useRecoilValue(ReceivedMessagesSelector);
+  const sentMessges = useRecoilValue(SentMessagesSelector);
+
+  // tabs 변경될 때 => 쪽지 상태 변경
+  const onChange = (key) => {
+    setMessageStatus(key === 1 ? true : false);
+    setCurMessage(key === 1 ? receivedMessages[0] : sentMessges[0]);
+  };
+
   return (
-    <div>
-      <h1>쪽지 목록</h1>
+    <div
+      style={{
+        width: isMobile || isTablet ? "100%" : "30%",
+      }}
+    >
+      <ConfigProvider
+        theme={{
+          components: {
+            Tabs: {},
+          },
+          token: {
+            colorPrimary: colors.sub,
+            colorPrimaryHover: colors.main,
+            colorPrimaryTextHover: "white",
+          },
+        }}
+      >
+        <Tabs
+          style={{ fontWeight: "bold", color: colors.text_black_color }}
+          onChange={onChange}
+          type="card"
+          size="large"
+          defaultActiveKey={1}
+          items={[
+            {
+              label: "받은 쪽지함",
+              key: 1,
+              children: <ReceiveList />,
+            },
+            {
+              label: "보낸 쪽지함",
+              key: 2,
+              children: <SendList />,
+            },
+          ]}
+        />
+      </ConfigProvider>
     </div>
   );
 };

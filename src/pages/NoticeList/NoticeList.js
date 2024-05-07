@@ -4,6 +4,7 @@ import React from "react";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 import { data_notice } from "../../assets/data/notice";
+import PageHeaderImage from "../../assets/images/PageHeaderImage/notice.svg";
 
 import styled from "styled-components";
 import { colors } from "../../assets/colors";
@@ -77,6 +78,7 @@ const NoticeListPage = () => {
       <PageHeader
         title="공지사항"
         subtitle="DevTogether의 다양한 소식을 알려드립니다."
+        image={PageHeaderImage}
       />
       <Container style={{ fontSize: 20 }}>
         <Table

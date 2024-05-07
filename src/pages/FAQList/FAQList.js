@@ -9,6 +9,7 @@ import Accordion from "react-bootstrap/Accordion";
 import { useAccordionButton } from "react-bootstrap/AccordionButton";
 import Card from "react-bootstrap/Card";
 import styles from "./FAQList.module.css";
+import PageHeaderImage from "../../assets/images/PageHeaderImage/faq.svg";
 
 const FAQListPage = () => {
   // 반응형 화면
@@ -44,7 +45,7 @@ const FAQListPage = () => {
 
   return (
     <div>
-      <PageHeader title="자주묻는질문" subtitle="" />
+      <PageHeader title="자주묻는질문" subtitle="" image={PageHeaderImage} />
       <div style={{ padding: "10%" }}>
         <Accordion defaultActiveKey="0" flush={true}>
           {data_faq.map((data, index) => {

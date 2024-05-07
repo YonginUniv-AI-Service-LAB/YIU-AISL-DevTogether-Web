@@ -1,0 +1,7 @@
+.background {
+  background: linear-gradient(to right bottom, #68568e, #9f5d83);
+  color: white;
+}
+.container:hover {
+  cursor: pointer;
+}
