@@ -35,6 +35,27 @@ export const MessageListSelector = selector({
   },
 });
 
+export const ReceivedMessagesSelector = selector({
+  key: "ReceivedMessagesSelector",
+  get: async ({ get }) => {
+    // const { data } = await axios.get("/path/to/your/message/api");
+    // const data = data_message; // 예시 데이터 사용
+
+    // 유저가 받은 쪽지 필터링
+    return data_message.filter((message) => message.to_user_id === "누들잉");
+  },
+});
+
+export const SentMessagesSelector = selector({
+  key: "SentMessagesSelector",
+  get: async ({ get }) => {
+    // const { data } = await axios.get("/path/to/your/message/api");
+    // const data = data_message; // 예시 데이터 사용
+    // 유저가 보낸 쪽지 필터링
+    return data_message.filter((message) => message.from_user_id === "누들잉");
+  },
+});
+
 // // 해당 유저가 받은 쪽지 리스트
 // export const ReceivedMessagesSelector = selector({
 //   key: "ReceivedMessagesSelector",

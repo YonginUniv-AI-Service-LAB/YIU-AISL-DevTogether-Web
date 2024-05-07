@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 import { Row, Col, Flex } from "antd";
@@ -9,8 +9,11 @@ import MessageList from "./MessageList";
 import PageHeader from "../../components/Group/PageHeader/PageHeader";
 import SectionHeader from "../../components/Group/SectionHeader/SectionHeader";
 import MessageDetail from "./MessageDetail";
-import { MessageAtom } from "../../recoil/atoms/message";
-import { MessageSelector } from "../../recoil/selectors/messageSelector";
+import { MessageAtom, MessageListAtom } from "../../recoil/atoms/message";
+import {
+  MessageSelector,
+  ReceivedMessagesSelector,
+} from "../../recoil/selectors/messageSelector";
 import axios from "axios";
 import { data_message } from "../../assets/data/message";
 import PageHeaderImage from "../../assets/images/PageHeaderImage/message.svg";
@@ -41,6 +44,9 @@ const getMessageData = async () => {
 };
 
 const MessagePage = () => {
+  useEffect(() => {
+    setCurMessage(receivedMessages[0]);
+  }, []);
   // 반응형 화면
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
@@ -52,6 +58,7 @@ const MessagePage = () => {
 
   // recoil 현재 쪽지
   const [curMessage, setCurMessage] = useRecoilState(MessageAtom);
+  const receivedMessages = useRecoilValue(ReceivedMessagesSelector);
 
   // const { data } = useQuery(["data_message"], getMessageData);
 

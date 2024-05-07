@@ -1,11 +1,12 @@
-import React from "react";
-import { useRecoilState } from "recoil";
+import React, { useDeferredValue } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 import { List } from "antd";
 import MessageListItem from "../../components/Group/MessageListItem/MessageListItem";
 import { data_message } from "../../assets/data/message";
 import { MessageAtom } from "../../recoil/atoms/message";
+import { SentMessagesSelector } from "../../recoil/selectors/messageSelector";
 
 const SendList = () => {
   // 반응형 화면
@@ -19,24 +20,23 @@ const SendList = () => {
 
   // recoil 현재 쪽지
   const [curMessage, setCurMessage] = useRecoilState(MessageAtom);
+  const sentMessages = useRecoilValue(SentMessagesSelector);
 
   return (
     <div>
-      {" "}
+      
       <List
         itemLayout="horizontal"
-        dataSource={data_message}
-        renderItem={(item, index) =>
-          item.from_user_id == "누들잉" ? (
-            <MessageListItem
-              selected={item.id === curMessage.id ? true : false}
-              title={item.title}
-              person={item.to_user_id}
-              date={item.createdAt}
-              onClick={() => setCurMessage(item)}
-            />
-          ) : null
-        }
+        dataSource={sentMessages}
+        renderItem={(item, index) => (
+          <MessageListItem
+            selected={item.id === curMessage.id ? true : false}
+            title={item.title}
+            person={item.to_user_id}
+            date={item.createdAt}
+            onClick={() => setCurMessage(item)}
+          />
+        )}
       />
     </div>
   );

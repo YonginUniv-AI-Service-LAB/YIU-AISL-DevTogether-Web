@@ -21,23 +21,22 @@ const ReceiveList = () => {
 
   // recoil 현재 쪽지
   const [curMessage, setCurMessage] = useRecoilState(MessageAtom);
+  const receivedMessages = useRecoilValue(ReceivedMessagesSelector);
 
   return (
     <div>
       <List
         itemLayout="horizontal"
-        dataSource={data_message}
-        renderItem={(item, index) =>
-          item.to_user_id == "누들잉" ? (
-            <MessageListItem
-              selected={item.id === curMessage.id ? true : false}
-              title={item.title}
-              person={item.from_user_id}
-              date={item.createdAt}
-              onClick={() => setCurMessage(item)}
-            />
-          ) : null
-        }
+        dataSource={receivedMessages}
+        renderItem={(item, index) => (
+          <MessageListItem
+            selected={item.id === curMessage.id ? true : false}
+            title={item.title}
+            person={item.from_user_id}
+            date={item.createdAt}
+            onClick={() => setCurMessage(item)}
+          />
+        )}
       />
     </div>
   );
