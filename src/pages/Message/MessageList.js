@@ -1,12 +1,17 @@
 import React from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 import { Tabs, ConfigProvider } from "antd";
 import { colors } from "../../assets/colors";
 import ReceiveList from "./ReceivedList";
 import SendList from "./SentList";
-import { MessageAtom, MessageStatusAtom } from "../../recoil/atoms/message";
+import {
+  MessageAtom,
+  MessageReceiverAtom,
+  MessageStatusAtom,
+  MessageViewStatusAtom,
+} from "../../recoil/atoms/message";
 import {
   ReceivedMessagesSelector,
   SentMessagesSelector,
@@ -26,14 +31,18 @@ const MessageList = () => {
   const [curMessage, setCurMessage] = useRecoilState(MessageAtom);
   // 쪽지 상태 변경(받은 쪽지함 / 보낸 쪽지함)
   const [messageStatus, setMessageStatus] = useRecoilState(MessageStatusAtom);
-
+  // 받은 쪽지함
   const receivedMessages = useRecoilValue(ReceivedMessagesSelector);
+  // 보낸 쪽지함
   const sentMessges = useRecoilValue(SentMessagesSelector);
+  // 현재 선택된 왼쪽 뷰 => 상세보기 | 작성폼
+  const setLeftView = useSetRecoilState(MessageViewStatusAtom);
 
   // tabs 변경될 때 => 쪽지 상태 변경
   const onChange = (key) => {
     setMessageStatus(key === 1 ? true : false);
     setCurMessage(key === 1 ? receivedMessages[0] : sentMessges[0]);
+    setLeftView(true);
   };
 
   return (
@@ -60,6 +69,7 @@ const MessageList = () => {
           type="card"
           size="large"
           defaultActiveKey={1}
+          onClick={() => setLeftView(true)}
           items={[
             {
               label: "받은 쪽지함",

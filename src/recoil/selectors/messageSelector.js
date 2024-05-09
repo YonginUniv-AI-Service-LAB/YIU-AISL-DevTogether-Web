@@ -15,7 +15,7 @@ export const MessageStatusSelector = selector({
   },
 });
 
-// 선택된 쪽지
+// 현재 선택된 쪽지
 export const MessageSelector = selector({
   key: "MessageSelector",
   get: ({ get }) => {

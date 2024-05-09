@@ -8,8 +8,14 @@ import DefaultButton from "../../components/Button/DefaultButton";
 import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
 
 import { colors } from "../../assets/colors";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  MessageReceiverAtom,
+  MessageViewStatusAtom,
+} from "../../recoil/atoms/message";
+import HoverEventButton from "../../components/Button/HoverEventButton";
 
-const MessageForm = () => {
+const MessageForm = (props) => {
   // 반응형 화면
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
@@ -21,13 +27,33 @@ const MessageForm = () => {
 
   const [contents, setContents] = useState();
 
+  // 쪽지 수신자
+  const messageReceiver = useRecoilValue(MessageReceiverAtom);
+  // 쪽지 수신자 설정
+  const setMessageReceiver = useSetRecoilState(MessageReceiverAtom);
+  // 현재 선택된 왼쪽 뷰 => 상세보기 | 작성폼
+  const setLeftView = useSetRecoilState(MessageViewStatusAtom);
+
   return (
     <div
       style={{
         width: isMobile || isTablet ? "100%" : "70%",
       }}
     >
-      {" "}
+      <div style={{ textAlign: "right" }}>
+        <HoverEventButton
+          title={"취소"}
+          onClick={() => {
+            setMessageReceiver("");
+            setLeftView(true);
+          }}
+          size={"middle"}
+          bgColor={colors.gray_light}
+          bgColor_hover={colors.gray_mid}
+          fontColor={colors.gray_mid}
+          fontColor_hover={"white"}
+        />
+      </div>
       <Form
         name="wrap"
         labelCol={{
@@ -47,7 +73,7 @@ const MessageForm = () => {
         }
       >
         <Form.Item
-          label={<FormLabelText text="받는이" />}
+          label={<FormLabelText text="수신자" />}
           name="title"
           style={{ marginBottom: 20 }}
         >
@@ -61,7 +87,7 @@ const MessageForm = () => {
               paddingLeft: 10,
             }}
           >
-            누들잉
+            {messageReceiver}
           </Tag>
         </Form.Item>
         <Form.Item

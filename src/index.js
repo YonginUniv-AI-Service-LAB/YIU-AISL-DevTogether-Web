@@ -10,6 +10,7 @@ import {
   QueryClient,
   useQuery,
 } from "@tanstack/react-query";
+import { Flex, Spin } from "antd";
 
 const queryClient = new QueryClient();
 
@@ -17,11 +18,17 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <RecoilRoot>
-      <React.Suspense fallback={<div>Loading...</div>}>
-        <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <React.Suspense
+          fallback={
+            <div style={{ margin: "auto" }}>
+              <Spin size="large" />
+            </div>
+          }
+        >
           <App />
-        </QueryClientProvider>
-      </React.Suspense>
+        </React.Suspense>
+      </QueryClientProvider>
     </RecoilRoot>
   </React.StrictMode>
 );
