@@ -158,6 +158,7 @@ const Header = (props) => {
                 </Button>
               </Dropdown>
             </ConfigProvider>
+            <HeaderNavBtn type={"text"} text="쪽지" href="/message" />
             {/* <HeaderNavBtn type={"text"} text="Community" href="/community" /> */}
           </Space>
         </Col>

@@ -50,6 +50,7 @@ const Footer = (props) => {
         <LinkBtn>커뮤니티</LinkBtn>
         <LinkBtn>공지사항</LinkBtn>
         <LinkBtn>자주묻는질문</LinkBtn>
+        <LinkBtn>쪽지</LinkBtn>
         <LinkBtn>마이페이지</LinkBtn>
       </div>
 
