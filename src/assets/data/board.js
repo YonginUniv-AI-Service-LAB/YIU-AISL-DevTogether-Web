@@ -12,7 +12,8 @@ export const data_board = [
         file: [
         ],
         nickname: "m_iiin_u",
-        userImage: "/keroro.png"
+        userImage: "/keroro.png",
+        motto: "민우인데요"
     },
 
     {
@@ -28,7 +29,8 @@ export const data_board = [
         file: [
         ],
         nickname: "m_iiin_u",
-        userImage: "/keroro.png"
+        userImage: "/keroro.png",
+        motto: "민우인데요"
     },
 
     {
@@ -44,7 +46,8 @@ export const data_board = [
         file: [
         ],
         nickname: "못말리는 아가씨",
-        userImage: "/blackcat.png"
+        userImage: "/blackcat.png",
+        motto:"단비꼬야!!!"
     },
 
     {
@@ -61,7 +64,8 @@ export const data_board = [
         file: [
         ],
         nickname: "못말리는 아가씨",
-        userImage: "/blackcat.png"
+        userImage: "/blackcat.png",
+        motto:"단비꼬야!!!"
     },
 
     {
@@ -78,7 +82,8 @@ export const data_board = [
         file: [
         ],
         nickname: "밍키",
-        userImage: "/cat.png"
+        userImage: "/cat.png",
+        motto: "정보 은닉 달인"
     },
 
     {
@@ -118,7 +123,8 @@ export const data_board = [
         file: [
         ],
         nickname: "안주연",
-        userImage: "/kiki.png"
+        userImage: "/kiki.png",
+        motto: "백엔드 개발자"
     },
 
     {
@@ -154,7 +160,8 @@ export const data_board = [
         file: [
         ],
         nickname: "김승진",
-        userImage: "/spongebob.jpg"
+        userImage: "/spongebob.jpg",
+        motto: "백엔드 개발자"
     },
 
     {
@@ -170,7 +177,8 @@ export const data_board = [
         file: [
         ],
         nickname: "하나도 모르겠어요",
-        userImage: "/dororo.png"
+        userImage: "/dororo.png",
+        motto: "열심히 배우기"
     },
 
     {
@@ -182,11 +190,12 @@ export const data_board = [
         likes: 0,
         views: 5,
         comment: 0,
-        img: "./band.jpg",
+        img: "/band.jpg",
         file: [
         ],
         nickname: "조민우",
-        userImage: "min.png"
+        userImage: "/min.png",
+        motto: "머요"
     },
 
     {
@@ -260,7 +269,8 @@ export const data_board = [
         file: [
         ],
         nickname: "변미현",
-        userImage: "https://cdn.pixabay.com/photo/2014/04/05/11/40/poster-316690_960_720.jpg"
+        userImage: "https://cdn.pixabay.com/photo/2014/04/05/11/40/poster-316690_960_720.jpg",
+        motto: "안주는 안락사다."
     },
 
     {
@@ -276,7 +286,8 @@ export const data_board = [
         file: [
         ],
         nickname: "김예서",
-        userImage: "/Calcifer.png"
+        userImage: "/Calcifer.png",
+        motto: "앱 개발중이에요"
     },
     
     {
@@ -292,7 +303,8 @@ export const data_board = [
         file: [
         ],
         nickname: "안영환",
-        userImage: "/youngman.png"
+        userImage: "/youngman.png",
+        motto: "영환이는 원영이밖에 없고, 원영이만 있으면 되고, 원영이만 사랑해"
     },
     
 ]

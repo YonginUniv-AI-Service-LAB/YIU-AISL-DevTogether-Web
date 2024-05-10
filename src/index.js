@@ -5,12 +5,30 @@ import App from "./App";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import "bootstrap/dist/css/bootstrap.min.css";
+import {
+  QueryClientProvider,
+  QueryClient,
+  useQuery,
+} from "@tanstack/react-query";
+import { Flex, Spin } from "antd";
+
+const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <RecoilRoot>
-      <App />
+      <QueryClientProvider client={queryClient}>
+        <React.Suspense
+          fallback={
+            <div style={{ margin: "auto" }}>
+              <Spin size="large" />
+            </div>
+          }
+        >
+          <App />
+        </React.Suspense>
+      </QueryClientProvider>
     </RecoilRoot>
   </React.StrictMode>
 );

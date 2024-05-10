@@ -195,6 +195,7 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
                     img={post.img}
                     nickname={post.nickname}
                     userImage={post.userImage}
+                    motto={post.motto}
                     onClick={() => handlePostClick(post.id)} // 클릭 시 상세 페이지로 이동하는 함수 전달
                   />
                 ))}

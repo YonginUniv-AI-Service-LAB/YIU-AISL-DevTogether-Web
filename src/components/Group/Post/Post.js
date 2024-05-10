@@ -25,11 +25,14 @@ const Post = (props) => {
             <div className={style.body}>
                 <div className={style.num}>{props.num} </div>
                 <div className={style.contents}>
-                  <div className={style.flex}>
+                  <div className={style.horizon}>
                     <div className= {`${style.circle} ${style.circleImage}`}>
                       <img src={props.userImage} alt="유저이미지" />
                     </div>
-                    <div className={style.nickname}>{props.nickname}</div>
+                    <div>
+                      <div className={style.writer}>{props.nickname}</div>
+                      <div className={style.motto}>{props.motto}</div>
+                    </div>
                   </div>
                   <span style={{fontWeight:'900'}}>{props.title}</span>
                   <span style={{opacity:'0.3'}}> | </span>
@@ -42,8 +45,8 @@ const Post = (props) => {
                 </div>
             </div>
             <div className={`${style.square} ${style.squareImage}`}>
-                      <img src={props.img} alt='게시물 이미지'/>
-                    </div>
+                <img src={props.img} alt='게시물 이미지'/>
+            </div>
         </div>
         <div className={style.line}></div>
     </div>
