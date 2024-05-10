@@ -1,33 +1,28 @@
 import React, { Component } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Button, ConfigProvider } from "antd";
+import { colors } from "../../../assets/colors";
 
-const HeaderNavBtn = (props) => {
+const FooterNavBtn = (props) => {
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const isNotMobile = useMediaQuery({ minWidth: 768 });
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          borderRadius: 8,
-          fontSize: 14,
-        },
+    <div
+      style={{
+        textDecoration: "none",
+        cursor: "pointer",
+        fontWeight: "bold",
+        color: colors.footer_text2,
+        fontSize: isMobile ? 14 : 15,
       }}
+      onClick={props.onClick}
     >
-      <Button
-        size={"large"}
-        type={props.type ? props.type : "text"}
-        href={props.href}
-        style={props.style}
-        onClick={props.onClick}
-      >
-        {props.text}
-      </Button>
-    </ConfigProvider>
+      {props.text}
+    </div>
   );
 };
 
-export default HeaderNavBtn;
+export default FooterNavBtn;

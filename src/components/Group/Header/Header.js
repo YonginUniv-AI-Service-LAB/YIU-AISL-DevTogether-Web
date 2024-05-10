@@ -9,17 +9,27 @@ import {
   ConfigProvider,
   Col,
   Row,
-  MenuProps,
   Drawer,
   theme,
-  Image,
-  Avatar,
+  Menu,
 } from "antd";
 import styles from "./Header.module.css";
-import { colors } from "../../../assets/colors";
-import LOGO from "../../../assets/images/devtogether_logo.png";
+import {
+  MenuOutlined,
+  AppstoreOutlined,
+  MailOutlined,
+  NotificationOutlined,
+  CustomerServiceOutlined,
+  QuestionCircleOutlined,
+  SignatureOutlined,
+  ReadOutlined,
+  CommentOutlined,
+} from "@ant-design/icons";
 
 import HeaderNavBtn from "./HeaderNavBtn";
+import LogoTitle from "../LOGO/LogoTitle";
+import LogoTitle_Drawer from "../LOGO/LogoTitle_Drawer";
+import { colors } from "../../../assets/colors";
 
 const DropdownItemStyle = {
   padding: 10,
@@ -34,6 +44,8 @@ const Header = (props) => {
   const navigate = useNavigate();
 
   const { token } = theme.useToken();
+
+  // Drawer 오픈 여부
   const [open, setOpen] = useState(false);
   const showDrawer = () => {
     setOpen(true);
@@ -42,17 +54,23 @@ const Header = (props) => {
     setOpen(false);
   };
 
-  const containerStyle = {
-    position: "relative",
-    height: 100,
-    padding: 48,
-    overflow: "hidden",
-    textAlign: "center",
-    background: token.colorFillAlter,
-    border: `1px solid ${token.colorBorderSecondary}`,
-    borderRadius: token.borderRadiusLG,
+  // Drawer 메뉴 클릭
+  const onClick = (e) => {
+    onClose();
+    navigate(e.key);
   };
 
+  // const funcLogout = () => {
+  //   dispatch(logout());
+  //   sessionStorage.removeItem("accessToken");
+  //   sessionStorage.removeItem("userid");
+  //   sessionStorage.removeItem("name");
+  //   sessionStorage.removeItem("email");
+  //   sessionStorage.removeItem("master");
+  //   navigate("/", { replace: true });
+  // };
+
+  // 네비게이션 메뉴 - 고객센터
   const items = [
     {
       key: "1",
@@ -74,18 +92,59 @@ const Header = (props) => {
     },
   ];
 
-  // const funcLogout = () => {
-  //   dispatch(logout());
-  //   sessionStorage.removeItem("accessToken");
-  //   sessionStorage.removeItem("userid");
-  //   sessionStorage.removeItem("name");
-  //   sessionStorage.removeItem("email");
-  //   sessionStorage.removeItem("master");
-  //   navigate("/", { replace: true });
-  // };
-
+  const DrawerMenuItems = [
+    {
+      key: "/matching/:mentee",
+      icon: <ReadOutlined />,
+      label: "학생 찾기",
+    },
+    {
+      key: "/matching/:mento",
+      icon: <SignatureOutlined />,
+      label: "선생님 찾기",
+    },
+    {
+      key: "/board",
+      icon: <AppstoreOutlined />,
+      label: "커뮤니티",
+    },
+    {
+      key: "/notice",
+      icon: <NotificationOutlined />,
+      label: "공지사항",
+    },
+    {
+      key: "cs",
+      label: "고객센터",
+      icon: <CustomerServiceOutlined />,
+      children: [
+        {
+          key: "/faq",
+          label: "자주 묻는 질문",
+          icon: <QuestionCircleOutlined />,
+        },
+        {
+          key: "/inquiry",
+          label: "문의하기",
+          icon: <MailOutlined />,
+        },
+      ],
+    },
+    {
+      key: "/message",
+      icon: <CommentOutlined />,
+      label: "쪽지",
+    },
+  ];
   return (
-    <div style={{ margin: 300, marginTop: 50, marginBottom: 50 }}>
+    <div
+      style={{
+        marginTop: isMobile || isTablet ? 25 : 50,
+        marginBottom: isMobile || isTablet ? 25 : 50,
+        marginLeft: isMobile || isTablet ? 30 : 225,
+        marginRight: isMobile || isTablet ? 30 : 225,
+      }}
+    >
       <div
         style={{
           display: "flex",
@@ -94,64 +153,74 @@ const Header = (props) => {
           justifyContent: "space-between",
         }}
       >
-        {/* 랩실 로고 */}
-        <div>
-          <a
-            href="/"
-            style={{
-              textDecoration: "none",
-              fontWeight: "bold",
-              fontSize: 30,
-              color: colors.main,
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <span style={{ marginRight: 10 }}>
-              <Image width={70} src={LOGO} preview={false} />
-            </span>
-            <span style={{}}>DevTogether</span>
-          </a>
-        </div>
+        {/* 로고 */}
+        <LogoTitle
+          fontSize={isMobile || isTablet ? 20 : 30}
+          logoWidth={isMobile || isTablet ? 50 : 70}
+        />
 
-        {/* 메인 네비 */}
-        {/* 로그인&회원가입 */}
-        <div>
-          <Space>
+        {isMobile ? (
+          <>
+            <MenuOutlined onClick={showDrawer} style={{ cursor: "pointer" }} />
+            <Drawer
+              title={<LogoTitle_Drawer onClick={onClose} />}
+              onClose={onClose}
+              open={open}
+              closable={false}
+              width={"50%"}
+            >
+              <ConfigProvider
+                theme={{
+                  token: {
+                    colorPrimary: colors.sub,
+                  },
+                }}
+              >
+                <Menu
+                  onClick={onClick}
+                  // defaultSelectedKeys={["1"]}
+                  mode="inline"
+                  items={DrawerMenuItems}
+                  style={{
+                    border: "none",
+                    width: "100%",
+                  }}
+                  autoFocus={false}
+                />
+              </ConfigProvider>
+            </Drawer>
+          </>
+        ) : (
+          <div>
             <HeaderNavBtn type={"text"} text="로그인" href="/signin" />
             <HeaderNavBtn type={"text"} text="회원가입" href="/signup" />
-          </Space>
-        </div>
+          </div>
+        )}
       </div>
 
-      <Row align={"middle"} justify={"start"}>
-        <Col>
-          <Space wrap>
-            <HeaderNavBtn
-              type={"text"}
-              text="학생 찾기"
-              href="/matching/:mentee"
-            />
-            <HeaderNavBtn
-              type={"text"}
-              text="선생님 찾기"
-              href="/matching/:mento"
-            />
-            <HeaderNavBtn type={"text"} text="커뮤니티" href="/board" />
-            <HeaderNavBtn type={"text"} text="공지사항" href="/notice" />
+      <div>
+        <HeaderNavBtn type={"text"} text="학생 찾기" href="/matching/:mentee" />
+        <HeaderNavBtn
+          type={"text"}
+          text="선생님 찾기"
+          href="/matching/:mento"
+        />
+        <HeaderNavBtn type={"text"} text="커뮤니티" href="/board" />
+        <HeaderNavBtn type={"text"} text="공지사항" href="/notice" />
+        {isMobile ? null : (
+          <>
             <ConfigProvider
               theme={{
                 token: {
                   borderRadius: 8,
-                  fontSize: isMobile ? 11 : 16,
+                  fontSize: 16,
                 },
               }}
             >
               <Dropdown menu={{ items }} placement="bottom">
                 <Button
                   type="text"
-                  size={isMobile ? "small" : "large"}
+                  size={"large"}
                   onClick={() => navigate("/faq")}
                 >
                   고객센터
@@ -159,10 +228,9 @@ const Header = (props) => {
               </Dropdown>
             </ConfigProvider>
             <HeaderNavBtn type={"text"} text="쪽지" href="/message" />
-            {/* <HeaderNavBtn type={"text"} text="Community" href="/community" /> */}
-          </Space>
-        </Col>
-      </Row>
+          </>
+        )}
+      </div>
     </div>
   );
 };

@@ -33,6 +33,8 @@ import PostDetailPage from "./pages/PostDetail/PostDetail";
 import PostFormPage from "./pages/PostForm/PostForm";
 import ReportDetailPage from "./pages/ReportDetail/ReportDetail";
 import ReportListPage from "./pages/ReportList/ReportList";
+import TermOfService from "./pages/Term/TermOfService";
+import PrivacyPolicy from "./pages/Term/PrivacyPolicy";
 
 function App(props) {
   return (
@@ -86,6 +88,16 @@ function App(props) {
           <Route exact path="/inquiry/form" element={<InquiryFormPage />} />
 
           <Route exact path="/message" element={<MessagePage />} />
+          <Route
+            exact
+            path="/devtogether/term-of-service"
+            element={<TermOfService />}
+          />
+          <Route
+            exact
+            path="/devtogether/privacy-policy"
+            element={<PrivacyPolicy />}
+          />
         </Routes>
       </Layout>
     </BrowserRouter>
