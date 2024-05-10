@@ -4,18 +4,12 @@ import { SearchOutlined } from "@ant-design/icons";
 import style from './Searchbar.module.css'
 
 const Searchbar = ({ defaultSearchText, onSearch }) => {
-    const [searchText, setSearchText] = useState(defaultSearchText);
+    const [searchText, setSearchText] = useState("");
     const inputRef = useRef(null);
 
     const handleInputChange = (event) => {
         const searchTextValue = event.target.value;
         setSearchText(searchTextValue);
-    };
-
-    const handleInputClick = () => {
-        if (searchText === defaultSearchText) {
-            setSearchText("");
-        }
     };
 
     useEffect(() => {
@@ -43,7 +37,6 @@ const Searchbar = ({ defaultSearchText, onSearch }) => {
             type="text"
             value={searchText}
             onChange={handleInputChange}
-            onClick={handleInputClick}
             onKeyPress={handleKeyPress}
         />
     );

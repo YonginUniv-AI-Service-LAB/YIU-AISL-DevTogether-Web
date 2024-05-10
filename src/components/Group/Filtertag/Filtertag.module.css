@@ -7,10 +7,11 @@
 }
 
 .head {
-    margin-top: 20px;
+    margin-top: 15px;
     margin-bottom: 50px;
-    font-size: 20px;
-    font-weight: 400;
+    color: #495057;
+    font-size: 18px;
+    font-weight: 800;
     position: sticky; /* 이 부분만 추가 */
     top: 10px;
     z-index: 100;

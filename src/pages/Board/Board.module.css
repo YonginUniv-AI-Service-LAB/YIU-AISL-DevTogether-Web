@@ -4,13 +4,18 @@
 
 .background {
     display: flex;
+    margin-left: 250px;
+    margin-right: 250px;
 }
 
 .background_head{
     display: flex;
     justify-content: space-between;
     flex-grow: 1; /* 새로 추가한 부분 */
-    margin-right: 30px;
+}
+
+.horizon {
+    display: flex;
 }
 
 .search {
@@ -22,7 +27,7 @@
     opacity: 1;
     font-size: 25px;
     font-weight: 600;
-    margin-left: 45px;
+    margin-left: 30px;
 }
 
 .line {
@@ -33,31 +38,141 @@
     margin-bottom: 35px;
 }
 
-.best {
-    background-color: #f0f0f0;
-    border-radius: 40px;
-    margin-top: 40px;
-    margin-right: 10px;
-    width: 15%;
-}
-
-.best_contents {
+.neck {
     display: flex;
-    justify-content: center;
-    color: #495057;
-    opacity: 1;
-    font-size: 25px;
-    font-weight: 600;
-    margin-top: 45px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    margin-right: 15px;
+    justify-content: space-between;
 }
 
-.fix {
+.write {
+    background-color: #f0f0f0;
+    padding-top: 10px;
+    margin-top: 15px;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    padding-right: 35px;
+    padding-left: 35px;
+    margin-left: 40px;
+    border-radius: 15px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 400;
+    margin-left: 395px;
+}
+
+.write:hover {
+    background-color: #eeeeee;
+    color: #9f5d83;
+  }
+
+.save {
+    background-color: #f0f0f0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    padding-right: 25px;
+    padding-left: 25px;
+    border-radius: 15px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 400;
+    margin-left: 30px;
+}
+
+.save:hover {
+    background-color: #eeeeee;
+    color: #9f5d83;
+  }
+
+.background2 {
+    background: linear-gradient(to right bottom, #68568e, #9f5d83);
+}
+
+.fix_head {
     position: sticky; /* 이 부분만 추가 */
-    top: 0;
+    top: 0px;
     z-index: 99;
     background-color: white;
 }
 
-.background2 {
-    background: linear-gradient(to right bottom, #68568e, #9f5d83);
+.fix_left {
+    position: sticky; /* 이 부분만 추가 */
+    top: 15px;
+    z-index: 99;
+    background-color: white;
+}
+
+.foot {
+    display: flex; 
+    justify-Content: center; 
+    margin-top: 20px;
+}
+
+.page {
+    margin-bottom: 30px;
+    padding-left: 20px;
+    cursor: pointer; 
+}
+
+.page.active {
+    color: #9f5d83; /* 클릭된 숫자의 텍스트 색상 */
+}
+
+.border {
+    margin-top: 30px;
+    margin-left: 30px;
+    margin-right: 5px;
+    padding-top: 15px;
+    padding-bottom: 250px;
+    padding-left: 30px;
+    padding-right: 30px;
+    border-left: 1px solid rgba(0, 0, 0, 0.1); /* 왼쪽에 1픽셀 실선 테두리 생성 */
+    border-right: 1px solid rgba(0, 0, 0, 0.1); /* 오른쪽에 1픽셀 실선 테두리 생성 */
+    height: 670px;
+}
+
+.markdown {
+   width: 100%; /* 전체 너비를 사용하도록 설정합니다. */
+   height: 100%;
+}
+
+.markdown.ql-editor {
+   width: 100%; /* 전체 너비를 사용하도록 설정합니다. */
+   height: 500px; 
+}
+
+.side {
+    background-color: #f0f0f0;
+    border-radius: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    margin-left: 30px;
+    padding-top: 40px;
+    padding-bottom: 10px;
+}
+
+.circle{
+    width: 30px; /* 원의 지름 */
+    height: 30px; /* 원의 지름 */
+    background-color: #f0f0f0; /* 배경색 */
+    border-radius: 50%; /* 원형으로 만들기 */
+    transform: translateX(-50%); /* 가운데 정렬을 위한 이동 */
+    overflow: hidden; /* 넘치는 부분을 잘라냅니다. */
+    margin-left: 50px;
+}
+
+.circle img {
+    width: 100%; /* 이미지의 너비를 100%로 설정합니다. */
+    height: 100%; /* 이미지의 높이를 100%로 설정합니다. */
+    object-fit: cover; /* 이미지를 원형 영역에 맞게 조절합니다. */
+}
+
+.contents {
+    margin-left: 40px;
 }

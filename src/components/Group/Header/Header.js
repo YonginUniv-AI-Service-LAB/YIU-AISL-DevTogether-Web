@@ -8,8 +8,9 @@ const Header = (props) => {
               <span className={style.logo}>DevTogether</span>
               <div className={style.menu}>  
                 <span>내 정보</span>
-                <span>학생 찾기 / 선생님 찾기</span>
-                <span>자유게시판</span>
+                <span>학생 찾기</span> 
+                <span>선생님 찾기</span>
+                <span>커뮤니티</span>
                 <span>공지사항</span>
                 <span>자주묻는질문</span>
               </div>
