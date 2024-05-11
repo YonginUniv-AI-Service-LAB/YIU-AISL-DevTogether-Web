@@ -87,7 +87,7 @@ const Header = (props) => {
       style: DropdownItemStyle,
       onClick: () => {
         // setMembers("professors");
-        navigate("/inquiry");
+        navigate("/inquiry/form");
       },
     },
   ];
@@ -124,7 +124,7 @@ const Header = (props) => {
           icon: <QuestionCircleOutlined />,
         },
         {
-          key: "/inquiry",
+          key: "/inquiry/form",
           label: "문의하기",
           icon: <MailOutlined />,
         },

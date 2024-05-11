@@ -10,8 +10,9 @@ import FormLabelText from "../../components/Text/FormLabel";
 import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
 import { Button, message, Input, Form, Select, Upload } from "antd";
 import DefaultButton from "../../components/Button/DefaultButton";
-const { Dragger } = Upload;
+import PageHeaderImage from "../../assets/images/PageHeaderImage/inquiry.svg";
 
+const { Dragger } = Upload;
 // const getBase64 = (file) =>
 //   new Promise((resolve, reject) => {
 //     const reader = new FileReader();
@@ -67,13 +68,15 @@ const NoticeFormPage = () => {
     <div>
       <PageHeader
         title="공지사항 작성"
-        // subtitle="DevTogether의 다양한 소식을 알려드립니다."
+        subtitle="오타 없이 공지사항 작성 똑디 해라잉~"
       />
       <Form
         name="wrap"
-        labelCol={{
-          flex: "120px",
-        }}
+        labelCol={
+          {
+            // flex: "120px",
+          }
+        }
         labelAlign="left"
         labelWrap
         wrapperCol={{
@@ -81,31 +84,37 @@ const NoticeFormPage = () => {
         }}
         colon={false}
         style={{
-          margin: 300,
-          marginTop: 80,
+          marginTop: 100,
+          marginBottom: 150,
+          marginLeft: isMobile ? 30 : isTablet ? 100 : "25%",
+          marginRight: isMobile ? 30 : isTablet ? 100 : "25%",
         }}
+        layout="vertical"
+        variant="filled"
       >
         <Form.Item
           label={<FormLabelText text="카테고리" />}
-          style={{ marginBottom: 50 }}
+          style={{ marginBottom: 30 }}
+          required
         >
-          <Select placeholder="카테고리 선택" size="large">
-            <Select.Option value={0}>공지사항</Select.Option>
-            <Select.Option value={1}>이벤트</Select.Option>
-            <Select.Option value={2}>업데이트</Select.Option>
+          <Select placeholder={`카테고리 선택`} size="large">
+            <Select.Option value={1}>공지사항</Select.Option>
+            <Select.Option value={2}>이벤트</Select.Option>
+            <Select.Option value={3}>업데이트</Select.Option>
           </Select>
         </Form.Item>
         <Form.Item
           label={<FormLabelText text="제목" />}
           name="title"
-          style={{ marginBottom: 50 }}
+          style={{ marginBottom: 30 }}
+          required
         >
           <Input
             count={{
               show: true,
               max: 100,
             }}
-            placeholder="제목 입력"
+            placeholder={`제목 입력`}
             size={"large"}
           />
         </Form.Item>
@@ -113,12 +122,13 @@ const NoticeFormPage = () => {
         <Form.Item
           label={<FormLabelText text="내용" />}
           name="contents"
-          style={{ marginBottom: 50 }}
+          style={{ marginBottom: 30 }}
+          required
         >
           <TextArea
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            placeholder="내용 입력"
+            placeholder={`내용 입력`}
             autoSize={{
               minRows: 15,
               // maxRows: 100,
@@ -145,8 +155,8 @@ const NoticeFormPage = () => {
 
         <Form.Item
           label={<FormLabelText text="파일" />}
-          style={{ marginBottom: 50 }}
-          extra={"hwp, jpg, png 여기에 무엇을 쓸까..."}
+          style={{ marginBottom: 30 }}
+          extra={"jpg, png, hwp 등"}
         >
           <Form.Item
             name="dragger"

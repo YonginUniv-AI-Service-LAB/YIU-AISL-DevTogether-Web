@@ -65,7 +65,7 @@ const InquriyListPage = () => {
           onRow={(record, rowIndex) => {
             return {
               onClick: (event) => {
-                navigate("/inquiry/detail", { state: record.id });
+                navigate("/inquiry/detail", { state: { data: record } });
               }, // click row
             };
           }}
@@ -95,7 +95,7 @@ const InquriyListPage = () => {
             render={(status) => (
               <>
                 {status === 0 ? (
-                  <Tag bordered={false} color="orange" >
+                  <Tag bordered={false} color="orange">
                     문의 접수
                   </Tag>
                 ) : (
