@@ -5,7 +5,7 @@ const FormLabelText = (props) => {
   return (
     <span
       style={{
-        fontSize: 20,
+        fontSize: 17,
         fontWeight: "bold",
         color: colors.text_black_color,
       }}

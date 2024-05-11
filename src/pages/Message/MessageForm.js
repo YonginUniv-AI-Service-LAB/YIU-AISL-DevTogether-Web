@@ -14,6 +14,7 @@ import {
   MessageViewStatusAtom,
 } from "../../recoil/atoms/message";
 import HoverEventButton from "../../components/Button/HoverEventButton";
+import DefaultTag from "../../components/Tag/DefaultTag";
 
 const MessageForm = (props) => {
   // 반응형 화면
@@ -77,18 +78,7 @@ const MessageForm = (props) => {
           name="title"
           style={{ marginBottom: 20 }}
         >
-          <Tag
-            style={{
-              fontSize: 15,
-              fontWeight: "bold",
-
-              padding: 5,
-              paddingRight: 10,
-              paddingLeft: 10,
-            }}
-          >
-            {messageReceiver}
-          </Tag>
+          <DefaultTag text={messageReceiver} />
         </Form.Item>
         <Form.Item
           label={<FormLabelText text="제목" />}
