@@ -6,7 +6,7 @@ export const data_mentee = [
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
     gender: 1, // 0은 남자, 1은 여자
-    img: "./kuromi.png",
+    img: "/kuromi.png",
     age: 21,
     method: 0, // 0은 대면, 1은 비대면
     fee: 400000,
@@ -25,7 +25,7 @@ export const data_mentee = [
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
     gender: 0, // 0은 남자, 1은 여자
-    img: "./dororo.png",
+    img: "/dororo.png",
     age: 26,
     method: 0, // 0은 대면, 1은 비대면
     fee: 400000,
@@ -44,7 +44,7 @@ export const data_mentee = [
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
     gender: 0, // 0은 남자, 1은 여자
-    img: "./keroro.png",
+    img: "/keroro.png",
     age: 24,
     method: 0, // 0은 대면, 1은 비대면
     fee: 400000,
@@ -62,7 +62,7 @@ export const data_mentee = [
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
     gender: 0, // 0은 남자, 1은 여자
-    img: "./min.png",
+    img: "/min.png",
     age: 24,
     method: 0, // 0은 대면, 1은 비대면
     fee: 400000,
@@ -81,7 +81,7 @@ export const data_mentee = [
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
     gender: 0, // 0은 남자, 1은 여자
-    img: "./spongebob.jpg",
+    img: "/spongebob.jpg",
 
     age: 24,
     method: 0, // 0은 대면, 1은 비대면
@@ -100,7 +100,7 @@ export const data_mentee = [
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
     gender: 1, // 0은 남자, 1은 여자
-    img: "./kiki.png",
+    img: "/kiki.png",
     age: 23,
     method: 0, // 0은 대면, 1은 비대면
     fee: 400000,
@@ -119,7 +119,7 @@ export const data_mentee = [
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
     gender: 0, // 0은 남자, 1은 여자
-    img: "./cat.png",
+    img: "/cat.png",
     age: 25,
     method: 0, // 0은 대면, 1은 비대면
     fee: 400000,
@@ -138,7 +138,7 @@ export const data_mentee = [
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
     gender: 1, // 0은 남자, 1은 여자
-    img: "./kuromi.png",
+    img: "/kuromi.png",
     age: 21,
     method: 0, // 0은 대면, 1은 비대면
     fee: 400000,
@@ -157,7 +157,7 @@ export const data_mentee = [
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
     gender: 1, // 0은 남자, 1은 여자
-    img: "./kuromi.png",
+    img: "/kuromi.png",
     age: 21,
     method: 0, // 0은 대면, 1은 비대면
     fee: 400000,
@@ -176,7 +176,7 @@ export const data_mentee = [
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
     gender: 1, // 0은 남자, 1은 여자
-    img: "./kuromi.png",
+    img: "/kuromi.png",
     age: 21,
     method: 0, // 0은 대면, 1은 비대면
     fee: 400000,
@@ -196,7 +196,7 @@ export const data_mentee = [
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
     gender: 0, // 0은 남자, 1은 여자
-    img: "./dicafrio.png",
+    img: "/dicafrio.png",
     age: 24,
     method: 0, // 0은 대면, 1은 비대면
     fee: 400000,

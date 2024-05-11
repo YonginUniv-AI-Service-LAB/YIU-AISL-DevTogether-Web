@@ -23,7 +23,7 @@ const FilterTag = ({ selectedSubjects, selectedLocations, selectedGenders, selec
       {/* 과목 필터 태그 */}
       {hideIfEmpty(selectedSubjects).length > 0 && (
         <React.Fragment>
-          <Divider orientation="left">과목</Divider>
+          <Divider  style={{ borderColor: 'rgba(0, 0, 0, 0.85)', borderWidth: '1px', marginRight: '20px' }} orientation="left">과목</Divider>
           <Flex gap="4px 0" wrap="wrap">
             {/* Render selected subjects as tags with corresponding colors */}
             {selectedSubjects.map((subject, index) => (
@@ -36,7 +36,7 @@ const FilterTag = ({ selectedSubjects, selectedLocations, selectedGenders, selec
       {/* 지역 필터 태그 */}
       {hideIfEmpty(selectedLocations).length > 0 && (
         <React.Fragment>
-          <Divider orientation="left">지역</Divider>
+          <Divider style={{ borderColor: 'rgba(0, 0, 0, 0.85)', borderWidth: '1px', marginRight: '20px' }} orientation="left">지역</Divider>
           <Flex gap="4px 0" wrap="wrap">
             {/* Render selected locations as tags with corresponding colors */}
             {selectedLocations.map((location, index) => (
@@ -49,7 +49,7 @@ const FilterTag = ({ selectedSubjects, selectedLocations, selectedGenders, selec
       {/* 성별 필터 태그 */}
       {hideIfEmpty(selectedGenders).length > 0 && (
         <React.Fragment>
-          <Divider orientation="left">성별</Divider>
+          <Divider style={{ borderColor: 'rgba(0, 0, 0, 0.85)', borderWidth: '1px', marginRight: '20px' }} orientation="left">성별</Divider>
           <Flex gap="4px 0" wrap="wrap">
             {/* Render selected genders as tags with corresponding colors */}
             {selectedGenders.map((gender, index) => (
@@ -62,7 +62,7 @@ const FilterTag = ({ selectedSubjects, selectedLocations, selectedGenders, selec
       {/* 나이 필터 태그 */}
       {(selectedAges.min !== undefined && selectedAges.max !== undefined) && (
         <React.Fragment>
-          <Divider orientation="left">나이</Divider>
+          <Divider style={{ borderColor: 'rgba(0, 0, 0, 0.85)', borderWidth: '1px', marginRight: '20px' }} orientation="left">나이</Divider>
           <Flex gap="4px 0" wrap="wrap">
             {/* Render selected ages as tags */}
             <Tag color="green">{selectedAges.min}세 ~ {selectedAges.max}세</Tag>
@@ -73,7 +73,7 @@ const FilterTag = ({ selectedSubjects, selectedLocations, selectedGenders, selec
       {/* 과외방식 필터 태그 */}
       {hideIfEmpty(selectedMethods).length > 0 && (
         <React.Fragment>
-          <Divider orientation="left">과외방식</Divider>
+          <Divider style={{ borderColor: 'rgba(0, 0, 0, 0.85)', borderWidth: '1px', marginRight: '20px' }} orientation="left">과외방식</Divider>
           <Flex gap="4px 0" wrap="wrap">
             {/* Render selected methods as tags with corresponding colors */}
             {selectedMethods.map((method, index) => (
@@ -86,7 +86,7 @@ const FilterTag = ({ selectedSubjects, selectedLocations, selectedGenders, selec
       {/* 수업료 필터 태그 */}
       {hideIfEmpty(selectedFees).length > 0 && (
         <React.Fragment>
-          <Divider orientation="left">수업료</Divider>
+          <Divider style={{ borderColor: 'rgba(0, 0, 0, 0.85)', borderWidth: '1px', marginRight: '20px' }} orientation="left">수업료</Divider>
           <Flex gap="4px 0" wrap="wrap">
             {/* Render selected fees as tags with corresponding colors */}
             {selectedFees.map((fee, index) => (

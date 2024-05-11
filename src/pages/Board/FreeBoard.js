@@ -1,5 +1,3 @@
-// BoardPage.js
-
 import React, { useState, useEffect } from 'react';
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +9,7 @@ import SortButton from '../../components/Button/SortButton';
 import { data_board } from '../../assets/data/board'; // data_board import
 import Post from '../../components/Group/Post/Post';
 
-const BoardPage = ({ handleSidebarButtonClick }) => {
+const FreeBoard = ({ handleSidebarButtonClick }) => {
   // 반응형 화면
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
@@ -22,8 +20,6 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
   const [sortedPosts, setSortedPosts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태 추가
-  const [postPerPage] = useState(20); // 페이지당 게시물 수 상태 추가
 
   // 최신순 정렬 함수
   const sortLatest = (data) => {
@@ -74,9 +70,30 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
     setSortedPosts(sortedData);
   }, []);
 
-  // 페이지 변경 함수
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
+  const handleCategoryClick = (category) => {
+    // 클릭된 카테고리에 따라 페이지 이동을 처리합니다.
+    switch (category) {
+      case "전체":
+        navigate("/board");
+        break;
+      case "자유":
+        navigate("/board/free");
+        break;
+      case "뉴스":
+        navigate("/board/news");
+        break;
+      case "질문 / 공부":
+        navigate("/board/question");
+        break;
+      case "취업 / 기술":
+        navigate("/board/employedment");
+        break;
+      case "플리마켓":
+        navigate("/board/market");
+        break;
+      default:
+        break;
+    }
   };
 
   // 검색 결과 필터링 함수
@@ -105,47 +122,6 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
     }
   }, [searchText]); // searchText 상태가 변경될 때마다 실행됩니다.
 
-  // 클릭된 카테고리에 따라 페이지 이동을 처리합니다.
-  const handleCategoryClick = (category) => {
-    switch (category) {
-      case "전체":
-        navigate("/board");
-        break;
-      case "자유":
-        navigate("/board/free");
-        break;
-      case "뉴스":
-        navigate("/board/news");
-        break;
-      case "질문 / 공부":
-        navigate("/board/question");
-        break;
-      case "취업 / 기술":
-        navigate("/board/employedment");
-        break;
-      case "플리마켓":
-        navigate("/board/market");
-        break;
-      default:
-        break;
-    }
-  };
-
-  // Post 클릭 시 상세 페이지로 이동하는 함수
-  const handlePostClick = (postId) => {
-    navigate(`/board/detail/${postId}`);
-  };
-
-  // 현재 페이지의 게시물을 가져오는 함수
-  const indexOfLastPost = currentPage * postPerPage;
-  const indexOfFirstPost = indexOfLastPost - postPerPage;
-  const currentPosts = sortedPosts.slice(indexOfFirstPost, indexOfLastPost);
-
-  const handleWritePost = () => {
-    navigate("/board/form");
-  };
-
-
   return (
     <div className={style.background2}>
       <div style={{paddingBottom:'200px'}}></div>
@@ -154,7 +130,7 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
           sentence1="나와 비슷한 비전을 가진 사람들과의 대화"
           sentence2="일상적인 이야기부터 필요한 다양한 정보까지"
           title="커뮤니티"
-          imageSrc="./board.png" 
+          imageSrc="/board.png" 
         />
         <div className={style.color}>
           <div className={style.background}>
@@ -169,43 +145,30 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
                 <div className={style.fix_head}>
                   <div className={style.line}></div>
                   <div className={style.background_head}>
-                    <div className={style.head}>전체 글 목록</div>
+                    <div className={style.head}>자유 글 목록</div>
                     <Searchbar defaultSearchText="제목 및 내용으로 검색" onSearch={handleSearch}/>
                   </div>
                   <div className={style.neck}>
                     <SortButton text="최신순" onClick={() => handleSort('latest')} />
                     <SortButton text="인기순" onClick={() => handleSort('popular')} />
                     <SortButton text="조회순" onClick={() => handleSort('views')} />
-                    <div className={style.write} onClick={handleWritePost}>글 작성하기</div>
+                    <div className={style.write}>글 작성하기</div>
                   </div>
                 </div>
                 {/* 정렬된 데이터를 표시 */}
-                {currentPosts.map((post, index) => (
+                {sortedPosts.filter(post => post.category === '자유').map((post, index) => (
                   <Post
                     key={post.id}
-                    id={post.id}
                     num={index + 1}
                     category={post.category}
                     title={post.title}
-                    contents={post.contents.length > 80 ? post.contents.substring(0, 80) + '···' : post.contents}
+                    contents={post.contents.length > 100 ? post.contents.substring(0, 100) + '···' : post.contents}
                     createdAt={post.createdAt}
                     likes={post.likes}
                     views={post.views}
                     comment={post.comment}
                     img={post.img}
-                    nickname={post.nickname}
-                    userImage={post.userImage}
-                    motto={post.motto}
-                    onClick={() => handlePostClick(post.id)} // 클릭 시 상세 페이지로 이동하는 함수 전달
                   />
-                ))}
-              </div>
-              {/* 페이지네이션 */}
-              <div className={style.foot}>
-                {[...Array(Math.ceil(sortedPosts.length / postPerPage)).keys()].map((number) => (
-                  <div className={`${style.page} ${currentPage === number + 1 ? style.active : ''}`} key={number} onClick={() => paginate(number + 1)}>
-                  {number + 1}
-                </div>
                 ))}
               </div>
             </div>
@@ -216,4 +179,4 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
   );
 };
 
-export default BoardPage;
+export default FreeBoard;

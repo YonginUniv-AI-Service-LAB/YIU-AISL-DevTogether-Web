@@ -39,6 +39,7 @@ const Footer = (props) => {
           marginBottom: 30,
         }}
       >
+
         <FooterNavBtn
           text={"학생 찾기"}
           onClick={() => navigate("/matching:mentee")}

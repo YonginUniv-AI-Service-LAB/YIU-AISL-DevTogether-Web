@@ -45,6 +45,7 @@ const Header = (props) => {
 
   const { token } = theme.useToken();
 
+
   // Drawer 오픈 여부
   const [open, setOpen] = useState(false);
   const showDrawer = () => {
@@ -53,6 +54,7 @@ const Header = (props) => {
   const onClose = () => {
     setOpen(false);
   };
+
 
   // Drawer 메뉴 클릭
   const onClick = (e) => {
@@ -91,6 +93,7 @@ const Header = (props) => {
       },
     },
   ];
+
 
   const DrawerMenuItems = [
     {
@@ -220,6 +223,7 @@ const Header = (props) => {
               <Dropdown menu={{ items }} placement="bottom">
                 <Button
                   type="text"
+
                   size={"large"}
                   onClick={() => navigate("/faq")}
                 >
@@ -228,6 +232,7 @@ const Header = (props) => {
               </Dropdown>
             </ConfigProvider>
             <HeaderNavBtn type={"text"} text="쪽지" href="/message" />
+
           </>
         )}
       </div>

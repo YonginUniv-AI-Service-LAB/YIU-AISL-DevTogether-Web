@@ -13,11 +13,13 @@ const HeaderNavBtn = (props) => {
       theme={{
         token: {
           borderRadius: 8,
+
           fontSize: 14,
         },
       }}
     >
       <Button
+
         size={"large"}
         type={props.type ? props.type : "text"}
         href={props.href}

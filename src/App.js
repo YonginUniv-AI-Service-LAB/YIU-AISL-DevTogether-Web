@@ -10,6 +10,8 @@ import SignInPage from "./pages/SignIn/SignIn";
 import SignUpPage from "./pages/SignUp/SignUp";
 
 import MatchingPage from "./pages/Matching/Matching";
+import MatchingMenteeList from "./pages/Matching/MatchingMenteeList";
+import MatchingMentorList from "./pages/Matching/MatchingMentorList";
 import MenteeDetailPage from "./pages/MatchingDetail/MenteeDetail";
 import MentorDetailPage from "./pages/MatchingDetail/MentorDetail";
 import MatchingManagementListPage from "./pages/MatchingManagementList/MatchingManagementList";
@@ -20,6 +22,13 @@ import PostListPage from "./pages/UserBoard/PostList";
 import ScrapListPage from "./pages/UserBoard/ScrapList";
 
 import BoardPage from "./pages/Board/Board";
+import FreeBoard from "./pages/Board/FreeBoard";
+import NewsBoard from "./pages/Board/NewsBoard";
+import QuestionBoard from "./pages/Board/QuestionBoard";
+import EmployedmentBoard from "./pages/Board/EmployedmentBoard";
+import MarketBoard from "./pages/Board/MarketBoard";
+import BoardForm from "./pages/Board/BoardForm";
+
 import FAQFormPage from "./pages/FAQForm/FAQForm";
 import FAQListPage from "./pages/FAQList/FAQList";
 import InquiryDetailPage from "./pages/InquiryDetail/InquiryDetail";
@@ -33,8 +42,10 @@ import PostDetailPage from "./pages/PostDetail/PostDetail";
 import PostFormPage from "./pages/PostForm/PostForm";
 import ReportDetailPage from "./pages/ReportDetail/ReportDetail";
 import ReportListPage from "./pages/ReportList/ReportList";
+import BoardDetail from "./pages/Board/BoardDetail";
 import TermOfService from "./pages/Term/TermOfService";
 import PrivacyPolicy from "./pages/Term/PrivacyPolicy";
+
 
 function App(props) {
   return (
@@ -56,7 +67,9 @@ function App(props) {
           <Route exact path="/user/post" element={<PostListPage />} />
           <Route exact path="/user/comment" element={<CommentListPage />} />
           <Route exact path="/user/scrap" element={<ScrapListPage />} />
-
+          
+          <Route exact path="/matching/menteelist" element={<MatchingMenteeList />} />
+          <Route exact path="/matching/mentorlist" element={<MatchingMentorList />} />
           <Route exact path="/matching/:target" element={<MatchingPage />} />
           <Route
             exact
@@ -70,6 +83,13 @@ function App(props) {
           />
 
           <Route exact path="/board" element={<BoardPage />} />
+          <Route exact path="/board/free" element={<FreeBoard />} />
+          <Route exact path="/board/news" element={<NewsBoard />} />
+          <Route exact path="/board/question" element={<QuestionBoard />} />
+          <Route exact path="/board/employedment" element={<EmployedmentBoard />} />
+          <Route exact path="/board/market" element={<MarketBoard />} />
+          <Route exact path="/board/form" element={<BoardForm />} />
+          <Route exact path="/board/detail/:id" element={<BoardDetail />} />
           <Route exact path="/board/post/:id" element={<PostDetailPage />} />
           <Route exact path="/board/post/form" element={<PostFormPage />} />
 

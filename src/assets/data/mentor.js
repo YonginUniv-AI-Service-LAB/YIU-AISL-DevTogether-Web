@@ -25,7 +25,7 @@ export const data_mentor = [
     email: "bmh2038@naver.com",
     role: 2, // 1은 멘티, 2은 멘토
     gender: 1, // 0은 남자, 1은 여자
-    img: "./Calcifer.png",
+    img: "/Calcifer.png",
     age: 24,
     method: 1, // 0은 대면, 1은 비대면
     fee: 1000000,
@@ -42,7 +42,7 @@ export const data_mentor = [
     email: "bmh2038@naver.com",
     role: 1, // 1은 멘티, 2은 멘토
     gender: 0, // 0은 남자, 1은 여자
-    img: "./youngman.png",
+    img: "/youngman.png",
     age: 24,
     method: 0, // 0은 대면, 1은 비대면
     fee: 400000,
@@ -61,7 +61,7 @@ export const data_mentor = [
     email: "bmh2038@naver.com",
     role: 2, // 1은 멘티, 2은 멘토
     gender: 0, // 0은 남자, 1은 여자
-    img: "./flying.png",
+    img: "/flying.png",
     age: 32,
     method: 1, // 0은 대면, 1은 비대면
     fee: 1000000,
@@ -80,7 +80,7 @@ export const data_mentor = [
     email: "bmh2038@naver.com",
     role: 2, // 1은 멘티, 2은 멘토
     gender: 1, // 0은 남자, 1은 여자
-    img: "./blackcat.png",
+    img: "/blackcat.png",
     age: 26,
     method: 1, // 0은 대면, 1은 비대면
     fee: 1000000,
