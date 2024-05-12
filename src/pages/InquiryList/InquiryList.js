@@ -2,7 +2,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Flex, Input, Table, Tag } from "antd";
 import React from "react";
 import { useMediaQuery } from "react-responsive";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { data_ask } from "../../assets/data/ask";
 
 import styled from "styled-components";
@@ -11,36 +11,7 @@ import NoticeCategoryButton from "../../components/Button/NoticeCategoryButton";
 import PageHeader from "../../components/Group/PageHeader/PageHeader";
 import styles from "./InquiryList.module.css";
 import Column from "antd/es/table/Column";
-
-const columns = [
-  {
-    title: "번호",
-    dataIndex: "id",
-    width: 30,
-  },
-  {
-    title: "문의유형",
-    dataIndex: "category",
-    width: 50,
-    // align: "right",
-  },
-  {
-    title: "제목",
-    dataIndex: "title",
-    width: 200,
-  },
-  {
-    title: "문의 날짜",
-    dataIndex: "createdAt",
-    width: 50,
-    // align: "right",
-  },
-  {
-    title: "상태",
-    dataIndex: "status",
-    width: 50,
-  },
-];
+import PageHeaderImage from "../../assets/images/PageHeaderImage/inquiry.svg";
 
 const InquriyListPage = () => {
   // 반응형 화면
@@ -54,10 +25,21 @@ const InquriyListPage = () => {
 
   return (
     <div>
-      <PageHeader title="문의내역" subtitle="문의내역을 확인해보세요." />
-      <Container style={{ fontSize: 20 }}>
+      <PageHeader
+        title="문의내역"
+        subtitle="문의내역을 확인해보세요."
+        image={PageHeaderImage}
+      />
+      <div
+        style={{
+          marginTop: isMobile ? 100 : 100,
+          marginBottom: isMobile ? 0 : 100,
+          marginLeft: isMobile ? 10 : isTablet ? 100 : "15%",
+          marginRight: isMobile ? 10 : isTablet ? 100 : "15%",
+        }}
+      >
         <Table
-          size="middle"
+          size={"middle"}
           // columns={columns}
           dataSource={data_ask}
           // title={() => InquriyListHeader()}
@@ -75,13 +57,15 @@ const InquriyListPage = () => {
           rowClassName={styles.table_row}
         >
           <Column title="번호" dataIndex="id" key="id" width={30} />
-          <Column
-            title="문의 유형"
-            dataIndex="category"
-            key="category"
-            width={70}
-          />
-          <Column title="제목" dataIndex="title" key="title" width={230} />
+          {!isMobile ? (
+            <Column
+              title="문의 유형"
+              dataIndex="category"
+              key="category"
+              width={90}
+            />
+          ) : null}
+          <Column title="제목" dataIndex="title" key="title" />
           <Column
             title="문의 날짜"
             dataIndex="createdAt"
@@ -91,32 +75,25 @@ const InquriyListPage = () => {
           <Column
             title="상태"
             dataIndex="status"
-            width={30}
+            width={isMobile ? 20 : 30}
             render={(status) => (
               <>
                 {status === 0 ? (
                   <Tag bordered={false} color="orange">
-                    문의 접수
+                    {isMobile ? "접수" : "문의 접수"}
                   </Tag>
                 ) : (
                   <Tag bordered={false} color="processing">
-                    답변 완료
+                    {isMobile ? "완료" : "답변 완료"}
                   </Tag>
                 )}
               </>
             )}
           />
         </Table>
-      </Container>
+      </div>
     </div>
   );
 };
 
 export default InquriyListPage;
-
-const Container = styled.div`
-  padding-top: 5%;
-  padding-bottom: 5%;
-  padding-left: 15%;
-  padding-right: 15%;
-`;

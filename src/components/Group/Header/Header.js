@@ -45,7 +45,6 @@ const Header = (props) => {
 
   const { token } = theme.useToken();
 
-
   // Drawer 오픈 여부
   const [open, setOpen] = useState(false);
   const showDrawer = () => {
@@ -54,7 +53,6 @@ const Header = (props) => {
   const onClose = () => {
     setOpen(false);
   };
-
 
   // Drawer 메뉴 클릭
   const onClick = (e) => {
@@ -93,7 +91,6 @@ const Header = (props) => {
       },
     },
   ];
-
 
   const DrawerMenuItems = [
     {
@@ -142,10 +139,10 @@ const Header = (props) => {
   return (
     <div
       style={{
-        marginTop: isMobile || isTablet ? 25 : 50,
-        marginBottom: isMobile || isTablet ? 25 : 50,
-        marginLeft: isMobile || isTablet ? 30 : 225,
-        marginRight: isMobile || isTablet ? 30 : 225,
+        marginTop: isMobile ? 10 : isTablet ? 25 : 50,
+        marginBottom: isMobile ? 10 : isTablet ? 25 : 50,
+        marginLeft: isMobile ? 15 : isTablet ? 30 : 225,
+        marginRight: isMobile ? 15 : isTablet ? 30 : 225,
       }}
     >
       <div
@@ -223,7 +220,6 @@ const Header = (props) => {
               <Dropdown menu={{ items }} placement="bottom">
                 <Button
                   type="text"
-
                   size={"large"}
                   onClick={() => navigate("/faq")}
                 >
@@ -232,7 +228,6 @@ const Header = (props) => {
               </Dropdown>
             </ConfigProvider>
             <HeaderNavBtn type={"text"} text="쪽지" href="/message" />
-
           </>
         )}
       </div>

@@ -24,6 +24,7 @@ const DefaultButton = (props) => {
         block
         size="large"
         style={{ fontWeight: "bold", color: "white" }}
+        onClick={props.onClick}
       >
         {props.text}
       </Button>

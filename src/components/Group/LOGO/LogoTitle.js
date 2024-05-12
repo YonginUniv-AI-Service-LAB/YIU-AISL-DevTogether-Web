@@ -24,7 +24,7 @@ const LogoTitle = (props) => {
           alignItems: "center",
         }}
       >
-        <span style={{ marginLeft: isMobile ? 5 : 10, marginRight: 10 }}>
+        <span style={{ marginLeft: 10, marginRight: 10 }}>
           <Image width={props.logoWidth} src={LOGO} preview={false} />
         </span>
         <span>DevTogether</span>

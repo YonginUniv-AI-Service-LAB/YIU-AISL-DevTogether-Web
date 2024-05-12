@@ -12,8 +12,8 @@ const PageHeader = (props) => {
   return (
     <Container
       style={{
-        paddingTop: 50,
-        paddingBottom: 50,
+        paddingTop: isMobile ? 20 : 50,
+        paddingBottom: isMobile ? 20 : 50,
         paddingLeft: "15%",
         paddingRight: "15%",
       }}
@@ -29,7 +29,7 @@ const PageHeader = (props) => {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <p
             style={{
-              fontSize: 35,
+              fontSize: isMobile ? 25 : 35,
               fontWeight: "bold",
               paddingTop: 10,
               paddingBottom: 10,
@@ -37,7 +37,9 @@ const PageHeader = (props) => {
           >
             {props.title}
           </p>
-          <p style={{ fontSize: 20, fontWeight: "bold" }}>{props.subtitle}</p>
+          <p style={{ fontSize: isMobile ? 17 : 20, fontWeight: "bold" }}>
+            {props.subtitle}
+          </p>
         </div>
         {isMobile || isTablet ? null : props.image ? (
           <img src={props.image} alt="logo" height="300" width="300" />

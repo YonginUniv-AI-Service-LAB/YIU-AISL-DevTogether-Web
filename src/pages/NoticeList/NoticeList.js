@@ -1,6 +1,6 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Flex, Input, Table } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 import { data_notice } from "../../assets/data/notice";
@@ -11,24 +11,10 @@ import { colors } from "../../assets/colors";
 import NoticeCategoryButton from "../../components/Button/NoticeCategoryButton";
 import PageHeader from "../../components/Group/PageHeader/PageHeader";
 import styles from "./NoticeList.module.css";
-
-const columns = [
-  {
-    title: "쟉성일",
-    dataIndex: "createdAt",
-    width: 100,
-  },
-  {
-    title: "카테고리",
-    dataIndex: "category",
-    width: 100,
-    // align: "right",
-  },
-  {
-    title: "제목",
-    dataIndex: "title",
-  },
-];
+import Column from "antd/es/table/Column";
+import HoverEventButton from "../../components/Button/HoverEventButton";
+import { useSetRecoilState } from "recoil";
+import { NoticeFormTypeAtom } from "../../recoil/atoms/notice";
 
 const NoticeListPage = () => {
   // 반응형 화면
@@ -40,33 +26,70 @@ const NoticeListPage = () => {
   // 페이지 이동
   const navigate = useNavigate();
 
+  // 공지사항 데이터
+  const [notice, setNotice] = useState(data_notice);
+  // 현재 카테고리
+  const [curCategory, setCurCategory] = useState("전체");
+  // 현재 검색어
+  const [searchText, setSearchText] = useState("");
+
+  // 폼 타입 => 작성
+  const setFormType = useSetRecoilState(NoticeFormTypeAtom);
+
+  // 임시
+  const manager = true;
+
   const NoticeListHeader = () => {
     return (
       <div style={{ marginBottom: 10 }}>
         <div
           style={{
             display: "flex",
-            flexDirection: "row",
+            flexDirection: isMobile || isTablet ? "column" : "row",
             justifyContent: "space-between",
           }}
         >
           <Flex
             wrap="wrap"
             gap="small"
-            justify="space-between"
-            style={{ width: "30%" }}
+            justify="flex-start"
+            style={{
+              width: isMobile || isTablet ? "100%" : "50%",
+              marginBottom: isMobile || isTablet ? 20 : null,
+            }}
           >
-            <NoticeCategoryButton title="전체" />
-            <NoticeCategoryButton title="공지" />
-            <NoticeCategoryButton title="서비스" />
-            <NoticeCategoryButton title="업데이트" />
+            <NoticeCategoryButton
+              title="전체"
+              current={curCategory === "전체" ? true : false}
+              onClick={() => setCurCategory("전체")}
+            />
+            <NoticeCategoryButton
+              title="공지"
+              current={curCategory === "공지" ? true : false}
+              onClick={() => setCurCategory("공지")}
+            />
+            <NoticeCategoryButton
+              title="서비스"
+              current={curCategory === "서비스" ? true : false}
+              onClick={() => setCurCategory("서비스")}
+            />
+            <NoticeCategoryButton
+              title="업데이트"
+              current={curCategory === "업데이트" ? true : false}
+              onClick={() => setCurCategory("업데이트")}
+            />
           </Flex>
           <Input
-            style={{ width: "40%", color: colors.gray_mid, fontWeight: 800 }}
+            style={{
+              width: isMobile || isTablet ? "100%" : "50%",
+              color: colors.text_black_color,
+            }}
             size="large"
             placeholder="검색어 입력"
             variant="filled"
             prefix={<SearchOutlined />}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
           />
         </div>
       </div>
@@ -80,17 +103,47 @@ const NoticeListPage = () => {
         subtitle="DevTogether의 다양한 소식을 알려드립니다."
         image={PageHeaderImage}
       />
-      <Container style={{ fontSize: 20 }}>
+      <div
+        style={{
+          marginTop: isMobile ? 50 : 100,
+          marginBottom: isMobile ? 0 : 100,
+          marginLeft: isMobile ? 10 : isTablet ? 80 : "15%",
+          marginRight: isMobile ? 10 : isTablet ? 80 : "15%",
+        }}
+      >
+        {manager ? (
+          <div style={{ textAlign: "end", marginRight: 20 }}>
+            <HoverEventButton
+              title={"공지사항 작성"}
+              onClick={() => {
+                setFormType("create");
+                navigate("/notice/form");
+              }}
+              size={"middle"}
+              bgColor={colors.sub}
+              bgColor_hover={colors.main}
+              fontColor={"white"}
+              fontColor_hover={"white"}
+            />
+          </div>
+        ) : null}
         <Table
-          size="middle"
-          columns={columns}
-          dataSource={data_notice}
+          size={isMobile ? "middle" : "large"}
+          // columns={columns}
+          dataSource={
+            curCategory == "전체"
+              ? data_notice.filter((n) => n.title.includes(searchText))
+              : data_notice.filter(
+                  (n) =>
+                    n.category == curCategory && n.title.includes(searchText)
+                )
+          }
           title={() => NoticeListHeader()}
           // footer={() => "Footer"}
           onRow={(record, rowIndex) => {
             return {
               onClick: (event) => {
-                navigate("/notice/detail", { state: record.noticeid });
+                navigate("/notice/detail", { state: { data: record } });
               }, // click row
             };
           }}
@@ -98,17 +151,24 @@ const NoticeListPage = () => {
             position: ["bottomCenter"],
           }}
           rowClassName={styles.table_row}
-        />
-      </Container>
+        >
+          <Column
+            title="작성일"
+            dataIndex="createdAt"
+            key="createdAt"
+            width={60}
+          />
+          <Column
+            title="카테고리"
+            dataIndex="category"
+            key="category"
+            width={90}
+          />
+          <Column title="제목" dataIndex="title" key="title" />
+        </Table>
+      </div>
     </div>
   );
 };
 
 export default NoticeListPage;
-
-const Container = styled.div`
-  padding-top: 5%;
-  padding-bottom: 5%;
-  padding-left: 15%;
-  padding-right: 15%;
-`;
