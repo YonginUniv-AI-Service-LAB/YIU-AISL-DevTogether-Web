@@ -2,7 +2,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Flex, Input, Table, Tag } from "antd";
 import React from "react";
 import { useMediaQuery } from "react-responsive";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { data_ask } from "../../assets/data/ask";
 
 import styled from "styled-components";
