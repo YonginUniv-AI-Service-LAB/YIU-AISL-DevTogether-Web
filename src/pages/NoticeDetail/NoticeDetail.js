@@ -3,8 +3,18 @@ import { useMediaQuery } from "react-responsive";
 import { useLocation, useNavigate } from "react-router-dom";
 import { colors } from "../../assets/colors";
 import DefaultSeparator from "../../components/Separator/DefaultSeparator";
-import { MoreOutlined } from "@ant-design/icons";
-import { Button } from "antd";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+  MoreOutlined,
+} from "@ant-design/icons";
+import { Button, Popconfirm, message } from "antd";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  NoticeFormDataAtom,
+  NoticeFormTypeAtom,
+} from "../../recoil/atoms/notice";
 
 const NoticeDetailPage = (props) => {
   // 반응형 화면
@@ -17,6 +27,33 @@ const NoticeDetailPage = (props) => {
   const navigate = useNavigate();
   // 이전 페이지에서 데이터 가져오기
   const location = useLocation();
+
+  // 폼 타입 => 작성
+  const setFormType = useSetRecoilState(NoticeFormTypeAtom);
+  // 폼 데이터 세팅
+  const [formData, setFormData] = useRecoilState(NoticeFormDataAtom);
+
+  const updateConfirm = (e) => {
+    console.log(e);
+    // message.success("Click on Yes");
+    setFormType("update");
+    setFormData(location.state.data);
+    navigate("/notice/form");
+  };
+  const updateCancel = (e) => {
+    console.log(e);
+    // message.error("Click on No");
+  };
+
+  const deleteConfirm = (e) => {
+    console.log(e);
+    message.success("공지사항 삭제 완료");
+    navigate(-1);
+  };
+  const deleteCancel = (e) => {
+    console.log(e);
+    // message.error("Click on No");
+  };
 
   return (
     <div>
@@ -62,11 +99,35 @@ const NoticeDetailPage = (props) => {
             {"  |  "}
             <span>{location.state.data.category}</span>
           </p>
-          <Button
-            type="text"
-            icon={<MoreOutlined />}
-            onClick={() => alert("아직 구현안했지롱~~~")}
-          />
+          <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
+            <Popconfirm
+              title="공지사항 수정"
+              description="공지사항을 수정하시겠습니까?"
+              onConfirm={updateConfirm}
+              onCancel={updateCancel}
+              okText="수정"
+              cancelText="취소"
+            >
+              <Button type="text" icon={<EditOutlined />} />
+            </Popconfirm>
+            <Popconfirm
+              title="공지사항 삭제"
+              description="공지사항을 삭제하시겠습니까?"
+              onConfirm={deleteConfirm}
+              onCancel={deleteCancel}
+              okText="삭제"
+              cancelText="취소"
+              icon={
+                <ExclamationCircleOutlined
+                  style={{
+                    color: "red",
+                  }}
+                />
+              }
+            >
+              <Button type="text" icon={<DeleteOutlined />} />
+            </Popconfirm>
+          </div>
         </div>
 
         {/* 구분선 */}

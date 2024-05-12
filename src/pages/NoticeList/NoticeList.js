@@ -12,6 +12,9 @@ import NoticeCategoryButton from "../../components/Button/NoticeCategoryButton";
 import PageHeader from "../../components/Group/PageHeader/PageHeader";
 import styles from "./NoticeList.module.css";
 import Column from "antd/es/table/Column";
+import HoverEventButton from "../../components/Button/HoverEventButton";
+import { useSetRecoilState } from "recoil";
+import { NoticeFormTypeAtom } from "../../recoil/atoms/notice";
 
 const NoticeListPage = () => {
   // 반응형 화면
@@ -29,6 +32,12 @@ const NoticeListPage = () => {
   const [curCategory, setCurCategory] = useState("전체");
   // 현재 검색어
   const [searchText, setSearchText] = useState("");
+
+  // 폼 타입 => 작성
+  const setFormType = useSetRecoilState(NoticeFormTypeAtom);
+
+  // 임시
+  const manager = true;
 
   const NoticeListHeader = () => {
     return (
@@ -102,6 +111,22 @@ const NoticeListPage = () => {
           marginRight: isMobile ? 10 : isTablet ? 80 : "15%",
         }}
       >
+        {manager ? (
+          <div style={{ textAlign: "end", marginRight: 20 }}>
+            <HoverEventButton
+              title={"공지사항 작성"}
+              onClick={() => {
+                setFormType("create");
+                navigate("/notice/form");
+              }}
+              size={"middle"}
+              bgColor={colors.sub}
+              bgColor_hover={colors.main}
+              fontColor={"white"}
+              fontColor_hover={"white"}
+            />
+          </div>
+        ) : null}
         <Table
           size={isMobile ? "middle" : "large"}
           // columns={columns}

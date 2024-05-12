@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import PageHeader from "../../components/Group/PageHeader/PageHeader";
 import TextArea from "antd/es/input/TextArea";
 import Title from "antd/es/skeleton/Title";
@@ -11,6 +11,11 @@ import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
 import { Button, message, Input, Form, Select, Upload } from "antd";
 import DefaultButton from "../../components/Button/DefaultButton";
 import PageHeaderImage from "../../assets/images/PageHeaderImage/inquiry.svg";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  NoticeFormDataAtom,
+  NoticeFormTypeAtom,
+} from "../../recoil/atoms/notice";
 
 const { Dragger } = Upload;
 // const getBase64 = (file) =>
@@ -41,7 +46,7 @@ const props = {
   },
 };
 
-const NoticeFormPage = () => {
+const NoticeFormPage = (props) => {
   // 반응형 화면
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
@@ -50,8 +55,76 @@ const NoticeFormPage = () => {
 
   // 페이지 이동
   const navigate = useNavigate();
+  // 이전 페이지에서 데이터 가져오기
+  const location = useLocation();
 
-  const [value, setValue] = useState("");
+  // 작성 || 수정
+  // const [formType, setFormType] = useState(formType);
+
+  // 폼 타입 => 작성 || 수정
+  const formType = useRecoilValue(NoticeFormTypeAtom);
+  // 폼 데이터 세팅
+  const [formData, setFormData] = useRecoilState(NoticeFormDataAtom);
+
+  // 데이터
+  const [form, setForm] = useState({
+    noticeid: {
+      value: formType === "update" ? formData.noticeid : 0,
+      type: "textInput",
+      // rules: {
+      //   isRequired: true,
+      // },
+      valid: false,
+    },
+    category: {
+      value: formType === "update" ? formData.category : null,
+      type: "textInput",
+      rules: {
+        isRequired: true,
+      },
+      valid: false,
+    },
+    title: {
+      value: formType === "update" ? formData.title : "",
+      type: "textInput",
+      rules: {
+        isRequired: true,
+      },
+      valid: false,
+    },
+    contents: {
+      value: formType === "update" ? formData.contents : "",
+      type: "textInput",
+      rules: {
+        isRequired: true,
+      },
+      valid: false,
+    },
+  });
+
+  // 텍스트인풋 업데이트
+  const onChange = (e) => {
+    console.log("카테고리 선택 온채인지: ", e.target);
+    setForm((prevState) => ({
+      ...prevState,
+      [e.target.id]: {
+        ...prevState[e.target.id],
+        value: e.target.value,
+      },
+    }));
+  };
+
+  // 카테고리 업데이트
+  const handleChange = (value) => {
+    console.log(`selected ${value}`);
+    setForm((prevState) => ({
+      ...prevState,
+      category: {
+        ...prevState.category,
+        value: value,
+      },
+    }));
+  };
 
   const normFile = (e) => {
     console.log("Upload event:", e);
@@ -60,14 +133,14 @@ const NoticeFormPage = () => {
     }
     return e?.fileList;
   };
-  const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+  const onFinish = () => {
+    navigate(-1);
   };
 
   return (
     <div>
       <PageHeader
-        title="공지사항 작성"
+        title={formType == "create" ? "공지사항 작성" : "공지사항 수정"}
         subtitle="오타 없이 공지사항 작성 똑디 해라잉~"
       />
       <Form
@@ -96,11 +169,19 @@ const NoticeFormPage = () => {
           label={<FormLabelText text="카테고리" />}
           style={{ marginBottom: 30 }}
           required
+          id={"category"}
         >
-          <Select placeholder={`카테고리 선택`} size="large">
-            <Select.Option value={1}>공지사항</Select.Option>
-            <Select.Option value={2}>이벤트</Select.Option>
-            <Select.Option value={3}>업데이트</Select.Option>
+          <Select
+            id={"category"}
+            value={form.category.value}
+            defaultValue={form.category.value}
+            onChange={handleChange}
+            placeholder={`카테고리 선택`}
+            size="large"
+          >
+            <Select.Option value={0}>공지사항</Select.Option>
+            <Select.Option value={1}>이벤트</Select.Option>
+            <Select.Option value={2}>업데이트</Select.Option>
           </Select>
         </Form.Item>
         <Form.Item
@@ -110,6 +191,10 @@ const NoticeFormPage = () => {
           required
         >
           <Input
+            id={"title"}
+            value={form.title.value}
+            defaultValue={form.title.value}
+            onChange={onChange}
             count={{
               show: true,
               max: 100,
@@ -125,9 +210,12 @@ const NoticeFormPage = () => {
           style={{ marginBottom: 30 }}
           required
         >
+          {/* {console.log("데이터: ", form.contents.value)} */}
           <TextArea
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
+            id={"contents"}
+            value={form.contents.value}
+            defaultValue={form.contents.value}
+            onChange={onChange}
             placeholder={`내용 입력`}
             autoSize={{
               minRows: 15,
@@ -176,8 +264,8 @@ const NoticeFormPage = () => {
           </Form.Item>
         </Form.Item>
 
-        <Form.Item label=" ">
-          <DefaultButton text="게시" />
+        <Form.Item>
+          <DefaultButton text="게시" onClick={() => onFinish()} />
         </Form.Item>
       </Form>
     </div>
