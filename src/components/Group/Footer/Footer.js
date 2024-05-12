@@ -26,6 +26,7 @@ const Footer = (props) => {
         paddingRight: isMobile ? 30 : 120,
         backgroundColor: colors.footer_bg,
         color: colors.footer_text2,
+        marginTop: 100,
       }}
     >
       <LogoTitle_Footer />
@@ -39,7 +40,6 @@ const Footer = (props) => {
           marginBottom: 30,
         }}
       >
-
         <FooterNavBtn
           text={"학생 찾기"}
           onClick={() => navigate("/matching:mentee")}

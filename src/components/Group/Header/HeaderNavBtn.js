@@ -14,12 +14,11 @@ const HeaderNavBtn = (props) => {
         token: {
           borderRadius: 8,
 
-          fontSize: 14,
+          fontSize: isMobile ? 11 : 14,
         },
       }}
     >
       <Button
-
         size={"large"}
         type={props.type ? props.type : "text"}
         href={props.href}
