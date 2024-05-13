@@ -1,4 +1,6 @@
-import style from "../Post/Post.module.css";
+import style from "./Post.module.css";
+import { useRecoilState } from 'recoil';
+import { posterScrapState } from '../../../recoil/atoms/scrap';
 import React, { useState } from "react";
 import { CiRead } from "react-icons/ci";
 import { GoComment } from "react-icons/go";
@@ -15,15 +17,27 @@ import { Dropdown, Menu, Button, message } from 'antd';
 const PostDetail = (post) => {
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(post.likes);
-  const [scraped, setScraped] = useState(false);
+  const [scraped, setScraped] = useRecoilState(posterScrapState); // 수정 필요
 
   const toggleLike = () => {
     setLiked(!liked);
     setLikes(liked ? likes - 1 : likes + 1);
   };
 
-  const toggleScrap = () => {
-    setScraped(!scraped);
+  const toggleScrap = (postId) => {
+    console.log("toggleScrap 함수가 호출되었습니다. postId:", postId);
+    if (!postId) {
+      console.error("Invalid post id:", postId);
+      return;
+    }
+  
+    // 스크랩 상태 토글
+    setScraped(prevScraped => {
+      return {
+        ...prevScraped,
+        [postId]: !prevScraped[postId]
+      };
+    });
   };
 
   const handleShare = () => {
@@ -51,7 +65,9 @@ const PostDetail = (post) => {
     <div>
       <div className={style.head}>
         <div>{post.title}</div>
-        <div className={style.bookmark}>{scraped ? <FaBookmark  style={{ color: '68568E' }} /> : <FaRegBookmark />}</div>
+        <div className={style.bookmark}>
+          {scraped ? <FaBookmark style={{ color: '68568E' }} /> : <FaRegBookmark />}
+        </div>
       </div>
       <div className={style.information}>
         <div className={style.horizon}>
@@ -60,10 +76,10 @@ const PostDetail = (post) => {
           </div>
           <div>
             <div className={style.writer}>{post.nickname}</div>
-            <div className={style.motto}>{post.motto}</div>
+            <div className={style.introduction}>{post.introduction}</div>
           </div>
         </div>
-        <div className={style.flex}>
+        <div className={style.horizon}>
           <div className={style.date}>작성 일자: {post.createdAt}</div>
           <div className={style.more}>
             <Dropdown overlay={menu} trigger={['click']} placement="bottomRight" arrow>
@@ -78,22 +94,19 @@ const PostDetail = (post) => {
         <img src={post.img} alt='게시물 이미지' style={{ marginTop: "25px" }} />
       </div>
       <div className={`${style.horizon} ${style.record}`}>
-        <FaEye style={{color:'gray' }}/> <span style={{ marginLeft: "10px"}}>{post.views}</span>
-        <span style={{ opacity: '0.3', marginLeft: "10px" }}> | </span> 
-        {/* <BiLike style={{ marginLeft: "10px" }} />  */}
-        <FaHeart style={{ marginLeft: "10px", color:'gray' }} />
+        <FaEye style={{ color: 'gray' }} /> <span style={{ marginLeft: "10px" }}>{post.views}</span>
+        <span style={{ opacity: '0.3', marginLeft: "10px" }}> | </span>
+        <FaHeart style={{ marginLeft: "10px", color: 'gray' }} />
         <span style={{ marginLeft: "10px" }}>{likes}</span>
-        <span style={{ opacity: '0.3', marginLeft: "10px" }}> | </span> <FaCommentAlt style={{ marginLeft: "10px", color:'gray' }} /> <span style={{ marginLeft: "10px" }}>{post.comment}</span>
+        <span style={{ opacity: '0.3', marginLeft: "10px" }}> | </span> <FaCommentAlt style={{ marginLeft: "10px", color: 'gray' }} /> <span style={{ marginLeft: "10px" }}>{post.comment}</span>
       </div>
       <div className={style.reaction}>
         <div className={style.like} onClick={toggleLike}>
-          {/* {liked ? <BiSolidLike style={{ color:'blue' }} /> : <BiLike />} <span style={{ color: liked ? 'blue' : 'gray' }}>좋아요</span> */}
           {liked ? <FaHeart style={{ color: 'red' }} /> : <FaRegHeart />} <span style={{ color: liked ? 'red' : 'gray' }}>좋아요</span>
         </div>
         <span style={{ opacity: '0.3', marginLeft: "10px" }}> | </span>
         <div className={style.scrap} onClick={toggleScrap}>
-          {/* {scraped ? <GoHeartFill style={{ color: 'red' }} /> : <GoHeart />} <span style={{ color: scraped ? 'red' : 'gray' }}>스크랩</span> */}
-          {scraped ? <FaBookmark  style={{ color: '68568E' }} /> : <FaRegBookmark />} <span style={{ color: scraped ? '#68568E' : 'gray' }}>스크랩</span>
+          {scraped ? <FaBookmark style={{ color: '68568E' }} /> : <FaRegBookmark />} <span style={{ color: scraped ? '#68568E' : 'gray' }}>스크랩</span>
         </div>
         <span style={{ opacity: '0.3', marginLeft: "10px" }}> | </span>
         <div className={style.share} onClick={handleShare}>

@@ -11,7 +11,7 @@ export const data_comment = [
         ],
         nickname: "m_iiin_u",
         userImage: "/keroro.png",
-        motto: "민우인데요",
+        introduction: "민우인데요",
         edited: false
     },
 
@@ -27,7 +27,7 @@ export const data_comment = [
         ],
         nickname: "안영환",
         userImage: "/youngman.png",
-        motto: "영환이는 원영이밖에 없고, 원영이만 있으면 돼",
+        introduction: "영환이는 원영이밖에 없고, 원영이만 있으면 돼",
         edited: false
     },
 
@@ -43,7 +43,7 @@ export const data_comment = [
         ],
         nickname: "밍키",
         userImage: "/cat.png",
-        motto: "정보 은닉 달인",
+        introduction: "정보 은닉 달인",
         edited: false
     },
 
@@ -59,7 +59,7 @@ export const data_comment = [
         ],
         nickname: "하나도 모르겠어요",
         userImage: "/dororo.png",
-        motto: "열심히 배우기",
+        introduction: "열심히 배우기",
         edited: false
     },
 
@@ -75,7 +75,7 @@ export const data_comment = [
         ],
         nickname: "조민우",
         userImage: "/min.png",
-        motto: "머요",
+        introduction: "머요",
         edited: false
     },
 ]

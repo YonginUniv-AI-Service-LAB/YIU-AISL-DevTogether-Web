@@ -20,6 +20,8 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
 
   // 페이지 이동
   const navigate = useNavigate();
+  // Recoil에서 스크랩 상태 가져오기
+  
   const [searchText, setSearchText] = useState("");
   const [sortedPosts, setSortedPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태 추가
@@ -141,10 +143,10 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
   const indexOfFirstPost = indexOfLastPost - postPerPage;
   const currentPosts = sortedPosts.slice(indexOfFirstPost, indexOfLastPost);
 
+  // 글 작성 페이지로 이동하는 함수
   const handleWritePost = () => {
     navigate("/board/form");
   };
-
 
   return (
     <div className={style.background2}>
@@ -195,7 +197,8 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
                     img={post.img}
                     nickname={post.nickname}
                     userImage={post.userImage}
-                    motto={post.motto}
+                    introduction={post.introduction}
+                    scraped={post.scraped} // 스크랩 상태를 props로 전달
                     onClick={() => handlePostClick(post.id)} // 클릭 시 상세 페이지로 이동하는 함수 전달
                   />
                 ))}
