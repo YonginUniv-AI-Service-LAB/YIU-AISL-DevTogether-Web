@@ -59,7 +59,7 @@ export const data_ask = [
   },
   {
     id: 5,
-    category: "시스테 오류",
+    category: "시스템 오류",
     title: "오류 발생 에엥이에에엥에ㅔㅇ엥",
     contents: `에에에에에이잉이에에에에잉에잉이`,
     createdAt: "2024.01.14",
@@ -132,7 +132,7 @@ export const data_ask = [
   },
   {
     id: 10,
-    category: "시스테 오류",
+    category: "시스템 오류",
     title: "오류 발생 에엥이에에엥에ㅔㅇ엥",
     contents: `에에에에에이잉이에에에에잉에잉이`,
     createdAt: "2023.01.14",

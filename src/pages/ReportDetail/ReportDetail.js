@@ -1,6 +1,6 @@
 import React from "react";
 import { useMediaQuery } from "react-responsive";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ReportDetailPage = () => {
   // 반응형 화면
@@ -11,6 +11,8 @@ const ReportDetailPage = () => {
 
   // 페이지 이동
   const navigate = useNavigate();
+  // 이전 페이지에서 데이터 가져오기
+  const location = useLocation();
 
   return (
     <div>
