@@ -45,13 +45,14 @@ import ReportListPage from "./pages/ReportList/ReportList";
 import BoardDetail from "./pages/Board/BoardDetail";
 import TermOfService from "./pages/Term/TermOfService";
 import PrivacyPolicy from "./pages/Term/PrivacyPolicy";
-
+import TestPage from "./pages/Test/Test";
 
 function App(props) {
   return (
     <BrowserRouter>
       <Layout>
         <Routes>
+          <Route exact path="/test" element={<TestPage />} />
           <Route exact path="/*" element={<MainPage />} />
           <Route exact path="/signup" element={<SignUpPage />} />
           <Route exact path="/signin" element={<SignInPage />} />
@@ -67,9 +68,17 @@ function App(props) {
           <Route exact path="/user/post" element={<PostListPage />} />
           <Route exact path="/user/comment" element={<CommentListPage />} />
           <Route exact path="/user/scrap" element={<ScrapListPage />} />
-          
-          <Route exact path="/matching/menteelist" element={<MatchingMenteeList />} />
-          <Route exact path="/matching/mentorlist" element={<MatchingMentorList />} />
+
+          <Route
+            exact
+            path="/matching/menteelist"
+            element={<MatchingMenteeList />}
+          />
+          <Route
+            exact
+            path="/matching/mentorlist"
+            element={<MatchingMentorList />}
+          />
           <Route exact path="/matching/:target" element={<MatchingPage />} />
           <Route
             exact
@@ -86,7 +95,11 @@ function App(props) {
           <Route exact path="/board/free" element={<FreeBoard />} />
           <Route exact path="/board/news" element={<NewsBoard />} />
           <Route exact path="/board/question" element={<QuestionBoard />} />
-          <Route exact path="/board/employedment" element={<EmployedmentBoard />} />
+          <Route
+            exact
+            path="/board/employedment"
+            element={<EmployedmentBoard />}
+          />
           <Route exact path="/board/market" element={<MarketBoard />} />
           <Route exact path="/board/form" element={<BoardForm />} />
           <Route exact path="/board/detail/:id" element={<BoardDetail />} />

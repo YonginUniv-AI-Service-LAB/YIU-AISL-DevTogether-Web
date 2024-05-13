@@ -104,7 +104,6 @@ const NoticeFormPage = (props) => {
 
   // 텍스트인풋 업데이트
   const onChange = (e) => {
-    console.log("카테고리 선택 온채인지: ", e.target);
     setForm((prevState) => ({
       ...prevState,
       [e.target.id]: {
