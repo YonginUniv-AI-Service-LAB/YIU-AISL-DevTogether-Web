@@ -38,14 +38,13 @@ const Comment = (props) => {
                     수정
                 </Menu.Item>
            
-           
                 <Menu.Item key="delete" style={{ borderBottom: "none" }} onClick={handleDelete}>
                     삭제
                 </Menu.Item>
      
-            <Menu.Item key="report" style={{ borderBottom: "none" }}>
-                신고
-            </Menu.Item>
+                <Menu.Item key="report" style={{ borderBottom: "none" }}>
+                    신고
+                </Menu.Item>
         </Menu>
     );
 
@@ -60,7 +59,7 @@ const Comment = (props) => {
                         <div className={style.horizon}>
                             <div>
                                 <div className={style.writer}>{props.nickname}</div>
-                                <div className={style.motto}>{props.motto}</div>
+                                <div className={style.introduction}>{props.introduction}</div>
                             </div>
                             <div className={style.more}>
                                 <Dropdown overlay={menu} trigger={['click']} placement="bottomRight" arrow>

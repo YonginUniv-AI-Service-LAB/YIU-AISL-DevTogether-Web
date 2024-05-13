@@ -13,7 +13,8 @@ export const data_board = [
         ],
         nickname: "m_iiin_u",
         userImage: "/keroro.png",
-        motto: "민우인데요"
+        introduction: "민우인데요",
+        scraped: false
     },
 
     {
@@ -30,7 +31,8 @@ export const data_board = [
         ],
         nickname: "m_iiin_u",
         userImage: "/keroro.png",
-        motto: "민우인데요"
+        introduction: "민우인데요",
+        scraped: false
     },
 
     {
@@ -47,7 +49,8 @@ export const data_board = [
         ],
         nickname: "못말리는 아가씨",
         userImage: "/blackcat.png",
-        motto:"단비꼬야!!!"
+        introduction:"단비꼬야!!!",
+        scraped: false
     },
 
     {
@@ -65,7 +68,8 @@ export const data_board = [
         ],
         nickname: "못말리는 아가씨",
         userImage: "/blackcat.png",
-        motto:"단비꼬야!!!"
+        introduction:"단비꼬야!!!",
+        scraped: false
     },
 
     {
@@ -83,7 +87,8 @@ export const data_board = [
         ],
         nickname: "밍키",
         userImage: "/cat.png",
-        motto: "정보 은닉 달인"
+        introduction: "정보 은닉 달인",
+        scraped: false
     },
 
     {
@@ -124,7 +129,8 @@ export const data_board = [
         ],
         nickname: "안주연",
         userImage: "/kiki.png",
-        motto: "백엔드 개발자"
+        introduction: "백엔드 개발자",
+        scraped: false
     },
 
     {
@@ -161,7 +167,8 @@ export const data_board = [
         ],
         nickname: "김승진",
         userImage: "/spongebob.jpg",
-        motto: "백엔드 개발자"
+        introduction: "백엔드 개발자",
+        scraped: false
     },
 
     {
@@ -178,7 +185,8 @@ export const data_board = [
         ],
         nickname: "하나도 모르겠어요",
         userImage: "/dororo.png",
-        motto: "열심히 배우기"
+        introduction: "열심히 배우기",
+        scraped: false
     },
 
     {
@@ -195,7 +203,8 @@ export const data_board = [
         ],
         nickname: "조민우",
         userImage: "/min.png",
-        motto: "머요"
+        introduction: "머요",
+        scraped: false
     },
 
     {
@@ -270,7 +279,8 @@ export const data_board = [
         ],
         nickname: "변미현",
         userImage: "https://cdn.pixabay.com/photo/2014/04/05/11/40/poster-316690_960_720.jpg",
-        motto: "안주는 안락사다."
+        introduction: "안주는 안락사다.",
+        scraped: false
     },
 
     {
@@ -287,7 +297,8 @@ export const data_board = [
         ],
         nickname: "김예서",
         userImage: "/Calcifer.png",
-        motto: "앱 개발중이에요"
+        introduction: "앱 개발중이에요",
+        scraped: false
     },
     
     {
@@ -304,7 +315,8 @@ export const data_board = [
         ],
         nickname: "안영환",
         userImage: "/youngman.png",
-        motto: "영환이는 원영이밖에 없고, 원영이만 있으면 되고, 원영이만 사랑해"
+        introduction: "영환이는 원영이밖에 없고, 원영이만 있으면 되고, 원영이만 사랑해",
+        scraped: false
     },
     
 ]

@@ -88,7 +88,7 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
       file: [],
       nickname: "댓글 작성자",
       userImage: "/default_user_image.png",
-      motto: "댓글 작성자의 소개",
+      introduction: "댓글 작성자의 소개",
     };
     // 하드 데이터에 새로운 댓글 정보를 추가합니다.
     data_comment.push(newComment);
@@ -170,6 +170,7 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
                   <div className={style.flex}>
                     <div style={{ flex: 1, marginRight: '20px' }}>
                       <PostDetail 
+                      id={post.id}
                       title={post.title}
                       contents={post.contents}
                       createdAt={post.createdAt}
@@ -179,7 +180,8 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
                       img={post.img}
                       nickname={post.nickname}
                       userImage={post.userImage}
-                      motto={post.motto}
+                      introduction={post.introduction}
+                      scraped={post.scraped}
                       />
                     </div>
                     <div style={{ flex: 0.5 }}>
@@ -224,7 +226,7 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
                             likes={comment.likes}
                             nickname={comment.nickname}
                             userImage={comment.userImage}
-                            motto={comment.motto}
+                            introduction={comment.introduction}
                             onEdit={handleEditComment} // 수정 버튼 클릭 시 호출될 함수 전달
                             onDelete={handleDeleteComment} // 삭제 버튼 클릭 시 호출될 함수 전달
                             edited={comment.edited} // 수정 여부를 전달합니다.
