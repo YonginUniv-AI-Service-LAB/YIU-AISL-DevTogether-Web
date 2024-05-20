@@ -170,8 +170,6 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
                         <div>
                             <div className={style.fix_left}>
                                 <Sidebar titles={["학생 찾기", "선생님 찾기"]} onCategoryClick={handleCategoryClick} />
-                                {/* <NavigateButton title="학생 찾기"/>
-                                <NavigateButton title="선생님 찾기"/> */}
                                 <div className={style.situation}><FilterTag selectedSubjects={selectedSubjects} selectedLocations={selectedLocations} selectedGenders={selectedGenders} selectedAges={selectedAges} selectedMethods={selectedMethods} selectedFees={selectedFees} /></div>
                             </div>
                         </div>

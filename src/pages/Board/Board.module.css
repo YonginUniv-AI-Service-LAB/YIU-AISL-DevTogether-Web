@@ -4,8 +4,8 @@
 
 .background {
     display: flex;
-    margin-left: 250px;
-    margin-right: 250px;
+    /* margin-left: 200px;
+    margin-right: 150px; */
 }
 
 .background_head{
@@ -32,9 +32,7 @@
 .head {
     color: #495057;
     opacity: 1;
-    font-size: 25px;
     font-weight: 600;
-    margin-left: 30px;
 }
 
 .line {
@@ -44,11 +42,15 @@
     margin-bottom: 35px;
 }
 
+.sort {
+    display: flex;
+}
+
 .neck {
     display: flex;
-    margin-top: 30px;
+    justify-content: space-between; /* 내부 요소를 컨테이너의 양쪽 끝에 배치합니다. */
+    margin-top: 15px;
     margin-bottom: 15px;
-    justify-content: space-between;
 }
 
 .write {
@@ -57,16 +59,14 @@
     margin-top: 15px;
     padding-bottom: 10px;
     margin-bottom: 15px;
-    padding-right: 35px;
-    padding-left: 35px;
-    margin-left: 40px;
+    padding-right: 20px;
+    padding-left: 20px;
     border-radius: 15px;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     font-size: 15px;
     font-weight: 400;
-    margin-left: 395px;
 }
 
 .write:hover {
@@ -75,7 +75,8 @@
   }
 
 .save {
-    background-color: #f0f0f0;
+    background-color: #68568e;
+    color: #ffffff;
     padding-top: 10px;
     padding-bottom: 10px;
     margin-bottom: 15px;
@@ -91,20 +92,41 @@
 }
 
 .save:hover {
-    background-color: #eeeeee;
-    color: #9f5d83;
+    background-color: #A499BB;
+    color: #ffffff;
   }
+
+.mobilesave {
+    background-color: #68568e;
+    color: #ffffff;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 20px;
+    padding-left: 20px;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 400;
+    margin-right: 10px;
+}
+
+.mobilesave:hover {
+    background-color: #A499BB;
+    color: #ffffff;
+}
 
 .background2 {
     background: linear-gradient(to right bottom, #68568e, #9f5d83);
 }
 
-.fix_head {
-    position: sticky; /* 이 부분만 추가 */
+/* .fix_head {
+    position: sticky; 
     top: 0px;
     z-index: 99;
     background-color: white;
-}
+} */
 
 .fix_left {
     position: sticky; /* 이 부분만 추가 */
@@ -131,7 +153,7 @@
 
 .border {
     margin-top: 30px;
-    margin-left: 30px;
+    margin-left: 5px;
     margin-right: 5px;
     padding-top: 15px;
     padding-bottom: 250px;
@@ -173,3 +195,37 @@
     min-height: 100px;
     margin-bottom: 40px;
 }
+
+
+
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #68568e;
+    border-radius: 10px;
+    font-weight: 900;
+    font-size: 20px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #A499BB;
+    border-radius: 10px;
+    font-weight: 900;
+    font-size: 20px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.commentFormContainer {
+    position: sticky;
+    top: 0;
+    background-color: white; /* 원하는 배경색으로 설정하세요 */
+    z-index: 1000; /* 다른 요소들 위에 표시되도록 z-index 설정 */
+    padding-bottom: 10px;
+    padding-right: 10px;
+  }

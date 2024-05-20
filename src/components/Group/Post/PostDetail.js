@@ -13,6 +13,7 @@ import { CiShare1 } from "react-icons/ci";
 import { FaEye } from "react-icons/fa";
 import { IoMdMore } from "react-icons/io";
 import { Dropdown, Menu, Button, message } from 'antd';
+import MenuDropdown from "../../Dropdown/MenuDropdown";
 
 const PostDetail = (post) => {
   const [liked, setLiked] = useState(false);
@@ -54,9 +55,7 @@ const PostDetail = (post) => {
   const menu = (
     <Menu>
       <Menu.Item key="1" style={{ borderBottom: "none" }}>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
           신고
-        </a>
       </Menu.Item>
     </Menu>
   );
@@ -79,15 +78,18 @@ const PostDetail = (post) => {
             <div className={style.introduction}>{post.introduction}</div>
           </div>
         </div>
-        <div className={style.horizon}>
-          <div className={style.date}>작성 일자: {post.createdAt}</div>
-          <div className={style.more}>
-            <Dropdown overlay={menu} trigger={['click']} placement="bottomRight" arrow>
-              <IoMdMore style={{ cursor: 'pointer' }} />
-            </Dropdown>
+        <div>
+          <div className={style.horizon}>
+            <div className={style.more}>
+              <Dropdown overlay={menu} trigger={['click']} placement="bottomRight" arrow>
+                <IoMdMore style={{ cursor: 'pointer'}} />
+              </Dropdown>
+              <div className={style.date}>작성일 : {post.createdAt}</div>
+            </div>
           </div>
         </div>
       </div>
+      {/* <div className={style.date}>작성일 : {post.createdAt}</div> */}
       <div className={style.line}></div>
       <div className={style.text}>
         <div>{post.contents}</div>
@@ -102,15 +104,15 @@ const PostDetail = (post) => {
       </div>
       <div className={style.reaction}>
         <div className={style.like} onClick={toggleLike}>
-          {liked ? <FaHeart style={{ color: 'red' }} /> : <FaRegHeart />} <span style={{ color: liked ? 'red' : 'gray' }}>좋아요</span>
+          {liked ? <FaHeart style={{ color: 'red' }} /> : <FaRegHeart />} <span style={{marginLeft:"5px", marginRight:"5px", color: liked ? 'red' : 'gray' }}>좋아요</span>
         </div>
-        <span style={{ opacity: '0.3', marginLeft: "10px" }}> | </span>
+        <span style={{ opacity: '0.3'}}> | </span>
         <div className={style.scrap} onClick={toggleScrap}>
-          {scraped ? <FaBookmark style={{ color: '68568E' }} /> : <FaRegBookmark />} <span style={{ color: scraped ? '#68568E' : 'gray' }}>스크랩</span>
+          {scraped ? <FaBookmark style={{ color: '68568E' }} /> : <FaRegBookmark />} <span style={{marginLeft:"5px", marginRight:"5px", color: scraped ? '#68568E' : 'gray' }}>스크랩</span>
         </div>
-        <span style={{ opacity: '0.3', marginLeft: "10px" }}> | </span>
+        <span style={{ opacity: '0.3'}}> | </span>
         <div className={style.share} onClick={handleShare}>
-          <CiShare1 /> 공유하기
+          <CiShare1 /> <span style={{marginLeft:"5px", marginRight:"5px"}}>공유하기</span>
         </div>
       </div>
     </div>

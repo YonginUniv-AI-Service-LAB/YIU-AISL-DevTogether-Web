@@ -54,8 +54,18 @@
 
 import React from "react";
 import style from "./Sidebar.module.css";
+import { useMediaQuery } from "react-responsive";
+
 
 const Sidebar = ({ titles, onCategoryClick }) => {
+
+  // 반응형 화면
+  const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
+  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
+  const isMobile = useMediaQuery({ maxWidth: 767 });
+  const isNotMobile = useMediaQuery({ minWidth: 768 });
+
+  
   return (
     <div className={style.background}>
       <div className={style.fix}>

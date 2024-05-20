@@ -1,15 +1,19 @@
-// BoardPage.js
-
 import React, { useState, useEffect } from 'react';
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
+import PageHeader from '../../components/Group/PageHeader/PageHeader';
+import boardimg from '../../assets/images/PageHeaderImage/board.svg';
 import Body from "../../components/Group/Body/Body";
 import style from "../Board/Board.module.css";
 import Sidebar from "../../components/Group/Sidebar/Sidebar";
+import NavigateSelect from '../../components/Select/NavigateSelect';
 import Searchbar from "../../components/Group/Searchbar/Searchbar";
 import SortButton from '../../components/Button/SortButton';
+import SortSelect from '../../components/Select/SortSelect';
 import { data_board } from '../../assets/data/board'; // data_board import
 import Post from '../../components/Group/Post/Post';
+import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
+import { scrollPositionState } from '../../recoil/atoms/board';
 
 const BoardPage = ({ handleSidebarButtonClick }) => {
   // 반응형 화면
@@ -20,8 +24,10 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
 
   // 페이지 이동
   const navigate = useNavigate();
-  // Recoil에서 스크랩 상태 가져오기
+  // const [scrollPosition,setScrollPosition] = useRecoilState(scrollPositionState);
+
   
+  // Recoil에서 스크랩 상태 가져오기
   const [searchText, setSearchText] = useState("");
   const [sortedPosts, setSortedPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태 추가
@@ -53,13 +59,13 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
     let sortedData = [];
 
     switch (sortType) {
-      case 'latest':
+      case '0':
         sortedData = sortLatest(data_board);
         break;
-      case 'popular':
+      case '1':
         sortedData = sortPopular(data_board);
         break;
-      case 'views':
+      case '2':
         sortedData = sortViews(data_board);
         break;
       default:
@@ -148,36 +154,78 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
     navigate("/board/form");
   };
 
+  const maxCombinedLength = isMobile ? 20 : isTablet ? 50 : 80; // 화면 크기에 따른 최대 글자 수 설정
+
+
   return (
-    <div className={style.background2}>
-      <div style={{paddingBottom:'200px'}}></div>
+    <div>
+      <PageHeader
+      title='커뮤니티'
+      subtitle="나와 비슷한 비전을 가진 사람들과의 대화"
+      image={boardimg}
+      />
+      <div style={{
+      // marginTop: isMobile ? 50 : 100,
+      // marginBottom: isMobile ? 50 : 200,
+      marginLeft: isMobile ? '5%' : isTablet ? 30 : '10%',
+      marginRight: isMobile ? '5%' : isTablet ? 20 : '10%',
+    }}>
       <div>
-        <Body
-          sentence1="나와 비슷한 비전을 가진 사람들과의 대화"
-          sentence2="일상적인 이야기부터 필요한 다양한 정보까지"
-          title="커뮤니티"
-          imageSrc="./board.png" 
-        />
-        <div className={style.color}>
-          <div className={style.background}>
+        <div className={style.color} >
+          <div style={{display:'flex'}}>
+           {!isMobile && (
             <div>
               <div className={style.fix_left}>
                 <Sidebar onCategoryClick={handleCategoryClick} titles={["전체", "자유", "뉴스", "질문 / 공부", "취업 / 기술", "플리마켓"]} />
                 <div></div>
               </div>
-            </div>
-            <div style={{flex: '1', marginTop:'40px', marginLeft:'40px', marginRight:'80px'}}>
+            </div> )}
+            <div style={{flex: '1', marginTop:'40px', marginLeft:'40px', marginRight:'40px'}}>
               <div>
-                <div className={style.fix_head}>
-                  <div className={style.line}></div>
-                  <div className={style.background_head}>
-                    <div className={style.head}>전체 글 목록</div>
+                <div>
+                  {isMobile && 
+                  <div>
+                    <div className={style.head} style={{fontSize: isDesktopOrLaptop ? '25px' : '20px', marginBottom:'10px' }}>전체 글 목록</div>
                     <Searchbar defaultSearchText="제목 및 내용으로 검색" onSearch={handleSearch}/>
-                  </div>
+                  </div>}
+                  {!isMobile && <div className={style.background_head}>
+                    <div className={style.head} style={{fontSize: isDesktopOrLaptop ? '25px' : '20px' }}>전체 글 목록</div>
+                    <Searchbar defaultSearchText="제목 및 내용으로 검색" onSearch={handleSearch}/>
+                  </div>}
                   <div className={style.neck}>
-                    <SortButton text="최신순" onClick={() => handleSort('latest')} />
-                    <SortButton text="인기순" onClick={() => handleSort('popular')} />
-                    <SortButton text="조회순" onClick={() => handleSort('views')} />
+                    {!isMobile && (
+                    <div className={style.sort}> 
+                      <SortButton text="최신순" onClick={() => handleSort('0')} />
+                      <SortButton text="인기순" onClick={() => handleSort('1')} />
+                      <SortButton text="조회순" onClick={() => handleSort('2')} />
+                    </div>
+                    )}
+                    {isMobile && (
+                      <div style={{display:'flex'}}>
+                        <NavigateSelect
+                         placeholder="게시판"
+                         options={[
+                           { value: '전체', label: '전체' },
+                           { value: '자유', label: '자유' },
+                           { value: '뉴스', label: '뉴스' },
+                           { value: '질문 / 공부', label: '질문' },
+                           { value: '취업 / 기술', label: '취업' },
+                           { value: '플리마켓', label: '플리마켓' }
+                          ]}
+                         onChange={(newValue) => handleCategoryClick(newValue)}
+                        />
+                        <SortSelect
+                        placeholder="정렬순"
+                        options={[
+                            { value: '0', label: '최신순' },
+                            { value: '1', label: '인기순' },
+                            { value: '2', label: '조회순' }
+                          ]}
+                        onChange={(newValue) => handleSort(newValue)}
+                        />
+                      </div>
+                    )}
+                    
                     <div className={style.write} onClick={handleWritePost}>글 작성하기</div>
                   </div>
                 </div>
@@ -189,7 +237,9 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
                     num={index + 1}
                     category={post.category}
                     title={post.title}
-                    contents={post.contents.length > 80 ? post.contents.substring(0, 80) + '···' : post.contents}
+                    contents={ post.contents.length > maxCombinedLength - post.title.length
+                      ? post.contents.substring(0, maxCombinedLength - post.title.length) + '...'
+                      : post.contents}
                     createdAt={post.createdAt}
                     likes={post.likes}
                     views={post.views}
@@ -207,13 +257,15 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
               <div className={style.foot}>
                 {[...Array(Math.ceil(sortedPosts.length / postPerPage)).keys()].map((number) => (
                   <div className={`${style.page} ${currentPage === number + 1 ? style.active : ''}`} key={number} onClick={() => paginate(number + 1)}>
-                  {number + 1}
-                </div>
+                    {number + 1}
+                  </div>
                 ))}
               </div>
             </div>
           </div>
         </div>
+      </div>
+
       </div>
     </div>
   );

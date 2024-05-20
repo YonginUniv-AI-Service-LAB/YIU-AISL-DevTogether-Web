@@ -6,7 +6,7 @@ export const data_comment = [
         gender: 0,
         contents: `하하 이런 노래 잘 부르더라`,
         createdAt: "2011.04.20",
-        likes: 2,
+        likes: 22,
         file: [
         ],
         nickname: "m_iiin_u",
@@ -76,6 +76,96 @@ export const data_comment = [
         nickname: "조민우",
         userImage: "/min.png",
         introduction: "머요",
+        edited: false
+    },
+    {
+        id: 6,
+        post_id: 6,
+        role: 1,
+        gender: 0,
+        contents: `아이폰으로 괜히 바꿨나...`,
+        createdAt: "2024.05.02",
+        likes: 0,
+        file: [
+        ],
+        nickname: "m_iiin_u",
+        userImage: "/keroro.png",
+        introduction: "민우인데요",
+        edited: false
+    },
+    {
+        id: 7,
+        post_id: 6,
+        role: 1,
+        gender: 0,
+        contents: `아이폰으로 괜히 바꿨나...`,
+        createdAt: "2024.05.02",
+        likes: 0,
+        file: [
+        ],
+        nickname: "m_iiin_u",
+        userImage: "/keroro.png",
+        introduction: "민우인데요",
+        edited: false
+    },
+    {
+        id: 8,
+        post_id: 6,
+        role: 1,
+        gender: 0,
+        contents: `아이폰으로 괜히 바꿨나...`,
+        createdAt: "2024.05.02",
+        likes: 0,
+        file: [
+        ],
+        nickname: "m_iiin_u",
+        userImage: "/keroro.png",
+        introduction: "민우인데요",
+        edited: false
+    },
+    {
+        id: 9,
+        post_id: 6,
+        role: 1,
+        gender: 0,
+        contents: `아이폰으로 괜히 바꿨나...`,
+        createdAt: "2024.05.02",
+        likes: 0,
+        file: [
+        ],
+        nickname: "m_iiin_u",
+        userImage: "/keroro.png",
+        introduction: "민우인데요",
+        edited: false
+    },
+    {
+        id: 10,
+        post_id: 6,
+        role: 1,
+        gender: 0,
+        contents: `아이폰으로 괜히 바꿨나...`,
+        createdAt: "2024.05.02",
+        likes: 0,
+        file: [
+        ],
+        nickname: "m_iiin_u",
+        userImage: "/keroro.png",
+        introduction: "민우인데요",
+        edited: false
+    },
+    {
+        id: 11,
+        post_id: 6,
+        role: 1,
+        gender: 0,
+        contents: `아이폰으로 괜히 바꿨나...`,
+        createdAt: "2024.05.02",
+        likes: 0,
+        file: [
+        ],
+        nickname: "m_iiin_u",
+        userImage: "/keroro.png",
+        introduction: "민우인데요",
         edited: false
     },
 ]

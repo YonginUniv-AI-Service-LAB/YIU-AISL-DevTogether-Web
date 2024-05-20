@@ -1,16 +1,8 @@
-.dual {
-    display: flex;
-    justify-content: space-between;
-    margin-left: 250px;
-    margin-right: 250px;
-    min-width: 1000px;
-}
-
 .register {
     display: flex;
     align-items: center;
+    justify-content: center;
     flex: 0.6;
-    margin-left: 150px;
 }
 
 .head {
@@ -27,12 +19,10 @@
     justify-content: space-around;
 }
 
-
 .role {
     color: #666666;
     display: flex;
     justify-content: center;
-    min-width: 200px;
     cursor: pointer;
     font-weight: 600;
     font-size: 17px;
@@ -42,11 +32,19 @@
     color:#68568E;
 }
 
-.line {
+.selectedline {
     width: 100%;
     opacity: 0.7;
     min-width: 200px;
     border-bottom: 3px solid #68568E;
+    margin-top: 10px;
+}
+
+.line {
+    width: 100%;
+    opacity: 0.7;
+    min-width: 200px;
+    border-bottom: 3px solid #bdbdbd;
     margin-top: 10px;
 }
 
@@ -55,19 +53,17 @@
     display: flex;
     justify-content: center;
     margin-top: 50px;
-    max-width: 600px;
 }
 
 .form_button {
     background-color: #68568E;
-    min-width: 400px;
     min-height: 50px;
     margin-top: 10px;
+    min-width: 400px;
 }
 
 .form_button:hover {
     background-color: #A499BB;
-    min-width: 400px;
     min-height: 50px;
 }
 
@@ -105,7 +101,6 @@
 
 .square {
     border-radius: 10px;
-    width: 600px; /* 틀의 너비 */
     height: 800px; /* 틀의 높이 */
     overflow: hidden; /* 넘치는 부분을 잘라냅니다. */
     margin-left: 20px;
@@ -114,7 +109,6 @@
 .square img {
     width: 100%;
     height: 100%;
-    min-width: 100%;
     min-height: 100%;
     object-fit: cover;
 }
@@ -124,7 +118,6 @@
     background-size: cover;
     background-position: center;
     background-color: #68568E;
-    min-height: 900px;
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
     flex: 0.4;
@@ -135,18 +128,20 @@
     flex-direction: column;
     justify-content: center; /* 수직 가운데 정렬 */
     align-items: flex-end; /* 오른쪽 정렬 */
-    min-height: 800px;
+    min-height: 900px;
 }
 
 .side {
-    margin-top: 20px;
-    padding: 40px 50px; /* 내부 여백 설정 */
+    padding: 40px; /* 내부 여백 설정 */
     color: #ffffff; /* 텍스트 색상 */
     font-size: 20px;
     font-weight: bold; /* 글꼴 굵게 설정 */
     cursor: pointer; /* 마우스 커서 설정 */
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
+    width: 180px;
+    display: flex;
+    justify-content: center;
 }
 
 
@@ -156,8 +151,7 @@
 }
 
 .side_select {
-    margin-top: 20px;
-    padding: 40px 50px; /* 내부 여백 설정 */
+    padding: 40px; /* 내부 여백 설정 */
     font-size: 20px;
     font-weight: bold; /* 글꼴 굵게 설정 */
     border-top-left-radius: 20px;
@@ -167,12 +161,26 @@
 }
 
 .logo {
+    max-width: 100%;
     margin-top: 30px;
     margin-left: 15px;
+    padding-right: 20px;
     font-size: 10px;
     color: #ffffff;
 }
 
 .horizon {
     display: flex;
+}
+
+.complete {
+    margin-top: 5px;
+    color: blue;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.error {
+    margin-top: 5px;
+    color: red;
 }
