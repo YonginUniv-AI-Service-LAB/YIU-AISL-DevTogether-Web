@@ -8,7 +8,7 @@ export const data_board = [
         likes: 435,
         views: 500,
         comment: 2,
-        img: "./frozen.jpg",
+        img: "/frozen.jpg",
         file: [
         ],
         nickname: "m_iiin_u",
@@ -26,7 +26,7 @@ export const data_board = [
         likes: 33,
         views: 250,
         comment: 5,
-        img: "./watch.jpg",
+        img: "/watch.jpg",
         file: [
         ],
         nickname: "m_iiin_u",
@@ -44,7 +44,7 @@ export const data_board = [
         likes: 320,
         views: 350,
         comment: 7,
-        img: "./yare.png",
+        img: "/yare.png",
         file: [
         ],
         nickname: "못말리는 아가씨",
@@ -63,7 +63,7 @@ export const data_board = [
         likes: 1020,
         views: 1300,
         comment: 23,
-        img: "./chap.jpg",
+        img: "/chap.jpg",
         file: [
         ],
         nickname: "못말리는 아가씨",
@@ -82,7 +82,7 @@ export const data_board = [
         likes: 360,
         views: 700,
         comment: 17,
-        img: "./band.jpg",
+        img: "/band.jpg",
         file: [
         ],
         nickname: "밍키",
@@ -124,7 +124,7 @@ export const data_board = [
         likes: 1,
         views: 19,
         comment: 0,
-        img: "./band.jpg",
+        img: "/band.jpg",
         file: [
         ],
         nickname: "안주연",
@@ -162,7 +162,7 @@ export const data_board = [
         likes: 0,
         views: 20,
         comment: 0,
-        img: "./band.jpg",
+        img: "/band.jpg",
         file: [
         ],
         nickname: "김승진",
@@ -180,7 +180,7 @@ export const data_board = [
         likes: 0,
         views: 3,
         comment: 1,
-        img: "./band.jpg",
+        img: "/band.jpg",
         file: [
         ],
         nickname: "하나도 모르겠어요",
@@ -274,7 +274,7 @@ export const data_board = [
         likes: 2,
         views: 20,
         comment: 3,
-        img: "./band.jpg",
+        img: "/band.jpg",
         file: [
         ],
         nickname: "변미현",
@@ -292,7 +292,7 @@ export const data_board = [
         likes: 0,
         views: 15,
         comment: 2,
-        img: "./band.jpg",
+        img: "/band.jpg",
         file: [
         ],
         nickname: "김예서",
@@ -310,7 +310,7 @@ export const data_board = [
         likes: 0,
         views: 2,
         comment: 0,
-        img: "./band.jpg",
+        img: "/band.jpg",
         file: [
         ],
         nickname: "안영환",

@@ -1,7 +1,8 @@
 import React, { useState, useContext } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
-
+import { RecoilRoot, atom, useRecoilState } from 'recoil';
+import pageState from "../../../recoil/atoms/login";
 import {
   Button,
   Dropdown,
@@ -42,6 +43,18 @@ const Header = (props) => {
   const isNotMobile = useMediaQuery({ minWidth: 768 });
 
   const navigate = useNavigate();
+
+  const [page, setPage] = useRecoilState(pageState);
+
+  const goToLoginPage = () => {
+    setPage("signin");
+    navigate('/signin');
+  };
+
+  const goToSignUpPage = () => {
+    setPage("signup");
+    navigate('/signup');
+  };
 
   const { token } = theme.useToken();
 
@@ -192,8 +205,8 @@ const Header = (props) => {
           </>
         ) : (
           <div>
-            <HeaderNavBtn type={"text"} text="로그인" href="/signin" />
-            <HeaderNavBtn type={"text"} text="회원가입" href="/signup" />
+            <HeaderNavBtn type={"text"} text="로그인" onClick={goToLoginPage } />
+            <HeaderNavBtn type={"text"} text="회원가입" onClick={goToSignUpPage } />
           </div>
         )}
       </div>

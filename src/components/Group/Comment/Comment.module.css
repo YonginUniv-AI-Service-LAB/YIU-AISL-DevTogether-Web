@@ -1,54 +1,55 @@
 .background {
     display: flex;
-    padding-top: 5px;
-    padding-bottom: 15px;
-    justify-content: space-between;
+    padding: 5px 0 15px;
     margin-top: 10px;
-    border-style: solid;
-    border-width: 0;  
-    border-bottom-width: 1px; 
-    border-color: rgba(0, 0, 0, 0.1); 
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.horizon {
+.circleImage {
+    width: 40px;
+    height: 40px;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    overflow: hidden;
+    min-width: 40px;
+    flex-shrink: 0;
+}
+
+.circleImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.body {
+    margin-left: 15px;
+    flex-grow: 1;
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
 }
 
-.flex {
+.header {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.body {
-    margin-left: 15px;
-    min-width: 335px;
-}
-
-.circle{
-    width: 40px; /* 원의 지름 */
-    height: 40px; /* 원의 지름 */
-    background-color: #f0f0f0; /* 배경색 */
-    border-radius: 50%; /* 원형으로 만들기 */
-    overflow: hidden; /* 넘치는 부분을 잘라냅니다. */
-    min-width: 40px;
-}
-
-.circle img {
-    width: 100%; /* 이미지의 너비를 100%로 설정합니다. */
-    height: 100%; /* 이미지의 높이를 100%로 설정합니다. */
-    object-fit: cover; /* 이미지를 원형 영역에 맞게 조절합니다. */
-}
-
 .contents {
-    margin-top: 20px;
+    margin-top: 10px;
+    flex-grow: 1;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
 }
 
 .like {
     display: flex;
     align-items: center;
-    margin-top: 20px;
     font-size: 11px;
     font-weight: 600;
     cursor: pointer;
@@ -62,27 +63,14 @@
 .introduction {
     font-size: 12px;
     font-weight: 600;
-    color:#a8a8a8;
-}
-
-.report {
-    font-size: 13px;
+    color: #a8a8a8;
 }
 
 .time {
     font-size: 13px;
-    margin-top: 15px;
 }
 
 .more {
     font-size: 25px;
-    margin-left: 55px;
+    margin-left: 20px;
 }
-
-.foot {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin-bottom: 5px;
-}
-

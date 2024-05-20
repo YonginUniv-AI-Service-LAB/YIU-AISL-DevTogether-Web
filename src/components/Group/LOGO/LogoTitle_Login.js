@@ -17,7 +17,7 @@ const LogoTitle_Footer = (props) => {
         style={{
           textDecoration: "none",
           fontWeight: "bold",
-          fontSize: isMobile ? 20 : 30,
+          fontSize: isTablet ? 15 : 20,
           color: "white",
           display: "flex",
           flexDirection: "row",
@@ -26,8 +26,8 @@ const LogoTitle_Footer = (props) => {
         }}
         onClick={props.onClick}
       >
-        <span style={{ marginRight: 10 }}>
-          <Image width={isMobile ? 40 : 60} src={LOGO} preview={false} />
+        <span>
+          <Image width={isTablet ? 20 : 40} src={LOGO} preview={false} />
         </span>
         <span>DevTogether</span>
       </a>
