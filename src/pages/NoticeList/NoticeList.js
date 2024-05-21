@@ -15,6 +15,10 @@ import Column from "antd/es/table/Column";
 import HoverEventButton from "../../components/Button/HoverEventButton";
 import { useSetRecoilState } from "recoil";
 import { NoticeFormTypeAtom } from "../../recoil/atoms/notice";
+import { useQuery } from "@tanstack/react-query";
+import { fetchNotice } from "../../api/notice";
+import axios from "axios";
+import dayjs from "dayjs";
 
 const NoticeListPage = () => {
   // 반응형 화면
@@ -23,11 +27,24 @@ const NoticeListPage = () => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const isNotMobile = useMediaQuery({ minWidth: 768 });
 
+  const {
+    data: notice,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["notice"],
+    queryFn: async () => {
+      const res = await axios.get("http://localhost:8080/notice");
+      console.log("공지사항 목록 조회: ", res.data);
+      return res.data;
+    },
+  });
+
   // 페이지 이동
   const navigate = useNavigate();
 
   // 공지사항 데이터
-  const [notice, setNotice] = useState(data_notice);
+  // const [notice, setNotice] = useState(data_notice);
   // 현재 카테고리
   const [curCategory, setCurCategory] = useState("전체");
   // 현재 검색어
@@ -96,6 +113,9 @@ const NoticeListPage = () => {
     );
   };
 
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>An error occurred</div>;
+
   return (
     <div>
       <PageHeader
@@ -132,8 +152,8 @@ const NoticeListPage = () => {
           // columns={columns}
           dataSource={
             curCategory == "전체"
-              ? data_notice.filter((n) => n.title.includes(searchText))
-              : data_notice.filter(
+              ? notice.filter((n) => n.title.includes(searchText))
+              : notice.filter(
                   (n) =>
                     n.category == curCategory && n.title.includes(searchText)
                 )
@@ -152,16 +172,27 @@ const NoticeListPage = () => {
           }}
           rowClassName={styles.table_row}
         >
+          {/* 임시 - 컬럼 오타 */}
           <Column
+            title="작성일"
+            dataIndex="createAt"
+            key="createAt"
+            // defaultFilteredValue={(data) => dayjs(data).format("YYYY-MM-DD")}
+            width={60}
+            render={(text, row, index) => {
+              return <>{dayjs(text).format("YYYY.MM.DD")}</>;
+            }}
+          />
+          {/* <Column
             title="작성일"
             dataIndex="createdAt"
             key="createdAt"
             width={60}
-          />
+          /> */}
           <Column
             title="카테고리"
-            dataIndex="category"
-            key="category"
+            dataIndex="noticeCategory"
+            key="noticeCategory"
             width={90}
           />
           <Column title="제목" dataIndex="title" key="title" />

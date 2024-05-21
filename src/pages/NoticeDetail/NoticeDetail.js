@@ -15,6 +15,7 @@ import {
   NoticeFormDataAtom,
   NoticeFormTypeAtom,
 } from "../../recoil/atoms/notice";
+import dayjs from "dayjs";
 
 const NoticeDetailPage = (props) => {
   // 반응형 화면
@@ -95,9 +96,13 @@ const NoticeDetailPage = (props) => {
               whiteSpace: "pre-wrap",
             }}
           >
-            <span>{location.state.data.createdAt}</span>
+            {/* 임시 - 컬럼명 오류 */}
+            <span>
+              {dayjs(location.state.data.createAt).format("YYYY.MM.DD")}
+            </span>
+            {/* <span>{location.state.data.createdAt}</span> */}
             {"  |  "}
-            <span>{location.state.data.category}</span>
+            <span>{location.state.data.noticeCategory}</span>
           </p>
           <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
             <Popconfirm

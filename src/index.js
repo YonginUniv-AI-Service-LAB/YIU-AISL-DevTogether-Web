@@ -11,6 +11,10 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { Flex, Spin } from "antd";
+import axios from "axios";
+
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+axios.defaults.withCredentials = true;
 
 const queryClient = new QueryClient();
 
