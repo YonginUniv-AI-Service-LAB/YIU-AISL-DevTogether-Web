@@ -1,4 +1,4 @@
-import { Collapse, theme } from "antd";
+import { Collapse, Spin, theme } from "antd";
 import React from "react";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,8 @@ import { useAccordionButton } from "react-bootstrap/AccordionButton";
 import Card from "react-bootstrap/Card";
 import styles from "./FAQList.module.css";
 import PageHeaderImage from "../../assets/images/PageHeaderImage/faq.svg";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 const FAQListPage = () => {
   // 반응형 화면
@@ -17,6 +19,19 @@ const FAQListPage = () => {
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const isNotMobile = useMediaQuery({ minWidth: 768 });
+
+  const {
+    data: faq,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["faq"],
+    queryFn: async () => {
+      const res = await axios.get("http://localhost:8080/faq");
+      console.log("공지사항 목록 조회: ", res.data);
+      return res.data;
+    },
+  });
 
   // 페이지 이동
   const navigate = useNavigate();
@@ -43,12 +58,15 @@ const FAQListPage = () => {
     );
   }
 
+  if (isLoading) return <Spin size="large" />;
+  if (error) return <div>An error occurred</div>;
+
   return (
     <div>
       <PageHeader title="자주묻는질문" subtitle="" image={PageHeaderImage} />
       <div style={{ padding: "10%" }}>
         <Accordion defaultActiveKey="0" flush={true}>
-          {data_faq.map((data, index) => {
+          {faq.map((data, index) => {
             return (
               <Card style={{ marginBottom: 30, borderRadius: 10 }}>
                 <CustomToggle eventKey={index.toString()}>

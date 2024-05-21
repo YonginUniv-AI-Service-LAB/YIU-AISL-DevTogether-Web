@@ -1,5 +1,5 @@
 import { SearchOutlined } from "@ant-design/icons";
-import { Flex, Input, Table } from "antd";
+import { Flex, Input, Spin, Table } from "antd";
 import React, { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
@@ -113,7 +113,7 @@ const NoticeListPage = () => {
     );
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Spin size="large" />;
   if (error) return <div>An error occurred</div>;
 
   return (
