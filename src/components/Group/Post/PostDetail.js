@@ -93,7 +93,7 @@ const PostDetail = (post) => {
       <div className={style.line}></div>
       <div className={style.text}>
         <div>{post.contents}</div>
-        <img src={post.img} alt='게시물 이미지' style={{ marginTop: "25px" }} />
+        <img className={style.contnentsimage} src={post.img} alt='게시물 이미지' style={{ marginTop: "25px" }} />
       </div>
       <div className={`${style.horizon} ${style.record}`}>
         <FaEye style={{ color: 'gray' }} /> <span style={{ marginLeft: "10px" }}>{post.views}</span>

@@ -309,33 +309,33 @@ const SignUpSub = ({ resetState }) => {
         </Form.Item>
 
         <Form.Item name="fee">
-              <div>과외비</div>
-              <div className={style.horizon}>
-                  <Input.Group compact>
-                      <Input
-                      style={{ width: '130px' }}
-                      type="text"
-                      placeholder="최소 금액"
-                      suffix="원"
-                      value={minAmount}
-                      onChange={handleMinAmountChange}
-                      />
-                      <Input
-                      style={{ width: '32px', textAlign: 'center' }}
-                      placeholder="~"
-                      disabled
-                      />
-                      <Input
-                      style={{ width: '130px' }}
-                      type="text"
-                      placeholder="최대 금액"
-                      suffix="원"
-                      value={maxAmount}
-                      onChange={handleMaxAmountChange}
-                      />
-                  </Input.Group>
+            <div>과외비</div>
+            <div className={style.horizon}>
+                <Input.Group compact>
+                    <Input
+                    style={{ width: '130px' }}
+                    type="text"
+                    placeholder="최소 금액"
+                    suffix="원"
+                    value={minAmount}
+                    onChange={handleMinAmountChange}
+                    />
+                    <Input
+                    style={{ width: '32px', textAlign: 'center' }}
+                    placeholder="~"
+                    disabled
+                    />
+                    <Input
+                    style={{ width: '130px' }}
+                    type="text"
+                    placeholder="최대 금액"
+                    suffix="원"
+                    value={maxAmount}
+                    onChange={handleMaxAmountChange}
+                    />
+                 </Input.Group>
               </div> 
-            </Form.Item>
+        </Form.Item>
     </Form>         
   );
 };

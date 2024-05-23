@@ -168,4 +168,34 @@ export const data_comment = [
         introduction: "민우인데요",
         edited: false
     },
+    {
+        id: 12,
+        post_id: 13,
+        role: 1,
+        gender: 0,
+        contents: `밤양갱~ 연양갱~ gang!!`,
+        createdAt: "2024.05.02",
+        likes: 3,
+        file: [
+        ],
+        nickname: "m_iiin_u",
+        userImage: "/keroro.png",
+        introduction: "민우인데요",
+        edited: false
+    },
+    {
+        id: 13,
+        post_id: 13,
+        role: 1,
+        gender: 0,
+        contents: `아휴 씨`,
+        createdAt: "2024.05.05",
+        likes: 0,
+        file: [
+        ],
+        nickname: "안영환",
+        userImage: "/youngman.png",
+        introduction: "영환이는 원영이밖에 없고, 원영이만 있으면 되고, 원영이만 사랑해",
+        edited: false
+    },
 ]

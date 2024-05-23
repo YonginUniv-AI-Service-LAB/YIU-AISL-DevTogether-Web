@@ -31,7 +31,7 @@ const  NavigateSelect = (props) => {
       placeholder={placeholder}
       value={selectedTags}
       onChange={handleSelectChange}
-      style={{ minWidth: '100px', marginTop:'20px', marginRight:'10px'}}
+      style={{ minWidth: '100px'}}
       tagRender={({ label, closable, onClose }) => (
         <Tag closable={closable} onClose={onClose}>
           {label}

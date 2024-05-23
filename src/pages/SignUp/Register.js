@@ -222,53 +222,53 @@ const SignUpMain = ({ resetState }) => {
   };
 
   
-//   const generateYearOptions = () => {
-//     const currentYear = new Date().getFullYear();
-//     const startYear = 1940;
-//     const endYear = currentYear - 0; 
+  const generateYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const startYear = 1940;
+    const endYear = currentYear - 0; 
   
-//     const options = [];
-//     for (let year = endYear; year >= startYear; year--) {
-//       options.push({ value: year.toString(), label: `${year.toString()}년` });
-//     }
+    const options = [];
+    for (let year = endYear; year >= startYear; year--) {
+      options.push({ value: year.toString(), label: `${year.toString()}년` });
+    }
   
-//     return options;
-//   };
+    return options;
+  };
 
-//   const generateMonthOptions = () => {
-//     return Array.from({ length: 12 }, (_, index) => {
-//       const monthNumber = (index + 1).toString().padStart(2, '0');
-//       return { value: monthNumber, label: `${monthNumber}월` };
-//     });
-//   };
+  const generateMonthOptions = () => {
+    return Array.from({ length: 12 }, (_, index) => {
+      const monthNumber = (index + 1).toString().padStart(2, '0');
+      return { value: monthNumber, label: `${monthNumber}월` };
+    });
+  };
 
-//   const handleMonthChange = (newValue) => {
-//     setSelectedMonth(newValue);
-//     setDayOptions(generateDayOptions(newValue));
-//   };
+  const handleMonthChange = (newValue) => {
+    setSelectedMonth(newValue);
+    setDayOptions(generateDayOptions(newValue));
+  };
   
 
   
-//   const monthDays = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+  const monthDays = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
   
-//   const generateDayOptions = (selectedMonth) => {
-//     const daysInMonth = monthDays[selectedMonth - 1]; 
-//     return Array.from({ length: daysInMonth }, (_, index) => {
-//       const dayNumber = (index + 1).toString().padStart(2, '0');
-//       return { value: dayNumber, label: `${dayNumber}일` };
-//     });
-//   };
+  const generateDayOptions = (selectedMonth) => {
+    const daysInMonth = monthDays[selectedMonth - 1]; 
+    return Array.from({ length: daysInMonth }, (_, index) => {
+      const dayNumber = (index + 1).toString().padStart(2, '0');
+      return { value: dayNumber, label: `${dayNumber}일` };
+    });
+  };
 
-//   const [dayOptions, setDayOptions] = useState(generateDayOptions(selectedMonth));
+  const [dayOptions, setDayOptions] = useState(generateDayOptions(selectedMonth));
 
-//   useEffect(() => {
-//     if (selectedYear && selectedMonth && selectedDay) {
-//       const today = new Date();
-//       const birthYear = parseInt(selectedYear);
-//       let age = today.getFullYear() - birthYear + 1;
-//       setAge(age);
-//     }
-//   }, [selectedYear, selectedMonth, selectedDay]);
+  useEffect(() => {
+    if (selectedYear && selectedMonth && selectedDay) {
+      const today = new Date();
+      const birthYear = parseInt(selectedYear);
+      let age = today.getFullYear() - birthYear + 1;
+      setAge(age);
+    }
+  }, [selectedYear, selectedMonth, selectedDay]);
 
   // 이름 변경 함수
   // 이름 입력 (한글만 허용)
@@ -502,7 +502,7 @@ const SignUpMain = ({ resetState }) => {
             </Form.Item>
         </div>
 
-        {/* <Form.Item name="age">
+        <Form.Item name="age">
             <div>생년월일</div>
             <div className={style.horizon}>
                 <Select
@@ -530,7 +530,7 @@ const SignUpMain = ({ resetState }) => {
                   style={{ width: 60 }}
                 />
             </div>
-        </Form.Item> */}
+        </Form.Item>
         <Form.Item name="question">
                 <div>아이디 찾기 질문</div>
                 <Select

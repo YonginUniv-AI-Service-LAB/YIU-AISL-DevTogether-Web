@@ -2,7 +2,7 @@ import React from 'react';
 import { Divider, Flex, Tag } from 'antd';
 import style from './Filtertag.module.css';
 
-const FilterTag = ({ selectedSubjects, selectedLocations, selectedGenders, selectedMinAges, selectedMaxAges, selectedMethods, selectedMinFees, selectedMaxFees }) => {
+const MobFilterTag = ({ selectedSubjects, selectedLocations, selectedGenders, selectedMinAges, selectedMaxAges, selectedMethods, selectedMinFees, selectedMaxFees }) => {
   // 필터에 대한 색상 배열을 정의합니다.
   const colors = {
     subjects: ['magenta','orange','lime', 'geekblue', 'purple'],
@@ -63,85 +63,96 @@ const FilterTag = ({ selectedSubjects, selectedLocations, selectedGenders, selec
   
   
   return (
-    <div className={style.background} style={{maxWidth:'200px'}}>
-      <div className={style.head}>필터 적용 상황</div>
+    <div style={{display:'flex', flexWrap:'wrap'}}>
       {/* 과목 필터 태그 */}
       {hideIfEmpty(selectedSubjects).length > 0 && (
         <React.Fragment>
-          <Divider  style={{ borderColor: 'rgba(0, 0, 0, 0.85)', borderWidth: '0.5px', opacity: '0.7', marginRight: '20px' }}>과목</Divider>
-          <Flex gap="4px 0" wrap="wrap">
-            {/* Render selected subjects as tags with corresponding colors */}
-            {selectedSubjects.map((subject, index) => (
-              <Tag key={subject} color={colors.subjects[index]}>{subject}</Tag>
-            ))}
-          </Flex>
+          <div style={{display:'flex', justifyContent:'center'}}>
+            <span style={{opacity:'0.3', marginRight:'5px'}}> # </span>
+            <Flex gap="4px 0" wrap="wrap">
+              {/* Render selected subjects as tags with corresponding colors */}
+              {selectedSubjects.map((subject, index) => (
+                <Tag key={subject} color={colors.subjects[index]}>{subject}</Tag>
+              ))}
+            </Flex>
+          </div>
         </React.Fragment>
       )}
 
       {/* 지역 필터 태그 */}
       {hideIfEmpty(selectedLocations).length > 0 && (
         <React.Fragment>
-          <Divider style={{ borderColor: 'rgba(0, 0, 0, 0.85)', borderWidth: '0.5px', opacity: '0.7'}}>지역</Divider>
-          <Flex gap="4px 0" wrap="wrap">
-            {/* Render selected locations as tags with corresponding colors */}
-            {selectedLocations.map((location, index) => (
-              <Tag key={location} color={colors.locations[index]}>{location}</Tag>
-            ))}
-          </Flex>
+          <div style={{display:'flex', justifyContent:'center'}}>
+            <span style={{opacity:'0.3', marginRight:'5px'}}> # </span>
+            <Flex gap="4px 0" wrap="wrap">
+              {/* Render selected locations as tags with corresponding colors */}
+              {selectedLocations.map((location, index) => (
+                <Tag key={location} color={colors.locations[index]}>{location}</Tag>
+              ))}
+            </Flex>
+          </div>
         </React.Fragment>
       )}
 
       {/* 성별 필터 태그 */}
       {hideIfEmpty(selectedGenders).length > 0 && (
         <React.Fragment>
-          <Divider style={{ borderColor: 'rgba(0, 0, 0, 0.85)', borderWidth: '1px', opacity: '0.7', marginRight: '20px' }}>성별</Divider>
-          <Flex gap="4px 0" wrap="wrap">
-            {/* Render selected genders as tags with corresponding colors */}
-            {selectedGenders.map((gender, index) => (
-              <Tag key={gender} color={colors.genders[index]}>{gender}</Tag>
-            ))}
-          </Flex>
+          <div style={{display:'flex'}}>
+            <span style={{opacity:'0.3', marginRight:'5px'}}> # </span>
+            <Flex gap="4px 0" wrap="wrap">
+              {/* Render selected genders as tags with corresponding colors */}
+              {selectedGenders.map((gender, index) => (
+                <Tag key={gender} color={colors.genders[index]}>{gender}</Tag>
+              ))}
+            </Flex>
+          </div>
         </React.Fragment>
       )}
 
       {/* 나이 필터 태그 */}
       {((selectedMinAges.length > 0 || selectedMaxAges.length > 0)) && (
         <React.Fragment>
-          <Divider style={{ borderColor: 'rgba(0, 0, 0, 0.85)', borderWidth: '0.5px', opacity: '0.7', marginRight: '20px' }}>나이</Divider>
-          <Flex gap="4px 0" wrap="wrap">
-            {/* Render selected ages as tags */}
-            <Tag color="green">{displayMinMax(selectedMinAges, selectedMaxAges)}</Tag>
-          </Flex>
+          <div style={{display:'flex'}}>
+            <span style={{opacity:'0.3', marginRight:'5px'}}> # </span>
+            <Flex gap="4px 0" wrap="wrap">
+              {/* Render selected ages as tags */}
+              <Tag color="green">{displayMinMax(selectedMinAges, selectedMaxAges)}</Tag>
+            </Flex>
+          </div>
         </React.Fragment>
       )}
   
       {/* 과외방식 필터 태그 */}
         {hideIfEmpty(selectedMethods).length > 0 && (
           <React.Fragment>
-            <Divider style={{ borderColor: 'rgba(0, 0, 0, 0.85)', borderWidth: '0.5px', opacity: '0.7', marginRight: '20px' }}>과외방식</Divider>
-            <Flex gap="4px 0" wrap="wrap">
-              {/* Render selected methods as tags with corresponding colors */}
-              {selectedMethods.map((method, index) => (
-                <Tag key={method} color={colors.methods[index]}>
-                 {method == 0 ? '대면' : method == 1 ? '비대면' : '블렌딩'}
-                </Tag>
-              ))}
-            </Flex>
+            <div style={{display:'flex'}}>
+              <span style={{opacity:'0.3', marginRight:'5px'}}> # </span>
+              <Flex gap="4px 0" wrap="wrap">
+                {/* Render selected methods as tags with corresponding colors */}
+                {selectedMethods.map((method, index) => (
+                  <Tag key={method} color={colors.methods[index]}>
+                  {method == 0 ? '대면' : method == 1 ? '비대면' : '블렌딩'}
+                  </Tag>
+                ))}
+              </Flex>
+            </div>
           </React.Fragment>
         )}
 
       {/* 수업료 필터 태그 */}
       {(selectedMinFees.length > 0 || selectedMaxFees.length > 0) && (
         <React.Fragment>
-          <Divider style={{ borderColor: 'rgba(0, 0, 0, 0.85)', borderWidth: '0.5px', opacity: '0.7', marginRight: '20px' }}>수업료</Divider>
-          <Flex gap="4px 0" wrap="wrap">
-            {/* Render selected fees as tags with corresponding colors */}
-            <Tag color="gold">{displayMinAndMaxFees(selectedMinFees, selectedMaxFees)}</Tag>
-          </Flex>
+          <div style={{display:'flex'}}>
+            <span style={{opacity:'0.3', marginRight:'5px'}}> # </span>
+            <Flex gap="4px 0" wrap="wrap">
+              {/* Render selected fees as tags with corresponding colors */}
+              <Tag color="gold">{displayMinAndMaxFees(selectedMinFees, selectedMaxFees)}</Tag>
+            </Flex>
+          </div>
         </React.Fragment>
       )}
     </div>
   );
 };
 
-export default FilterTag;
+export default MobFilterTag;
