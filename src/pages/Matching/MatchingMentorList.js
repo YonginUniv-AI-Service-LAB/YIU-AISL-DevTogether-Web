@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import { useMediaQuery } from "react-responsive";
 import style from './Matching.module.css';
 import Body from '../../components/Group/Body/Body';
 import FilterButton from '../../components/Button/FilterButton';
@@ -7,141 +8,102 @@ import Profile from '../../components/Group/Profile/Profile';
 import Sidebar from '../../components/Group/Sidebar/Sidebar';
 import Searchbar from '../../components/Group/Searchbar/Searchbar';
 import FilterTag from '../../components/Group/Filtertag/Filtertag';
-import SubjectModal from '../../components/Modal/FilterModal/SubjectModal';
-import LocationModal from '../../components/Modal/FilterModal/LocationModal';
-import GenderModal from '../../components/Modal/FilterModal/GenderModal';
-import AgeModal from '../../components/Modal/FilterModal/AgeModal';
-import MethodModal from '../../components/Modal/FilterModal/MethodModal';
-import FeeModal from '../../components/Modal/FilterModal/FeeModal';
-
+import EntireModal from '../../components/Modal/FilterModal/EntireModal';
+import NavigateSelect from '../../components/Select/NavigateSelect';
+import MobFilterTag from '../../components/Group/Filtertag/MobFiltertag';
+import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
+import { selectedgenderStateAtom, selectedsubjectStateAtom, selectedlocationStateAtom, selectedminageStateAtom, selectedmaxageStateAtom, 
+    selectedminfeeStateAtom, selectedmaxfeeStateAtom, selectedmethodStateAtom } from '../../recoil/atoms/matchingAtom';
 import { data_mentor } from '../../assets/data/mentor';
 import NavigateButton from '../../components/Button/NavigateButton';
+import PageHeader from '../../components/Group/PageHeader/PageHeader';
 
 const MatchingMentorList = ({ handleSidebarButtonClick }) => {
+    const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
+    const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
+    const isMobile = useMediaQuery({ maxWidth: 767 });
+    const isNotMobile = useMediaQuery({ minWidth: 768 });
+
     const navigate = useNavigate();
 
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
-    const [profiles, setProfiles] = useState([]);
+    const [profiles, setProfiles] = useState(data_mentor); // 초기 상태를 모든 프로필로 설정
     const [searchText, setSearchText] = useState("");
-    const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
-    const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-    const [isGenderModalOpen, setIsGenderModalOpen] = useState(false);
-    const [isAgeModalOpen, setIsAgeModalOpen] = useState(false);
-    const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
-    const [isFeeModalOpen, setIsFeeModalOpen] = useState(false);
 
-    const [selectedSubjects, setSelectedSubjects] = useState([]);
-    const [selectedLocations, setSelectedLocations] = useState([]);
-    const [selectedGenders, setSelectedGenders] = useState([]);
-    const [selectedAges, setSelectedAges] = useState([]);
-    const [selectedMethods, setSelectedMethods] = useState([]);
-    const [selectedFees, setSelectedFees] = useState([]);
+    const [selectedSubjects, setSelectedSubjects] = useRecoilState(selectedsubjectStateAtom);
+    const [selectedLocations, setSelectedLocations] = useRecoilState(selectedlocationStateAtom);
+    const [selectedGenders, setSelectedGenders] = useRecoilState(selectedgenderStateAtom);
+    const [selectedMinAges, setSelectedMinAges] = useRecoilState(selectedminageStateAtom);
+    const [selectedMaxAges, setSelectedMaxAges] = useRecoilState(selectedmaxageStateAtom);
+    const [selectedMethods, setSelectedMethods] = useRecoilState(selectedmethodStateAtom);
+    const [selectedMinFees, setSelectedMinFees] = useRecoilState(selectedminfeeStateAtom);
+    const [selectedMaxFees, setSelectedMaxFees] = useRecoilState(selectedmaxfeeStateAtom);
     const [isSearchApplied, setIsSearchApplied] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isFilterApplied, setIsFilterApplied] = useState(false);
+    const [isFilterTagExpanded, setIsFilterTagExpanded] = useState(false);
 
-    useEffect(() => {
-        const applyFilters = () => {
-            const filteredProfiles = data_mentor.filter(profile => {
-                const subjectFilter = selectedSubjects.length === 0 || selectedSubjects.every(subject => profile.subject.includes(subject));
-                const locationFilter = selectedLocations.length === 0 || 
-                    (Array.isArray(profile.location1) ? 
-                        profile.location1.some(location => selectedLocations.includes(location)) : 
-                        selectedLocations.includes(profile.location1));
-                const genderFilter = selectedGenders.length === 0 || selectedGenders.includes(profile.gender === 0 ? "남자" : "여자");
-                const ageFilter = selectedAges.min === undefined || selectedAges.max === undefined || (parseInt(profile.age) >= selectedAges.min && parseInt(profile.age) <= selectedAges.max);
-                const methodFilter = selectedMethods.length === 0 || selectedMethods.every(method => profile.method.includes(method));
-                const feeFilter = selectedFees.length === 0 || selectedFees.every(fee => profile.fee.includes(fee));
-                const searchFilter = isSearchApplied || profile.name.includes(searchText); // 검색이 적용되었거나 검색어가 포함된 경우에만 검색 필터 적용
-        
-                return subjectFilter && locationFilter && genderFilter && ageFilter && methodFilter && feeFilter && searchFilter;
-            });
-        
-            setProfiles(filteredProfiles);
-        };
-
-        applyFilters();
-    }, [selectedSubjects, selectedLocations, selectedGenders, selectedAges, selectedMethods, selectedFees, searchText, isSearchApplied]);
-
-    const applySelectedSubjectFilter = (selectedSubjects) => {
-        setSelectedSubjects(selectedSubjects);
+    const toggleFilterTag = () => {
+        setIsFilterTagExpanded(!isFilterTagExpanded);
     };
 
-    const applySelectedLocationFilter = (selectedLocations) => {
-        setSelectedLocations(selectedLocations);
+    const showModal = () => {
+        setIsModalOpen(true);
     };
 
-    const applySelectedGenderFilter = (selectedGenders) => {
-        setSelectedGenders(selectedGenders);
-    };
-
-    const applySelectedAgeFilter = (minAge, maxAge) => {
-        setSelectedAges({ min: minAge, max: maxAge });
-    };
-    
-    const applySelectedMethodFilter = (selectedMethods) => {
-        setSelectedMethods(selectedMethods);
-    };
-
-    const applySelectedFeeFilter = (selectedFees) => {
-        setSelectedFees(selectedFees);
-    };
-
-    const openSubjectModal = () => {
-        setIsSubjectModalOpen(true);
-    };
-
-    const openLocationModal = () => {
-        setIsLocationModalOpen(true);
-    };
-
-    const openGenderModal = () => {
-        setIsGenderModalOpen(true);
-    };
-
-    const openAgeModal = () => {
-        setIsAgeModalOpen(true);
-    };
-
-    const openMethodModal = () => {
-        setIsMethodModalOpen(true);
-    };
-
-    const openFeeModal = () => {
-        setIsFeeModalOpen(true);
+    const handleCancel = () => {
+        setIsModalOpen(false);
     };
 
     const closeModal = () => {
-        setIsSubjectModalOpen(false);
-        setIsLocationModalOpen(false);
-        setIsGenderModalOpen(false);
-        setIsAgeModalOpen(false);
-        setIsMethodModalOpen(false);
-        setIsFeeModalOpen(false);
+        applyFilters();
+        setIsModalOpen(false);
+    };
+
+    const applyFilters = () => {
+        const filteredProfiles = data_mentor.filter(profile => {
+            const subjectFilter = selectedSubjects.length === 0 || selectedSubjects.every(subject => profile.subject.includes(subject));
+            const locationFilter = selectedLocations.length === 0 || selectedLocations.includes(profile.location1);
+            const genderFilter = selectedGenders.length === 0 || selectedGenders.includes(profile.gender === 0 ? "남자" : "여자");
+            const ageFilter = 
+            (selectedMinAges === undefined || selectedMinAges === "" || parseInt(profile.age) >= parseInt(selectedMinAges)) && 
+            (selectedMaxAges === undefined || selectedMaxAges === "" || parseInt(profile.age) <= parseInt(selectedMaxAges));
+            const methodFilter = selectedMethods.length === 0 || selectedMethods.includes(profile.method.toString());
+            const feeFilter = 
+            (selectedMinFees === undefined || selectedMinFees === "" || parseInt(profile.fee) >= parseInt(selectedMinFees.replace(/,/g, ''))) && 
+            (selectedMaxFees === undefined || selectedMaxFees === "" || parseInt(profile.fee) <= parseInt(selectedMaxFees.replace(/,/g, '')));
+            const searchFilter = !isSearchApplied || profile.name.includes(searchText);
+            
+            return subjectFilter && locationFilter && genderFilter && ageFilter && methodFilter && feeFilter  && searchFilter;
+        });
+
+        setProfiles(filteredProfiles);
+        setIsFilterApplied(true)
     };
 
     const handleSearch = (searchValue) => {
         setSearchText(searchValue);
+        setIsSearchApplied(true);
     };
 
     const handleCategoryClick = (category) => {
-        // 클릭된 카테고리에 따라 페이지 이동을 처리합니다.
         switch (category) {
             case "학생 찾기":
-            navigate('/matching/menteelist');
-            break;
-        case "선생님 찾기":
-            navigate('/matching/mentorlist');
-            break;
-        default:
-            // 다른 동작 처리
-            break;
+                navigate('/matching/menteelist');
+                break;
+            case "선생님 찾기":
+                navigate('/matching/mentorlist');
+                break;
+            default:
+                break;
         }
     };
 
     const profilesPerPage = 30;
     const indexOfLastProfile = currentPage * profilesPerPage;
     const indexOfFirstProfile = indexOfLastProfile - profilesPerPage;
-    const currentProfiles = profiles.slice(indexOfFirstProfile, indexOfLastProfile);
+    const currentProfiles = profiles.slice(indexOfFirstProfile, indexOfFirstProfile + profilesPerPage);
 
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
@@ -149,78 +111,139 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
     for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
     }
-    
 
     useEffect(() => {
         setTotalPages(Math.ceil(profiles.length / profilesPerPage));
     }, [profiles, profilesPerPage]);
 
+    useEffect(() => {
+        applyFilters();
+    }, [searchText, selectedSubjects, selectedLocations, selectedGenders, selectedMinAges, selectedMaxAges, selectedMethods, selectedMinFees, selectedMaxFees]);
+
     return (
-        <div className={style.background2}>
-            <div style={{paddingBottom:'200px'}}></div>
-            <div>
+        <div>
+            {!isMobile && <div className={style.background2}>
+                <div style={{paddingBottom:'200px'}}></div>
                 <Body
                     sentence1="보다 쉬운 코딩 과외 매칭을 위해"
                     sentence2="DevTogether에서 더 나은 매칭 선택"
                     title="학생 찾기/ 선생님 찾기"
                     imageSrc='/matching2.png' // 이미지 경로를 전달합니다.
                 />
-                 <div className={style.color}>
+            </div>}
+            {isMobile && 
+            <PageHeader
+            title='학생 찾기'
+            subtitle="DevTogether에서 더 나은 매칭 선택"
+            />}
+            
+            <div style={{
+                marginLeft: isMobile ? '5%' : isTablet ? 30 : '15%',
+                marginRight: isMobile ? '5%' : isTablet ? 30 : '15%',
+            }}>
+                {!isMobile && <div className={style.line}></div>}
+                <div className={style.color}>
                     <div className={style.background}>
+                        {!isMobile && 
                         <div>
                             <div className={style.fix_left}>
                                 <Sidebar titles={["학생 찾기", "선생님 찾기"]} onCategoryClick={handleCategoryClick} />
-                                {/* <NavigateButton title="학생 찾기"/>
-                                <NavigateButton title="선생님 찾기"/> */}
-                                <div className={style.situation}><FilterTag selectedSubjects={selectedSubjects} selectedLocations={selectedLocations} selectedGenders={selectedGenders} selectedAges={selectedAges} selectedMethods={selectedMethods} selectedFees={selectedFees} /></div>
+                                <div className={style.situation}>
+                                    <FilterTag selectedSubjects={selectedSubjects} selectedLocations={selectedLocations} selectedGenders={selectedGenders} 
+                                    selectedMinAges={selectedMinAges} selectedMaxAges={selectedMaxAges} selectedMethods={selectedMethods} selectedMinFees={selectedMinFees} selectedMaxFees={selectedMaxFees}/>
+                                </div>
                             </div>
                         </div>
-                        <div style={{flex: '1', marginTop:'40px', marginLeft:'40px', marginRight:'80px'}}>
-                            <div className={style.fix_head}>
-                                <div className={style.line}></div>
+                        }
+                        <div style={{ flex: '1', marginTop: '40px', marginLeft: isMobile ? '0px' : '40px' }}>
+                            {!isMobile && 
+                            <div>
                                 <div className={style.background_head}>
-                                    <div className={style.head}>선생님 목록</div>
-                                    <Searchbar defaultSearchText="닉네임으로 검색" onSearch={handleSearch}/>
+                                    <div className={style.head} style={{fontSize: isDesktopOrLaptop ? '25px' : '25px' }}>선생님 목록</div>
+                                    <Searchbar defaultSearchText="닉네임으로 검색" onSearch={handleSearch} />
                                 </div>
-                                <div className={style.body} style={{marginTop:'50px', marginRight:'10px', justifyContent:'space-between'}}>
-                                    <FilterButton name="과목" onClick={openSubjectModal} isFilterApplied={selectedSubjects.length > 0} />
-                                    <FilterButton name="지역" onClick={openLocationModal} isFilterApplied={selectedLocations.length > 0} />
-                                    <FilterButton name="성별" onClick={openGenderModal} isFilterApplied={selectedGenders.length > 0} />
-                                    <FilterButton name="나이" onClick={openAgeModal} isFilterApplied={selectedAges.min !== undefined || selectedAges.max !== undefined} />
-                                    <FilterButton name="과외방식" onClick={openMethodModal} isFilterApplied={selectedMethods.length > 0} />
-                                    <FilterButton name="수업료" onClick={openFeeModal} isFilterApplied={selectedFees.length > 0} />
+                                <div className={style.body} style={{ marginTop: '20px', justifyContent: 'flex-end' }}>
+                                    <FilterButton name="필터 적용" onClick={showModal} />
                                 </div>
                             </div>
-                            <div className={style.body} style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                {currentProfiles.map(profile => (
-                                    <Profile
-                                        key={profile.id}
-                                        name={profile.name}
-                                        subject={profile.subject.join(", ")}
-                                        gender={profile.gender === 0 ? "남자" : "여자"}
-                                        age={profile.age}
-                                        location={profile.location1}
-                                        imagepath={profile.img}
-                                        imagetext="프로필 이미지"
+                            }
+                            {isMobile &&
+                            <div>
+                                <div className={style.background_head}>
+                                    <div className={style.head} style={{fontSize: isDesktopOrLaptop ? '25px' : '20px', marginBottom: '10px' }}>선생님 목록</div>
+                                    <Searchbar defaultSearchText="닉네임으로 검색" onSearch={handleSearch} />
+                                </div>
+                                <div className={style.body} style={{ marginTop: '30px', marginBottom:'20px', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <NavigateSelect
+                                        placeholder="목록"
+                                        options={[
+                                            { value: '학생 찾기', label: '학생' },
+                                            { value: '선생님 찾기', label: '선생님' },
+                                        ]}
+                                        onChange={(newValue) => handleCategoryClick(newValue)}
                                     />
-                                ))}
+                                    <FilterButton name="필터 적용" onClick={showModal} />
+                                </div>
+                                { isFilterApplied && (
+                                        <div className={style.tagbg}>
+                                            <MobFilterTag selectedSubjects={selectedSubjects} selectedLocations={selectedLocations} selectedGenders={selectedGenders} 
+                                            selectedMinAges={selectedMinAges} selectedMaxAges={selectedMaxAges} selectedMethods={selectedMethods} selectedMinFees={selectedMinFees} selectedMaxFees={selectedMaxFees} />
+                                        </div>
+                                    )}
+                                
+                            </div>
+                            }
+                            {/* {isMobile &&
+                            <div>
+                                <div className={style.background_head}>
+                                    <div className={style.head} style={{fontSize: isDesktopOrLaptop ? '25px' : '25px', marginBottom: '10px' }}>학생 목록</div>
+                                    <NavigateSelect
+                                        placeholder="목록"
+                                        options={[
+                                            { value: '학생 찾기', label: '학생' },
+                                            { value: '선생님 찾기', label: '선생님' },
+                                        ]}
+                                        onChange={(newValue) => handleCategoryClick(newValue)}
+                                    />
+                                </div>
+                                <div className={style.body} style={{ marginTop: '30px', marginBottom:'20px', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <FilterButton name="필터 적용" onClick={showModal} />
+                                    <Searchbar defaultSearchText="닉네임으로 검색" onSearch={handleSearch} />
+                                </div>
+                                <div className={style.tagbg}>
+                                    <MobFilterTag selectedSubjects={selectedSubjects} selectedLocations={selectedLocations} selectedGenders={selectedGenders} 
+                                    selectedMinAges={selectedMinAges} selectedMaxAges={selectedMaxAges} selectedMethods={selectedMethods} selectedMinFees={selectedMinFees} selectedMaxFees={selectedMaxFees} />
+                                </div>
+                            </div>
+                            } */}
+                            <div className={style.outer}>
+                                <div className={style.inner}>
+                                    {currentProfiles.map(profile => (
+                                        <Profile
+                                            key={profile.id}
+                                            name={profile.name}
+                                            subject={profile.subject.join(", ")}
+                                            gender={profile.gender === 0 ? "남자" : "여자"}
+                                            age={profile.age}
+                                            location={profile.location1}
+                                            fee={profile.fee}
+                                            method={profile.method === 0 ? "대면" : profile.method === 1 ? "비대면" : "블렌딩"}
+                                            imagepath={profile.img}
+                                            imagetext="프로필 이미지"
+                                        />
+                                    ))}
+                                </div>
                             </div>
                             <div className={style.pagination}>
                                 {pageNumbers.map(number => (
-                                    <div className={`${style.page} ${currentPage === number? style.active : ''}`} key={number} onClick={() => paginate(number)}>
+                                    <div className={`${style.page} ${currentPage === number ? style.active : ''}`} key={number} onClick={() => paginate(number)}>
                                         {number}
                                     </div>
                                 ))}
                             </div>
                         </div>
-                        {/* <div className={style.situation}><FilterTag selectedSubjects={selectedSubjects} selectedLocations={selectedLocations} selectedGenders={selectedGenders} selectedAges={selectedAges} selectedMethods={selectedMethods} selectedFees={selectedFees} /></div> */}
                     </div>
-                    <SubjectModal isOpen={isSubjectModalOpen} closeModal={closeModal} applyFilter={applySelectedSubjectFilter} />
-                    <LocationModal isOpen={isLocationModalOpen} closeModal={closeModal} applyFilter={applySelectedLocationFilter} />
-                    <GenderModal isOpen={isGenderModalOpen} closeModal={closeModal} applyFilter={applySelectedGenderFilter} />
-                    <AgeModal isOpen={isAgeModalOpen} closeModal={closeModal} applyFilter={applySelectedAgeFilter} />
-                    <MethodModal isOpen={isMethodModalOpen} closeModal={closeModal} applyFilter={applySelectedMethodFilter} />
-                    <FeeModal isOpen={isFeeModalOpen} closeModal={closeModal} applyFilter={applySelectedFeeFilter} />
+                    <EntireModal isOpen={isModalOpen} handleCancel={handleCancel} closeModal={closeModal} applyFilter={applyFilters}/>
                 </div>
             </div>
         </div>

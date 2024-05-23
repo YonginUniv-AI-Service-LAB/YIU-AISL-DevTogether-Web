@@ -318,5 +318,32 @@ export const data_board = [
         introduction: "영환이는 원영이밖에 없고, 원영이만 있으면 되고, 원영이만 사랑해",
         scraped: false
     },
+
+    {
+        id: 13,
+        category: "자유",
+        title: "네가 날 떠날 때 내게 했던 마지막 말",
+        contents: `떠나는 길에 니가 내게 말했지
+        '너는 바라는 게 너무나 많아
+        잠깐이라도 널 안 바라보면
+        머리에 불이 나버린다니까'
+        나는 흐르려는 눈물을 참고
+        하려던 얘길 어렵게 누르고
+        '그래 미안해'라는 한 마디로
+        너랑 나눈 날들 마무리했었지
+        달디달고 달디달고 달디단 밤양갱 밤양갱
+        내가 먹고 싶었던 건 달디단 밤양갱 밤양갱이야`,
+        createdAt: "2024.04.28",
+        likes: 780,
+        views: 560,
+        comment: 8,
+        img: "/bibi.jpg",
+        file: [
+        ],
+        nickname: "밍키",
+        userImage: "/cat.png",
+        introduction: "정보은닉 달인",
+        scraped: false
+    },
     
 ]

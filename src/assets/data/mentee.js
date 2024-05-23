@@ -8,8 +8,8 @@ export const data_mentee = [
     gender: 1, // 0은 남자, 1은 여자
     img: "/kuromi.png",
     age: 21,
-    method: 0, // 0은 대면, 1은 비대면
-    fee: 400000,
+    method: 1, // 0은 대면, 1은 비대면
+    fee: 1000000,
     location1: "충남 천안시 서북구",
     createdAt: "2023-05-21",
     updatedAt: "2024-04-05",
@@ -28,7 +28,7 @@ export const data_mentee = [
     img: "/dororo.png",
     age: 26,
     method: 0, // 0은 대면, 1은 비대면
-    fee: 400000,
+    fee: 800000,
     location1: "인천 부평구",
     createdAt: "2023-05-21",
     updatedAt: "2024-04-05",
@@ -45,9 +45,9 @@ export const data_mentee = [
     role: 1, // 1은 멘티, 2은 멘토
     gender: 0, // 0은 남자, 1은 여자
     img: "/keroro.png",
-    age: 24,
+    age: 27,
     method: 0, // 0은 대면, 1은 비대면
-    fee: 400000,
+    fee: 150000,
     location1: "인천 서구",
 
     createdAt: "2023-05-21",
@@ -64,8 +64,8 @@ export const data_mentee = [
     gender: 0, // 0은 남자, 1은 여자
     img: "/min.png",
     age: 24,
-    method: 0, // 0은 대면, 1은 비대면
-    fee: 400000,
+    method: 2, // 0은 대면, 1은 비대면
+    fee: 100000,
     location1: "경기 용인시 처인구",
     createdAt: "2023-05-21",
     updatedAt: "2024-04-05",
@@ -84,8 +84,8 @@ export const data_mentee = [
     img: "/spongebob.jpg",
 
     age: 24,
-    method: 0, // 0은 대면, 1은 비대면
-    fee: 400000,
+    method: 1, // 0은 대면, 1은 비대면
+    fee: 800000,
     location1: "경기 수원시 권선구",
 
     createdAt: "2023-05-21",
@@ -103,7 +103,7 @@ export const data_mentee = [
     img: "/kiki.png",
     age: 23,
     method: 0, // 0은 대면, 1은 비대면
-    fee: 400000,
+    fee: 700000,
 
     location1: "경기 수원시 영통구",
     createdAt: "2023-05-21",
@@ -121,8 +121,8 @@ export const data_mentee = [
     gender: 0, // 0은 남자, 1은 여자
     img: "/cat.png",
     age: 25,
-    method: 0, // 0은 대면, 1은 비대면
-    fee: 400000,
+    method: 1, // 0은 대면, 1은 비대면
+    fee: 500000,
     location1: "충남 천안시 동남구",
     createdAt: "2023-05-21",
     updatedAt: "2024-04-05",
@@ -140,8 +140,8 @@ export const data_mentee = [
     gender: 1, // 0은 남자, 1은 여자
     img: "/kuromi.png",
     age: 21,
-    method: 0, // 0은 대면, 1은 비대면
-    fee: 400000,
+    method: 2, // 0은 대면, 1은 비대면
+    fee: 300000,
     location1: "충남 천안시 서북구",
     createdAt: "2023-05-21",
     updatedAt: "2024-04-05",
@@ -159,7 +159,7 @@ export const data_mentee = [
     gender: 1, // 0은 남자, 1은 여자
     img: "/kuromi.png",
     age: 21,
-    method: 0, // 0은 대면, 1은 비대면
+    method: 2, // 0은 대면, 1은 비대면
     fee: 400000,
     location1: "충남 천안시 서북구",
     createdAt: "2023-05-21",
@@ -178,8 +178,8 @@ export const data_mentee = [
     gender: 1, // 0은 남자, 1은 여자
     img: "/kuromi.png",
     age: 21,
-    method: 0, // 0은 대면, 1은 비대면
-    fee: 400000,
+    method: 1, // 0은 대면, 1은 비대면
+    fee: 200000,
     location1: "충남 천안시 서북구",
     createdAt: "2023-05-21",
     updatedAt: "2024-04-05",
@@ -198,14 +198,33 @@ export const data_mentee = [
     gender: 0, // 0은 남자, 1은 여자
     img: "/dicafrio.png",
     age: 24,
-    method: 0, // 0은 대면, 1은 비대면
-    fee: 400000,
+    method: 1, // 0은 대면, 1은 비대면
+    fee: 300000,
     location1: "USA-California-Hollywood",
     createdAt: "2023-05-21",
     updatedAt: "2024-04-05",
     subject: [
       "Java", "React"
 
+    ]
+  },
+
+  {
+    id: 12,
+
+    name: "m_iiin_u",
+    email: "bmh2038@naver.com",
+    role: 1, // 1은 멘티, 2은 멘토
+    gender: 0, // 0은 남자, 1은 여자
+    img: "/keroro.png",
+    age: 24,
+    method: 1, // 0은 대면, 1은 비대면
+    fee: 400000,
+    location1: "인천 서구",
+    createdAt: "2023-05-21",
+    updatedAt: "2024-04-05",
+    subject: [
+      "Java", "Java Spring", "Mysql", "AWS", "Docker"
     ]
   },
 ];

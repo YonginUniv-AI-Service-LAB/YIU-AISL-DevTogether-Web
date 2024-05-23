@@ -13,7 +13,7 @@ const FilterButton = (props) => {
   return (
       <div
           className={`${style.filter} ${isFilterApplied ? style.filterApplied : ""}`}
-          onClick={handleClick}
+          onClick={handleClick}W
       >
           {props.name}
       </div>
