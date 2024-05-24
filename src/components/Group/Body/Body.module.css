@@ -66,3 +66,30 @@
 }
 
   
+
+@media screen and (min-width: 1450px) {
+  .desktext {
+      font-size: 1.5vw; /* 예시: vw 단위 */
+  }
+  .desktitle {
+      font-size: 2vw; /* 예시: vw 단위 */
+  }
+}
+
+@media screen and (max-width: 1449px) {
+  .desktext {
+      font-size: 22px; /* 예시: px 단위 */
+  }
+  .desktitle {
+      font-size: 30px; /* 예시: px 단위 */
+  }
+}
+
+.mobbackground{
+  background-color:#ffffff;
+  padding-top: 10px;
+  padding-bottom: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-top-right-radius: 80px;
+}

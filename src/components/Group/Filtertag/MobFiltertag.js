@@ -67,7 +67,7 @@ const MobFilterTag = ({ selectedSubjects, selectedLocations, selectedGenders, se
       {/* 과목 필터 태그 */}
       {hideIfEmpty(selectedSubjects).length > 0 && (
         <React.Fragment>
-          <div style={{display:'flex', justifyContent:'center'}}>
+          <div style={{display:'flex', justifyContent:'center', marginBottom:'5px'}}>
             <span style={{opacity:'0.3', marginRight:'5px'}}> # </span>
             <Flex gap="4px 0" wrap="wrap">
               {/* Render selected subjects as tags with corresponding colors */}
@@ -82,7 +82,7 @@ const MobFilterTag = ({ selectedSubjects, selectedLocations, selectedGenders, se
       {/* 지역 필터 태그 */}
       {hideIfEmpty(selectedLocations).length > 0 && (
         <React.Fragment>
-          <div style={{display:'flex', justifyContent:'center'}}>
+          <div style={{display:'flex', justifyContent:'center', marginBottom:'5px'}}>
             <span style={{opacity:'0.3', marginRight:'5px'}}> # </span>
             <Flex gap="4px 0" wrap="wrap">
               {/* Render selected locations as tags with corresponding colors */}
@@ -97,7 +97,7 @@ const MobFilterTag = ({ selectedSubjects, selectedLocations, selectedGenders, se
       {/* 성별 필터 태그 */}
       {hideIfEmpty(selectedGenders).length > 0 && (
         <React.Fragment>
-          <div style={{display:'flex'}}>
+          <div style={{display:'flex' , marginBottom:'5px'}}>
             <span style={{opacity:'0.3', marginRight:'5px'}}> # </span>
             <Flex gap="4px 0" wrap="wrap">
               {/* Render selected genders as tags with corresponding colors */}
@@ -112,7 +112,7 @@ const MobFilterTag = ({ selectedSubjects, selectedLocations, selectedGenders, se
       {/* 나이 필터 태그 */}
       {((selectedMinAges.length > 0 || selectedMaxAges.length > 0)) && (
         <React.Fragment>
-          <div style={{display:'flex'}}>
+          <div style={{display:'flex', marginBottom:'5px'}}>
             <span style={{opacity:'0.3', marginRight:'5px'}}> # </span>
             <Flex gap="4px 0" wrap="wrap">
               {/* Render selected ages as tags */}
@@ -125,7 +125,7 @@ const MobFilterTag = ({ selectedSubjects, selectedLocations, selectedGenders, se
       {/* 과외방식 필터 태그 */}
         {hideIfEmpty(selectedMethods).length > 0 && (
           <React.Fragment>
-            <div style={{display:'flex'}}>
+            <div style={{display:'flex' , marginBottom:'5px'}}>
               <span style={{opacity:'0.3', marginRight:'5px'}}> # </span>
               <Flex gap="4px 0" wrap="wrap">
                 {/* Render selected methods as tags with corresponding colors */}
@@ -142,7 +142,7 @@ const MobFilterTag = ({ selectedSubjects, selectedLocations, selectedGenders, se
       {/* 수업료 필터 태그 */}
       {(selectedMinFees.length > 0 || selectedMaxFees.length > 0) && (
         <React.Fragment>
-          <div style={{display:'flex'}}>
+          <div style={{display:'flex' , marginBottom:'5px'}}>
             <span style={{opacity:'0.3', marginRight:'5px'}}> # </span>
             <Flex gap="4px 0" wrap="wrap">
               {/* Render selected fees as tags with corresponding colors */}

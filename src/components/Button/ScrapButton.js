@@ -27,7 +27,7 @@ const ScarpButton = (props) => {
 
     return (
         <div className={style.scrap} onClick={handleClick}>
-           {isBookmarked ? <GoHeartFill size={20} /> : <GoHeart size={20} />}
+           {isBookmarked ? <GoHeartFill size={20} style={{ color: 'red' }} />  : <GoHeart size={20} />}
         </div>
     );
 };

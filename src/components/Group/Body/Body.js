@@ -41,6 +41,21 @@ const Body = (props) => {
                     <img src={props.imageSrc} alt="이미지" style={{ width: '300px', height: '230px' }} />
                 </div>
             </div>
+        )) || (isMobile && (
+            <div className={style.mobbackground}>
+                <div className={style.tabbody}>
+                    <div className={style.element}>
+                        <div className={style.tabtext}>
+                            <div style={{ marginBottom: '30px' }}>
+                                {props.sentence1}<br />
+                                {props.sentence2}<br />
+                                {props.sentence3}<br />
+                            </div>
+                        </div>
+                        <div className={style.tabtitle}>{props.title}</div>
+                    </div>
+                </div>
+            </div>
         ))
     );
 };
