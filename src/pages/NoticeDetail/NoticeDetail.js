@@ -9,15 +9,31 @@ import {
   ExclamationCircleOutlined,
   MoreOutlined,
 } from "@ant-design/icons";
-import { Button, Popconfirm, message } from "antd";
+import { Button, Popconfirm, Spin, message } from "antd";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   NoticeFormDataAtom,
   NoticeFormTypeAtom,
 } from "../../recoil/atoms/notice";
 import dayjs from "dayjs";
+import { useQuery } from "@tanstack/react-query";
+import { defaultAPI } from "../../api";
 
 const NoticeDetailPage = (props) => {
+  const {
+    data: notice,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["notice_detail"],
+    queryFn: async () => {
+      const res = await defaultAPI.get(
+        `/notice/detail?noticeId=${location.state.data.noticeId}`
+      );
+      return res.data;
+    },
+  });
+
   // 반응형 화면
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
@@ -56,6 +72,9 @@ const NoticeDetailPage = (props) => {
     // message.error("Click on No");
   };
 
+  if (isLoading) return <Spin size="large" />;
+  if (error) return <div>An error occurred</div>;
+
   return (
     <div>
       <div
@@ -74,7 +93,7 @@ const NoticeDetailPage = (props) => {
             color: colors.text_black_color,
           }}
         >
-          {location.state.data.title}
+          {notice.title}
         </p>
 
         <div
@@ -97,12 +116,10 @@ const NoticeDetailPage = (props) => {
             }}
           >
             {/* 임시 - 컬럼명 오류 */}
-            <span>
-              {dayjs(location.state.data.createAt).format("YYYY.MM.DD")}
-            </span>
+            <span>{dayjs(notice.createAt).format("YYYY.MM.DD")}</span>
             {/* <span>{location.state.data.createdAt}</span> */}
             {"  |  "}
-            <span>{location.state.data.noticeCategory}</span>
+            <span>{notice.noticeCategory}</span>
           </p>
           <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
             <Popconfirm
