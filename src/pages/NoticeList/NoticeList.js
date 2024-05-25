@@ -19,6 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchNotice } from "../../api/notice";
 import axios from "axios";
 import dayjs from "dayjs";
+import { defaultAPI } from "../../api";
 
 const NoticeListPage = () => {
   // 반응형 화면
@@ -34,8 +35,7 @@ const NoticeListPage = () => {
   } = useQuery({
     queryKey: ["notice"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:8080/notice");
-      console.log("공지사항 목록 조회: ", res.data);
+      const res = await defaultAPI.get("/notice");
       return res.data;
     },
   });

@@ -12,6 +12,7 @@ import styles from "./FAQList.module.css";
 import PageHeaderImage from "../../assets/images/PageHeaderImage/faq.svg";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { defaultAPI } from "../../api";
 
 const FAQListPage = () => {
   // 반응형 화면
@@ -27,8 +28,7 @@ const FAQListPage = () => {
   } = useQuery({
     queryKey: ["faq"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:8080/faq");
-      console.log("공지사항 목록 조회: ", res.data);
+      const res = await defaultAPI.get("/faq");
       return res.data;
     },
   });
@@ -64,7 +64,7 @@ const FAQListPage = () => {
   return (
     <div>
       <PageHeader title="자주묻는질문" subtitle="" image={PageHeaderImage} />
-      <div style={{ padding: "10%" }}>
+      <div style={{ padding: isMobile ? "10%" : "15%" }}>
         <Accordion defaultActiveKey="0" flush={true}>
           {faq.map((data, index) => {
             return (
