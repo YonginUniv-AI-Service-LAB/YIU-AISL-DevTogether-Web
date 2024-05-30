@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
-import { RecoilRoot, atom, useRecoilState } from 'recoil';
+import { RecoilRoot, atom, useRecoilState } from "recoil";
 import pageState from "../../../recoil/atoms/login";
 import {
   Button,
@@ -48,12 +48,17 @@ const Header = (props) => {
 
   const goToLoginPage = () => {
     setPage("signin");
-    navigate('/signin');
+    navigate("/signin");
   };
 
   const goToSignUpPage = () => {
     setPage("signup");
-    navigate('/signup');
+    navigate("/signup");
+  };
+
+  const goToMyPage = () => {
+    setPage("user");
+    navigate("/user");
   };
 
   const { token } = theme.useToken();
@@ -149,6 +154,10 @@ const Header = (props) => {
       label: "쪽지",
     },
   ];
+
+  // 임시 설정
+  let login = false;
+
   return (
     <div
       style={{
@@ -205,8 +214,16 @@ const Header = (props) => {
           </>
         ) : (
           <div>
-            <HeaderNavBtn type={"text"} text="로그인" onClick={goToLoginPage } />
-            <HeaderNavBtn type={"text"} text="회원가입" onClick={goToSignUpPage } />
+            <HeaderNavBtn
+              type={"text"}
+              text={login === false ? "로그인" : "마이페이지"}
+              onClick={login === false ? goToLoginPage : goToMyPage}
+            />
+            <HeaderNavBtn
+              type={"text"}
+              text={login === false ? "회원가입" : "로그아웃"}
+              onClick={goToSignUpPage}
+            />
           </div>
         )}
       </div>

@@ -12,6 +12,7 @@ import {
 } from "@tanstack/react-query";
 import { Flex, Spin } from "antd";
 import axios from "axios";
+import LoadingSpin from "./components/Spin/LoadingSpin";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 axios.defaults.withCredentials = true;
@@ -23,13 +24,7 @@ root.render(
   <React.StrictMode>
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
-        <React.Suspense
-          fallback={
-            <div style={{ margin: "auto" }}>
-              <Spin size="large" />
-            </div>
-          }
-        >
+        <React.Suspense fallback={<LoadingSpin />}>
           <App />
         </React.Suspense>
       </QueryClientProvider>

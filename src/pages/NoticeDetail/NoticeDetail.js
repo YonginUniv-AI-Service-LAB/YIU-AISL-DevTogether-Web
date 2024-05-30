@@ -18,6 +18,7 @@ import {
 import dayjs from "dayjs";
 import { useQuery } from "@tanstack/react-query";
 import { defaultAPI } from "../../api";
+import LoadingSpin from "../../components/Spin/LoadingSpin";
 
 const NoticeDetailPage = (props) => {
   const {
@@ -72,7 +73,7 @@ const NoticeDetailPage = (props) => {
     // message.error("Click on No");
   };
 
-  if (isLoading) return <Spin size="large" />;
+  if (isLoading) return <LoadingSpin />;
   if (error) return <div>An error occurred</div>;
 
   return (

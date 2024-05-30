@@ -8,6 +8,9 @@ import { Input, Form } from "antd";
 import DefaultButton from "../../components/Button/DefaultButton";
 import { FAQFormDataAtom, FAQFormTypeAtom } from "../../recoil/atoms/faq";
 import { useRecoilState, useRecoilValue } from "recoil";
+import { authAPI } from "../../api";
+import { useMutation } from "@tanstack/react-query";
+
 const FAQFormPage = () => {
   // 반응형 화면
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
@@ -17,8 +20,6 @@ const FAQFormPage = () => {
 
   // 페이지 이동
   const navigate = useNavigate();
-
-  const [value, setValue] = useState("");
 
   // 폼 타입 => 작성 || 수정
   const formType = useRecoilValue(FAQFormTypeAtom);
@@ -64,6 +65,39 @@ const FAQFormPage = () => {
     }));
   };
 
+  // const createFAQ = async () => {
+  //   const response = authAPI.post("/faq", {
+  //     title: form.title.value,
+  //     contents: form.contents.value,
+  //   });
+  //   return response.data;
+  // };
+
+  // const { mutate, isLoading, isSuccess, isError } = useMutation({
+  //   mutationFn: async () => await createFAQ(),
+  //   onMutate: (variables) => {
+  //     // variables : {id: 1}
+  //     console.log("onMutate", variables);
+  //   },
+  //   onError: (error, variables, context) => {
+  //     // error
+  //   },
+  //   onSuccess: (data, variables, context) => {
+  //     console.log("success", data, variables, context);
+  //   },
+  //   onSettled: (data, error, variables, context) => {
+  //     // end
+  //   },
+  // });
+
+  const onFinish = (values) => {
+    console.log("Success:", values);
+    navigate(-1);
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+
   return (
     <div>
       <PageHeader
@@ -85,8 +119,13 @@ const FAQFormPage = () => {
           margin: 300,
           marginTop: 80,
         }}
+        // onClick={() => console.log("hello")}
+        // onFinish={() => console.log("hello")}
+        // onFinish={onFinish}
+        // onFinishFailed={onFinishFailed}
       >
         <Form.Item
+          key={"title"}
           label={<FormLabelText text="질문" />}
           name="title"
           style={{ marginBottom: 50 }}
@@ -94,7 +133,6 @@ const FAQFormPage = () => {
           <TextArea
             id={"title"}
             value={form.title.value}
-            defaultValue={form.title.value}
             onChange={onChange}
             placeholder="질문 입력"
             autoSize={{
@@ -110,6 +148,7 @@ const FAQFormPage = () => {
         </Form.Item>
 
         <Form.Item
+          key={"contents"}
           label={<FormLabelText text="답변" />}
           name="contents"
           style={{ marginBottom: 50 }}
@@ -117,7 +156,6 @@ const FAQFormPage = () => {
           <TextArea
             id={"contents"}
             value={form.contents.value}
-            defaultValue={form.contents.value}
             onChange={onChange}
             placeholder="답변 입력"
             autoSize={{
@@ -132,8 +170,8 @@ const FAQFormPage = () => {
           />
         </Form.Item>
 
-        <Form.Item label=" ">
-          <DefaultButton text="게시" />
+        <Form.Item label="">
+          <DefaultButton text="게시" onClick={() => onFinish()} />
         </Form.Item>
       </Form>
     </div>

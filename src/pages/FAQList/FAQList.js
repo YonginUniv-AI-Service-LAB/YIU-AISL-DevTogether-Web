@@ -22,6 +22,7 @@ import {
   EditOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
+import LoadingSpin from "../../components/Spin/LoadingSpin";
 
 const FAQListPage = (props) => {
   // 반응형 화면
@@ -101,7 +102,7 @@ const FAQListPage = (props) => {
     );
   }
 
-  if (isLoading) return <Spin size="large" />;
+  if (isLoading) return <LoadingSpin />;
   if (error) return <div>An error occurred</div>;
 
   return (

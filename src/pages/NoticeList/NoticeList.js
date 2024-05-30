@@ -20,6 +20,7 @@ import { fetchNotice } from "../../api/notice";
 import axios from "axios";
 import dayjs from "dayjs";
 import { defaultAPI } from "../../api";
+import LoadingSpin from "../../components/Spin/LoadingSpin";
 
 const NoticeListPage = () => {
   // 반응형 화면
@@ -113,7 +114,7 @@ const NoticeListPage = () => {
     );
   };
 
-  if (isLoading) return <Spin size="large" />;
+  if (isLoading) return <LoadingSpin />;
   if (error) return <div>An error occurred</div>;
 
   return (
