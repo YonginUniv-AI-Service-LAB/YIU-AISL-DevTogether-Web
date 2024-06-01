@@ -14,7 +14,7 @@ export const authAPI = axios.create({
   headers: {
     "Content-Type": "application/x-www-form-urlencoded",
     // Authorization: sessionStorage.getItem("accessToken"),
-    Authorization: `Bearer `,
+    Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhanVmcmVzaEBnbWFpbC5jb20iLCJpYXQiOjE3MTcyNTg2MDUsImV4cCI6MTcxNzI2MDQwNSwic3ViIjoi64iE65Ok7J6JIiwiZW1haWwiOiJibWgyMDM4QG5hdmVyLmNvbSIsInJvbGUiOiJBRE1JTiIsIm5pY2tuYW1lIjoi64iE65Ok7J6JIn0.lWPcEUBtzABxfKGEFLvycik2Amsc1a4ohEjv9hsLpAc`,
   },
 });
 
