@@ -10,6 +10,7 @@ import { FAQFormDataAtom, FAQFormTypeAtom } from "../../recoil/atoms/faq";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { authAPI } from "../../api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 const FAQFormPage = () => {
   // 반응형 화면
@@ -32,7 +33,7 @@ const FAQFormPage = () => {
   // 데이터
   const [form, setForm] = useState({
     faqId: {
-      value: formType === "update" ? formData.faqId : 0,
+      value: formData.faqId,
       type: "textInput",
       // rules: {
       //   isRequired: true,
@@ -40,7 +41,7 @@ const FAQFormPage = () => {
       valid: false,
     },
     title: {
-      value: formType === "update" ? formData.title : "",
+      value: formData.title,
       type: "textInput",
       rules: {
         isRequired: true,
@@ -48,7 +49,7 @@ const FAQFormPage = () => {
       valid: false,
     },
     contents: {
-      value: formType === "update" ? formData.contents : "",
+      value: formData.contents,
       type: "textInput",
       rules: {
         isRequired: true,
@@ -70,12 +71,21 @@ const FAQFormPage = () => {
 
   // FAQ 생성
   const createData = useMutation({
-    mutationFn: (data) =>
-      authAPI.post("/faq", {
+    mutationFn: async (data) =>
+      await axios({
+        method: "POST",
+        url: "/faq",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer `,
+        },
         data: data,
       }),
+    // authAPI.post("/faq", {
+    //   data: data,
+    // }),
     onSuccess: (data, variables) => {
-      message.success("FAQ 추가 완료");
+      message.success("FAQ 등록 완료");
       // FAQ 목록 리로드
       queryClient.invalidateQueries("faq");
       // FAQ 목록으로 이동
@@ -92,10 +102,19 @@ const FAQFormPage = () => {
 
   // FAQ 수정
   const updateData = useMutation({
-    mutationFn: (data) =>
-      authAPI.put("/faq", {
+    mutationFn: async (data) =>
+      await axios({
+        method: "PUT",
+        url: "/faq",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer`,
+        },
         data: data,
       }),
+    // authAPI.put("/faq", {
+    //   data: data,
+    // }),
     onSuccess: (data, variables) => {
       message.success("FAQ 수정 완료");
       // FAQ 목록 리로드
@@ -186,6 +205,7 @@ const FAQFormPage = () => {
           <TextArea
             id={"title"}
             value={form.title.value}
+            defaultValue={formData.title}
             onChange={onChange}
             placeholder="질문 입력"
             autoSize={{
@@ -209,6 +229,7 @@ const FAQFormPage = () => {
           <TextArea
             id={"contents"}
             value={form.contents.value}
+            defaultValue={formData.contents}
             onChange={onChange}
             placeholder="답변 입력"
             autoSize={{

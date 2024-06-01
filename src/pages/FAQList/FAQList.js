@@ -129,9 +129,10 @@ const FAQListPage = (props) => {
         {manager ? (
           <div style={{ textAlign: "end", marginBottom: 30 }}>
             <HoverEventButton
-              title={"FAQ 작성"}
+              title={"FAQ 등록"}
               onClick={() => {
                 setFormType("create");
+                setFormData({ faqId: 0, title: "", contents: "" });
                 navigate("/faq/form");
               }}
               size={"middle"}
