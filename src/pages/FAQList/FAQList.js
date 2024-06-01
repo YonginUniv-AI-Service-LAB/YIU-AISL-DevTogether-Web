@@ -1,5 +1,5 @@
 import { Button, Collapse, Popconfirm, Spin, theme } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useLocation, useNavigate } from "react-router-dom";
 import { data_faq } from "../../assets/data/faq";
@@ -12,8 +12,8 @@ import Card from "react-bootstrap/Card";
 import styles from "./FAQList.module.css";
 import PageHeaderImage from "../../assets/images/PageHeaderImage/faq.svg";
 import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
-import { defaultAPI } from "../../api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { authAPI, defaultAPI } from "../../api";
 import HoverEventButton from "../../components/Button/HoverEventButton";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { FAQFormDataAtom, FAQFormTypeAtom } from "../../recoil/atoms/faq";
@@ -23,6 +23,7 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import LoadingSpin from "../../components/Spin/LoadingSpin";
+import GetDataErrorView from "../../components/Result/GetDataError";
 
 const FAQListPage = (props) => {
   // 반응형 화면
@@ -31,6 +32,10 @@ const FAQListPage = (props) => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const isNotMobile = useMediaQuery({ minWidth: 768 });
 
+  // 등록된 queryClient를 가져옴
+  const queryClient = useQueryClient();
+
+  // FAQ 조회
   const {
     data: faq,
     isLoading,
@@ -41,6 +46,33 @@ const FAQListPage = (props) => {
       const res = await defaultAPI.get("/faq");
       return res.data;
     },
+  });
+
+  // FAQ 삭제
+  const deleteData = useMutation({
+    mutationFn: (data) =>
+      authAPI.delete("/faq", {
+        data: {
+          faqId: data,
+        },
+      }),
+    onSuccess: (data, variables) => {
+      message.success("FAQ 삭제 완료");
+      // FAQ 목록 리로드
+      queryClient.invalidateQueries("faq");
+
+      // FAQ 목록 중 삭제한 faqId만 삭제하는 로직 => 현재 보류...
+      // queryClient.setQueryData("faq", (oldData) => {
+      //   // oldData가 배열인지 확인하고, 맞다면 filter 메소드를 사용
+      //   return oldData ? oldData.filter((faq) => faq.faqId !== variables) : [];
+      // });
+    },
+    onError: (e) => {
+      message.error("잠시 후에 다시 시도해주세요");
+    },
+    // onSettled: () => {
+    //   console.log("결과에 관계 없이 무언가 실행됨");
+    // },
   });
 
   // 임시
@@ -54,26 +86,11 @@ const FAQListPage = (props) => {
   // 폼 타입 => 작성
   const setFormType = useSetRecoilState(FAQFormTypeAtom);
 
-  const updateConfirm = (e) => {
-    // console.log("FAQ 폼데이터", e);
-    // message.success("Click on Yes");
+  // FAQ 수정 페이지로 이동
+  const updateConfirm = (data) => {
     setFormType("update");
-    setFormData(e);
+    setFormData(data);
     navigate("/faq/form");
-  };
-  const updateCancel = (e) => {
-    console.log(e);
-    // message.error("Click on No");
-  };
-
-  const deleteConfirm = (e) => {
-    console.log(e);
-    message.success("FAQ 삭제 완료");
-    // navigate(-1);
-  };
-  const deleteCancel = (e) => {
-    console.log(e);
-    // message.error("Click on No");
   };
 
   // 폼 데이터 세팅
@@ -103,7 +120,7 @@ const FAQListPage = (props) => {
   }
 
   if (isLoading) return <LoadingSpin />;
-  if (error) return <div>An error occurred</div>;
+  if (error) return <GetDataErrorView />;
 
   return (
     <div>
@@ -158,7 +175,6 @@ const FAQListPage = (props) => {
                         title="FAQ 수정"
                         description="FAQ를 수정하시겠습니까?"
                         onConfirm={() => updateConfirm(data)}
-                        onCancel={updateCancel}
                         okText="수정"
                         cancelText="취소"
                       >
@@ -167,8 +183,7 @@ const FAQListPage = (props) => {
                       <Popconfirm
                         title="공지사항 삭제"
                         description="FAQ를 삭제하시겠습니까?"
-                        onConfirm={deleteConfirm}
-                        onCancel={deleteCancel}
+                        onConfirm={() => deleteData.mutate(data.faqId)}
                         okText="삭제"
                         cancelText="취소"
                         icon={
