@@ -10,10 +10,11 @@ export const defaultAPI = axios.create({
 
 // AccessToken이 필요한 API
 export const authAPI = axios.create({
-  baseURL: process.env.REACT_APP_API_URL, 
+  baseURL: process.env.REACT_APP_API_URL,
   headers: {
     "Content-Type": "application/x-www-form-urlencoded",
-    Authorization: sessionStorage.getItem("accessToken"),
+    // Authorization: sessionStorage.getItem("accessToken"),
+    Authorization: `Bearer `,
   },
 });
 
