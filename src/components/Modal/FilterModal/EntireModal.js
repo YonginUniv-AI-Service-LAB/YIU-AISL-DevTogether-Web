@@ -4,12 +4,11 @@ import style from './Modal.module.css';
 import RegisterSelect from '../../../components/Select/RegisterSelect';
 import { data_subject } from '../../../assets/data/subject';
 import { data_location } from '../../../assets/data/location';
-import { selectedgenderStateAtom, selectedsubjectStateAtom, selectedlocationStateAtom, selectedminageStateAtom, selectedmaxageStateAtom, 
-    selectedminfeeStateAtom, selectedmaxfeeStateAtom, selectedmethodStateAtom } from '../../../recoil/atoms/matchingAtom'; 
+import { selectedgenderStateAtom, selectedsubjectStateAtom, selectedlocationStateAtom, selectedminageStateAtom, selectedmaxageStateAtom, selectedminfeeStateAtom, selectedmaxfeeStateAtom, selectedmethodStateAtom } from '../../../recoil/atoms/matchingAtom'; 
 import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
 
-
 const EntireModal = ({ isOpen, handleCancel, closeModal, applyFilter }) => {
+  const [form] = Form.useForm(); // Form 인스턴스 생성
   const [Subjects, setSubjects] = useRecoilState(selectedsubjectStateAtom); // 선택된 과목을 관리하는 상태
   const [Locations, setLocations] = useRecoilState(selectedlocationStateAtom);
   const [Gender, setGender] = useRecoilState(selectedgenderStateAtom);
@@ -80,6 +79,7 @@ const EntireModal = ({ isOpen, handleCancel, closeModal, applyFilter }) => {
     setMinAmount('');
     setMaxAmount('');
     applyFilter({}); // 모든 필터를 초기화하여 모든 프로필을 보여줌
+    form.resetFields(); // 폼 필드를 초기화
   };
 
   return (
@@ -98,7 +98,7 @@ const EntireModal = ({ isOpen, handleCancel, closeModal, applyFilter }) => {
     >
       <div>
         <div style={{marginTop:'50px'}}>
-          <Form name="register_main" initialValues={{ remember: true }}>
+          <Form form={form} name="register_main" initialValues={{ remember: true }}>
             <Form.Item name="subject">
               <div>과목</div>
               <RegisterSelect

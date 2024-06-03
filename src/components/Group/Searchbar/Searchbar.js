@@ -34,7 +34,7 @@ const Searchbar = ({ defaultSearchText, onSearch }) => {
 
     return (
         <Input
-            style={{ width: !isMobile ? '320px': '250px', paddingTop: !isMobile ? '20px':'10px', paddingBottom: !isMobile ? '20px':'10px', fontWeight: 800 }}
+            style={{ width: !isMobile ? '300px': '250px', paddingTop: !isMobile ? '20px':'10px', paddingBottom: !isMobile ? '20px':'10px', fontWeight: 800 }}
             className={style.body}
             ref={inputRef}
             size="large"

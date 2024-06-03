@@ -1,3 +1,19 @@
+.nomal {
+  display: flex;
+  background-color: #68568E;
+  color: #ffffff;
+  border-radius: 8px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.nomal:hover {
+  background-color: #A499BB;
+  color: #ffffff;
+}
+
+
 .filter {
     display: flex;
     background-color: #68568E;
@@ -12,6 +28,7 @@
     cursor: pointer;
     font-size: 15px;
     font-weight: 600;
+    margin-left: 10px;
   }
   
   .filter:hover {
@@ -101,4 +118,26 @@
 .navigate:hover {
   background-color: #eeeeee;
   color: #9f5d83;
+}
+
+.list {
+  display: flex;
+  background-color: #68568E;
+  color: #ffffff;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 30px;
+  padding-left: 30px;
+  border-radius: 15px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  height: 50px;
+}
+
+.list:hover {
+  background-color: #A499BB;
+  color: #ffffff;
 }

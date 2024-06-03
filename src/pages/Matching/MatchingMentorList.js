@@ -43,9 +43,28 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isFilterApplied, setIsFilterApplied] = useState(false);
     const [isFilterTagExpanded, setIsFilterTagExpanded] = useState(false);
+    const [noProfilesFound, setNoProfilesFound] = useState(false); // 필터링된 프로필이 없는지 여부를 추적하는 상태 변수 추가
+
+    useEffect(() => {
+        // 페이지 이동 시 상태 초기화
+        setProfiles(data_mentor);
+        setSearchText("");
+        setSelectedSubjects([]);
+        setSelectedLocations([]);
+        setSelectedGenders([]);
+        setSelectedMinAges("");
+        setSelectedMaxAges("");
+        setSelectedMethods([]);
+        setSelectedMinFees("");
+        setSelectedMaxFees("");
+        setIsSearchApplied(false);
+        setIsModalOpen(false);
+        setIsFilterApplied(false);
+        setNoProfilesFound(false);
+    }, []);
 
     const toggleFilterTag = () => {
-        setIsFilterTagExpanded(!isFilterTagExpanded);
+        setIsFilterApplied(!isFilterApplied);
     };
 
     const showModal = () => {
@@ -75,11 +94,12 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
             (selectedMaxFees === undefined || selectedMaxFees === "" || parseInt(profile.fee) <= parseInt(selectedMaxFees.replace(/,/g, '')));
             const searchFilter = !isSearchApplied || profile.name.includes(searchText);
             
-            return subjectFilter && locationFilter && genderFilter && ageFilter && methodFilter && feeFilter  && searchFilter;
+            return subjectFilter && locationFilter && genderFilter && ageFilter && methodFilter && feeFilter && searchFilter;
         });
 
         setProfiles(filteredProfiles);
-        setIsFilterApplied(true)
+        setIsFilterApplied(true);
+        setNoProfilesFound(filteredProfiles.length === 0); // 필터링된 프로필이 없는지 여부를 업데이트
     };
 
     const handleSearch = (searchValue) => {
@@ -100,7 +120,7 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
         }
     };
 
-    const profilesPerPage = 30;
+    const profilesPerPage = 8;
     const indexOfLastProfile = currentPage * profilesPerPage;
     const indexOfFirstProfile = indexOfLastProfile - profilesPerPage;
     const currentProfiles = profiles.slice(indexOfFirstProfile, indexOfFirstProfile + profilesPerPage);
@@ -127,21 +147,29 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
                 <Body
                     sentence1="보다 쉬운 코딩 과외 매칭을 위해"
                     sentence2="DevTogether에서 더 나은 매칭 선택"
-                    title="학생 찾기/ 선생님 찾기"
+                    title="선생님 찾기"
                     imageSrc='/matching2.png' // 이미지 경로를 전달합니다.
                 />
             </div>}
-            {isMobile && 
+            {isMobile && <div className={style.background2}>
+                <div style={{paddingBottom:'100px'}}></div>
+                <Body
+                    sentence1="보다 쉬운 코딩 과외 매칭을 위해"
+                    sentence2="DevTogether에서 더 나은 매칭 선택"
+                    title="선생님 찾기"
+                />
+            </div>}
+            {/* {isMobile && 
             <PageHeader
-            title='학생 찾기'
+            title='선생님 찾기'
             subtitle="DevTogether에서 더 나은 매칭 선택"
-            />}
+            />} */}
             
             <div style={{
                 marginLeft: isMobile ? '5%' : isTablet ? 30 : '15%',
                 marginRight: isMobile ? '5%' : isTablet ? 30 : '15%',
             }}>
-                {!isMobile && <div className={style.line}></div>}
+                <div className={style.line}></div>
                 <div className={style.color}>
                     <div className={style.background}>
                         {!isMobile && 
@@ -167,6 +195,17 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
                                 </div>
                             </div>
                             }
+                             {/* {!isMobile &&
+                            <div>
+                                <div className={style.background_head}>
+                                    <div className={style.head} style={{fontSize: isDesktopOrLaptop ? '25px' : '25px' }}>선생님 목록</div>
+                                </div>
+                                <div className={style.body} style={{ marginTop: '20px', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <FilterButton name="필터 적용" onClick={showModal} />
+                                    <Searchbar defaultSearchText="닉네임으로 검색" onSearch={handleSearch} />
+                                </div>
+                            </div>
+                            } */}
                             {isMobile &&
                             <div>
                                 <div className={style.background_head}>
@@ -182,7 +221,15 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
                                         ]}
                                         onChange={(newValue) => handleCategoryClick(newValue)}
                                     />
-                                    <FilterButton name="필터 적용" onClick={showModal} />
+                                    <div style={{display:'flex'}}>
+                                        <FilterButton name="필터 적용" onClick={showModal} />
+                                        { !isFilterApplied && (
+                                            <FilterButton name="필터 보이기" onClick={toggleFilterTag} />
+                                        )} 
+                                        { isFilterApplied && (
+                                            <FilterButton name="필터 숨기기" onClick={toggleFilterTag} />
+                                        )} 
+                                    </div>
                                 </div>
                                 { isFilterApplied && (
                                         <div className={style.tagbg}>
@@ -193,7 +240,7 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
                                 
                             </div>
                             }
-                            {/* {isMobile &&
+                             {/* {isMobile &&
                             <div>
                                 <div className={style.background_head}>
                                     <div className={style.head} style={{fontSize: isDesktopOrLaptop ? '25px' : '25px', marginBottom: '10px' }}>학생 목록</div>
@@ -218,20 +265,29 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
                             } */}
                             <div className={style.outer}>
                                 <div className={style.inner}>
-                                    {currentProfiles.map(profile => (
-                                        <Profile
-                                            key={profile.id}
-                                            name={profile.name}
-                                            subject={profile.subject.join(", ")}
-                                            gender={profile.gender === 0 ? "남자" : "여자"}
-                                            age={profile.age}
-                                            location={profile.location1}
-                                            fee={profile.fee}
-                                            method={profile.method === 0 ? "대면" : profile.method === 1 ? "비대면" : "블렌딩"}
-                                            imagepath={profile.img}
-                                            imagetext="프로필 이미지"
-                                        />
-                                    ))}
+                                    {noProfilesFound ? ( // 필터링된 프로필이 없는 경우 메시지 표시
+                                        <div className={style.noProfilesMessage}>
+                                            해당하는 프로필이 존재하지 않습니다.
+                                        </div>
+                                    ) : (
+                                        currentProfiles.map(profile => (
+                                            <Profile
+                                                key={profile.nickname}
+                                                id={profile.id}
+                                                name={profile.name}
+                                                nickname={profile.nickname}
+                                                subject={profile.subject.join(", ")}
+                                                gender={profile.gender === 0 ? "남자" : "여자"}
+                                                age={profile.age}
+                                                role={profile.role}
+                                                location={profile.location1}
+                                                fee={profile.fee}
+                                                method={profile.method === 0 ? "대면" : profile.method === 1 ? "비대면" : "블렌딩"}
+                                                imagepath={profile.img}
+                                                imagetext="프로필 이미지"
+                                            />
+                                        ))
+                                    )}
                                 </div>
                             </div>
                             <div className={style.pagination}>

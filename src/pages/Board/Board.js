@@ -151,7 +151,7 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
 
   // 글 작성 페이지로 이동하는 함수
   const handleWritePost = () => {
-    navigate("/board/form");
+    navigate("/user");
   };
 
   const maxCombinedLength = isMobile ? 20 : isTablet ? 50 : 80; // 화면 크기에 따른 최대 글자 수 설정
@@ -159,18 +159,31 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
 
   return (
     <div>
-      <PageHeader
-      title='커뮤니티'
-      subtitle="나와 비슷한 비전을 가진 사람들과의 대화"
-      image={boardimg}
-      />
+      {!isMobile && <div className={style.background2}>
+                <div style={{paddingBottom:'200px'}}></div>
+                <Body
+                    sentence1="나와 같은 꿈을 가진 사람들과의 대화"
+                    sentence2="일상적인 얘기부터 필요한 정보까지"
+                    title="커뮤니티"
+                    imageSrc={boardimg} // 이미지 경로를 전달합니다.
+                />
+            </div>}
+            {isMobile && <div className={style.background2}>
+                <div style={{paddingBottom:'100px'}}></div>
+                <Body
+                    sentence1="나와 같은 꿈을 가진 사람들과의 대화"
+                    sentence2="일상적인 얘기부터 필요한 정보까지"
+                    title="커뮤니티"
+                />
+            </div>}
       <div style={{
       // marginTop: isMobile ? 50 : 100,
       // marginBottom: isMobile ? 50 : 200,
-      marginLeft: isMobile ? '5%' : isTablet ? 30 : '10%',
-      marginRight: isMobile ? '5%' : isTablet ? 20 : '10%',
+      marginLeft: isMobile ? '5%' : isTablet ? 30 : '12%',
+      marginRight: isMobile ? '5%' : isTablet ? 20 : '12%',
     }}>
       <div>
+        <div className={style.line}></div>
         <div className={style.color} >
           <div style={{display:'flex'}}>
            {!isMobile && (
@@ -201,7 +214,7 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
                     </div>
                     )}
                     {isMobile && (
-                      <div style={{display:'flex'}}>
+                      <div style={{display:'flex', alignItems:'center'}}>
                         <NavigateSelect
                          placeholder="게시판"
                          options={[
@@ -250,6 +263,8 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
                     introduction={post.introduction}
                     scraped={post.scraped} // 스크랩 상태를 props로 전달
                     onClick={() => handlePostClick(post.id)} // 클릭 시 상세 페이지로 이동하는 함수 전달
+                    showBookmark={true}
+                    showMenu={false}
                   />
                 ))}
               </div>

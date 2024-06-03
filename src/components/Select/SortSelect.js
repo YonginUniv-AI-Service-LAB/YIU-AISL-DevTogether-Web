@@ -31,7 +31,7 @@ const SortSelect = (props) => {
       placeholder={placeholder}
       value={selectedTags}
       onChange={handleSelectChange}
-      style={{ minWidth: '20px', marginTop:'20px'}}
+      style={{ minWidth: '20px', marginLeft:'5px'}}
       tagRender={({ label, closable, onClose }) => (
         <Tag closable={closable} onClose={onClose}>
           {label}

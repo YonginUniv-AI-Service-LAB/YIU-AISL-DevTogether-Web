@@ -72,7 +72,8 @@
 
 .page {
     margin-bottom: 30px;
-    padding-left: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
     cursor: pointer; 
 }
 
@@ -82,7 +83,8 @@
 
   .outer {
     display: flex;
-    align-items: center;
+    /* align-items: center; */
+    justify-content: space-between;
   }
   
   .inner {
@@ -91,3 +93,11 @@
     flex-grow: 1;
     justify-content: center;
   }
+
+.noProfilesMessage {
+    margin-top: 50px;
+}
+
+.tagbg {
+    margin-top: 10px;
+}
