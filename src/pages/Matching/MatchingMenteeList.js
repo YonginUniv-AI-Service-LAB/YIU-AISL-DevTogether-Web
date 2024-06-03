@@ -80,6 +80,7 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
     };
 
     const applyFilters = () => {
+        
         const filteredProfiles = data_mentee.filter(profile => {
             const subjectFilter = selectedSubjects.length === 0 || selectedSubjects.every(subject => profile.subject.includes(subject));
             const locationFilter = selectedLocations.length === 0 || selectedLocations.includes(profile.location1);
@@ -271,11 +272,14 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
                                     ) : (
                                         currentProfiles.map(profile => (
                                             <Profile
-                                                key={profile.id}
+                                                key={profile.nickname}
                                                 name={profile.name}
+                                                id={profile.id}
+                                                nickname={profile.nickname}
                                                 subject={profile.subject.join(", ")}
                                                 gender={profile.gender === 0 ? "남자" : "여자"}
                                                 age={profile.age}
+                                                role={profile.role}
                                                 location={profile.location1}
                                                 fee={profile.fee}
                                                 method={profile.method === 0 ? "대면" : profile.method === 1 ? "비대면" : "블렌딩"}

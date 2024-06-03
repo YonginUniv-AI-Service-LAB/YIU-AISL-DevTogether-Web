@@ -37,3 +37,91 @@
     height: 100%; /* 이미지의 높이를 100%로 설정합니다. */
     object-fit: cover; /* 이미지를 원형 영역에 맞게 조절합니다. */
 }
+
+
+.managercircle{
+    position: absolute;
+    top: -50px; /* 원형 영역을 body4 위쪽으로 이동 */
+    left: 50%; /* 가운데 정렬 */
+    width: 100px; /* 원의 지름 */
+    height: 100px; /* 원의 지름 */
+    background-color: #ccc; /* 배경색 */
+    border-radius: 50%; /* 원형으로 만들기 */
+    transform: translateX(-50%); /* 가운데 정렬을 위한 이동 */
+    overflow: hidden; /* 넘치는 부분을 잘라냅니다. */
+}
+
+.managercircle img {
+    width: 100%; /* 이미지의 너비를 100%로 설정합니다. */
+    height: 100%; /* 이미지의 높이를 100%로 설정합니다. */
+    object-fit: cover; /* 이미지를 원형 영역에 맞게 조절합니다. */
+}
+
+.process {
+    display: flex;
+    justify-content: center;
+
+   
+}
+
+.managebg{
+    background-color:#f0f0f0;
+    margin-top: 80px;
+    /* padding-top: 110px;
+    padding-bottom: 110px; */
+    /* padding-left: 100px;
+    padding-right: 100px; */
+    margin-bottom: 10px;
+    border-radius: 30px;
+    position: relative;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.ing {
+    background-color:#f0f0f0;
+    border-radius: 15px;
+    margin-right: 5px;
+    margin-bottom: 30px;
+    font-weight: 400;
+    padding-top: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 10px; 
+}
+
+.end {
+    background-color:#68568E;
+    color: #ffffff;
+    border-radius: 15px;
+    margin-left: 5px;
+    margin-bottom: 30px;
+    font-weight: 400;
+    padding-top: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 10px; 
+    cursor: pointer;
+}
+
+.end:hover {
+    background-color:#A499BB;
+}
+.status-apply {
+    background-color: rgb(101, 103, 233);
+    color: #ffffff;
+  }
+  
+  .status-progress {
+    background-color: rgb(33, 228, 33);
+    color: #ffffff;
+  }
+  
+  .status-end {
+    background-color: rgb(212, 33, 33);
+    color: #ffffff;
+  }
+
+  .ribbon {
+    left: 180px; /* 필요한 만큼의 값으로 조정 */
+  }

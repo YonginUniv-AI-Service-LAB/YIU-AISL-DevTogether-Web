@@ -3,19 +3,16 @@ import style from "./Comment.module.css";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import { IoMdMore } from "react-icons/io";
 import { Dropdown, Menu } from 'antd';
+import { commentLikesState, commentLikeState } from '../../../recoil/atoms/comment';
+import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 
 const Comment = (props) => {
-    const [liked, setLiked] = useState(false);
-    const [likes, setLikes] = useState(props.likes);
+    const [liked, setLiked] = useRecoilState(commentLikeState(props.id));
+    const [likes, setLikes] = useRecoilState(commentLikesState(props.id));
 
     const handleLike = () => {
-        if (!liked) {
-            setLikes(likes + 1);
-            setLiked(true);
-        } else {
-            setLikes(likes - 1);
-            setLiked(false);
-        }
+        setLikes(liked ? likes - 1 : likes + 1);
+        setLiked(!liked);
     };
 
     const handleEdit = () => {

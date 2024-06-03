@@ -102,6 +102,7 @@ function App(props) {
           />
           <Route exact path="/board/market" element={<MarketBoard />} />
           <Route exact path="/board/form" element={<BoardForm />} />
+          <Route exact path="/board/form/:id" element={<BoardForm />} />
           <Route exact path="/board/detail/:id" element={<BoardDetail />} />
           <Route exact path="/board/post/:id" element={<PostDetailPage />} />
           <Route exact path="/board/post/form" element={<PostFormPage />} />

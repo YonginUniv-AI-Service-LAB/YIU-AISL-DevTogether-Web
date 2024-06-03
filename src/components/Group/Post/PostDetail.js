@@ -1,7 +1,9 @@
 import style from "./Post.module.css";
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 import { posterScrapState } from '../../../recoil/atoms/scrap';
-import React, { useState } from "react";
+import { postLikesState, postLikeState } from '../../../recoil/atoms/likes';
+import { postCommentsState, postViewsState, postViewState } from '../../../recoil/atoms/post'; 
+import React, { useState, useEffect } from "react";
 import { CiRead } from "react-icons/ci";
 import { GoComment } from "react-icons/go";
 import { FaCommentAlt } from "react-icons/fa";
@@ -16,29 +18,30 @@ import { Dropdown, Menu, Button, message } from 'antd';
 import MenuDropdown from "../../Dropdown/MenuDropdown";
 
 const PostDetail = (post) => {
-  const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(post.likes);
-  const [scraped, setScraped] = useRecoilState(posterScrapState); // 수정 필요
+  const [liked, setLiked] = useRecoilState(postLikeState(post.id));
+  const [likes, setLikes] = useRecoilState(postLikesState(post.id));
+  const [views, setViews] = useRecoilState(postViewsState(post.id));
+  const view = useRecoilValue(postViewState(post.id));
+  const setView = useSetRecoilState(postViewState(post.id));
+  const [comments, setComments] = useRecoilState(postCommentsState(post.id));
+  const scraped = useRecoilValue(posterScrapState(post.id));
+  const setScraped = useSetRecoilState(posterScrapState(post.id));
+
+  useEffect(() => {
+    if (view === false) {
+      setView(true);
+      setViews(views + 1);
+    }
+  }, [view, setView, views, setViews]);
 
   const toggleLike = () => {
     setLiked(!liked);
     setLikes(liked ? likes - 1 : likes + 1);
   };
 
-  const toggleScrap = (postId) => {
-    console.log("toggleScrap 함수가 호출되었습니다. postId:", postId);
-    if (!postId) {
-      console.error("Invalid post id:", postId);
-      return;
-    }
-  
-    // 스크랩 상태 토글
-    setScraped(prevScraped => {
-      return {
-        ...prevScraped,
-        [postId]: !prevScraped[postId]
-      };
-    });
+  const toggleScrap = () => {
+    // 스크랩 상태를 반전시킴
+    setScraped(!scraped);
   };
 
   const handleShare = () => {
@@ -65,7 +68,7 @@ const PostDetail = (post) => {
       <div className={style.head}>
         <div>{post.title}</div>
         <div className={style.bookmark}>
-          {scraped ? <FaBookmark style={{ color: '68568E' }} /> : <FaRegBookmark />}
+          {scraped && <FaBookmark style={{ color: '68568E' }} />}
         </div>
       </div>
       <div className={style.information}>
@@ -96,11 +99,11 @@ const PostDetail = (post) => {
         <img className={style.contnentsimage} src={post.img} alt='게시물 이미지' style={{ marginTop: "25px" }} />
       </div>
       <div className={`${style.horizon} ${style.record}`}>
-        <FaEye style={{ color: 'gray' }} /> <span style={{ marginLeft: "10px" }}>{post.views}</span>
+        <FaEye style={{ color: 'gray' }} /> <span style={{ marginLeft: "10px" }}>{views}</span>
         <span style={{ opacity: '0.3', marginLeft: "10px" }}> | </span>
         <FaHeart style={{ marginLeft: "10px", color: 'gray' }} />
         <span style={{ marginLeft: "10px" }}>{likes}</span>
-        <span style={{ opacity: '0.3', marginLeft: "10px" }}> | </span> <FaCommentAlt style={{ marginLeft: "10px", color: 'gray' }} /> <span style={{ marginLeft: "10px" }}>{post.comment}</span>
+        <span style={{ opacity: '0.3', marginLeft: "10px" }}> | </span> <FaCommentAlt style={{ marginLeft: "10px", color: 'gray' }} /> <span style={{ marginLeft: "10px" }}>{comments}</span>
       </div>
       <div className={style.reaction}>
         <div className={style.like} onClick={toggleLike}>

@@ -3,6 +3,7 @@ import { useMediaQuery } from "react-responsive";
 import { useNavigate, useParams } from "react-router-dom";
 import PageHeader from '../../components/Group/PageHeader/PageHeader';
 import boardimg from '../../assets/images/PageHeaderImage/board.svg';
+import Body from "../../components/Group/Body/Body";
 import { Input, Button } from 'antd';
 import 'react-quill/dist/quill.snow.css';
 import style from "../Board/Board.module.css";
@@ -125,21 +126,34 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
 
   return (
     <div>
-      <PageHeader
-        title='커뮤니티'
-        subtitle="나와 비슷한 비전을 가진 사람들과의 대화"
-        image={boardimg}
-      />
+      {!isMobile && <div className={style.background2}>
+                <div style={{paddingBottom:'200px'}}></div>
+                <Body
+                    sentence1="나와 같은 꿈을 가진 사람들과의 대화"
+                    sentence2="일상적인 얘기부터 필요한 정보까지"
+                    title="커뮤니티"
+                    imageSrc={boardimg} // 이미지 경로를 전달합니다.
+                />
+            </div>}
+            {isMobile && <div className={style.background2}>
+                <div style={{paddingBottom:'100px'}}></div>
+                <Body
+                    sentence1="나와 같은 꿈을 가진 사람들과의 대화"
+                    sentence2="일상적인 얘기부터 필요한 정보까지"
+                    title="커뮤니티"
+                />
+            </div>}
       <div style={{
-        marginLeft: isMobile ? '5%' : isTablet ? 30 : '10%',
-        marginRight: isMobile ? '5%' : isTablet ? 30 : '10%',
+        marginLeft: isMobile ? '5%' : isTablet ? 30 : '12%',
+        marginRight: isMobile ? '5%' : isTablet ? 30 : '12%',
       }}>
+        <div className={style.line}></div>
         <div className={style.color}>
           <div className={style.background}>
             <div>
               <div className={style.fix_left}></div>
             </div>
-            <div style={{ flex: '1', marginTop: '40px' }}>
+            <div style={{ flex: '1', marginTop: '20px' }}>
               <div>
                 <div className={style.fix_head}>
                   <div className={!isMobile ? style.flex : null}>
