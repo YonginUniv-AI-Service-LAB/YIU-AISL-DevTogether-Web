@@ -19,7 +19,7 @@ import dayjs from "dayjs";
 import { useQuery } from "@tanstack/react-query";
 import { defaultAPI } from "../../api";
 import LoadingSpin from "../../components/Spin/LoadingSpin";
-import GetDataErrorView from '../../components/Result/GetDataError';
+import GetDataErrorView from "../../components/Result/GetDataError";
 
 const NoticeDetailPage = (props) => {
   const {
@@ -75,7 +75,7 @@ const NoticeDetailPage = (props) => {
   };
 
   if (isLoading) return <LoadingSpin />;
-  if (error) return <GetDataErrorView/>;
+  if (error) return <GetDataErrorView />;
 
   return (
     <div>
@@ -159,7 +159,7 @@ const NoticeDetailPage = (props) => {
 
         {/* 내용 */}
         <p style={{ fontWeight: "600", whiteSpace: "pre-line", marginTop: 30 }}>
-          {location.state.data.contents}
+          {notice.contents}
         </p>
       </div>
     </div>
