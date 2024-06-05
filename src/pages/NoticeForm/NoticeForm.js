@@ -16,6 +16,8 @@ import {
   NoticeFormDataAtom,
   NoticeFormTypeAtom,
 } from "../../recoil/atoms/notice";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 const { Dragger } = Upload;
 // const getBase64 = (file) =>
@@ -65,6 +67,82 @@ const NoticeFormPage = (props) => {
   const formType = useRecoilValue(NoticeFormTypeAtom);
   // 폼 데이터 세팅
   const [formData, setFormData] = useRecoilState(NoticeFormDataAtom);
+
+  // 등록된 queryClient를 가져옴
+  const queryClient = useQueryClient();
+
+  // 공지사항 생성
+  const createData = useMutation({
+    mutationFn: async (data) => {
+      const formData = new FormData();
+      formData.append("title", data.title.value);
+      formData.append("contents", data.contents.value);
+      // formData.append("img", img);
+
+      await axios
+        .post(process.env.REACT_APP_CREATE_NOTICE, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          },
+          transformRequest: [
+            function () {
+              return formData;
+            },
+          ],
+        })
+        .then((response) => {
+          return true;
+        })
+        .catch((err) => {
+          return false;
+        });
+    },
+    onSuccess: (data, variables) => {
+      message.success("공지사항 등록 완료");
+      // 공지사항 목록 리로드
+      queryClient.invalidateQueries("공지사항");
+      // 공지사항 목록으로 이동
+      navigate(-1);
+    },
+    onError: (e) => {
+      console.log("실패: ", e);
+      message.error("잠시 후에 다시 시도해주세요");
+    },
+    // onSettled: () => {
+    //   console.log("결과에 관계 없이 무언가 실행됨");
+    // },
+  });
+
+  // 공지사항 수정
+  const updateData = useMutation({
+    mutationFn: async (data) =>
+      await axios({
+        method: "PUT",
+        url: "/공지사항",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer`,
+        },
+        data: data,
+      }),
+    // authAPI.put("/공지사항", {
+    //   data: data,
+    // }),
+    onSuccess: (data, variables) => {
+      message.success("공지사항 수정 완료");
+      // 공지사항 목록 리로드
+      queryClient.invalidateQueries("공지사항");
+      // 공지사항 목록으로 이동
+      navigate(-1);
+    },
+    onError: (e) => {
+      message.error("잠시 후에 다시 시도해주세요");
+    },
+    // onSettled: () => {
+    //   console.log("결과에 관계 없이 무언가 실행됨");
+    // },
+  });
 
   // 데이터
   const [form, setForm] = useState({
