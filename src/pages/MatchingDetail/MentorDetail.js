@@ -10,6 +10,8 @@ import Intro from './intro';
 import FilterButton from '../../components/Button/FilterButton';
 import { Dropdown, Menu, Button, message } from 'antd';
 import { IoMdMore } from "react-icons/io";
+import NavigateSelect from '../../components/Select/NavigateSelect';
+import ListButton from '../../components/Button/ListButton';
 
 const MenteeDetailPage = () => {
 
@@ -65,20 +67,32 @@ const handleListback = () => {
         />
       </div>
       <div style={{
-                marginLeft: isMobile ? '5%' : isTablet ? 30 : '15%',
-                marginRight: isMobile ? '5%' : isTablet ? 30 : '15%',
+                marginLeft: isMobile ? '5%' : isTablet ? 30 : '12%',
+                marginRight: isMobile ? '5%' : isTablet ? 30 : '12%',
             }}>
         <div className={style.line}></div>
         <div className={style.color}>
           <div className={style.background}>
-            <div style={{marginTop:'30px'}}>
+          {!isMobile &&  <div style={{marginTop:'30px'}}>
               <div className={style.fix_left}>
-                <FilterButton name="목록으로" style={{Height:'20px'}} onClick={handleListback}/>
+                <ListButton name="목록으로" onClick={handleListback}/>
                 <Sidebar titles={["학생 찾기", "선생님 찾기"]} onCategoryClick={handleCategoryClick} />
               </div>
-            </div>
-            <div style={{ flex: '1',marginTop:'10px', marginLeft: '40px' }}>
+            </div> }
+            <div style={{ flex: '1',marginTop:'10px', marginLeft: '10px' }}>
               <div>
+                {isMobile && ( <div style={{display:'flex', justifyContent:'space-between', alignContent:'center', alignItems:'center' }}>
+                  <NavigateSelect
+                    placeholder="목록"
+                    style={{marginTop:'10px'}}
+                    options={[
+                        { value: '학생 찾기', label: '학생' },
+                        { value: '선생님 찾기', label: '선생님' },
+                            ]}
+                    onChange={(newValue) => handleCategoryClick(newValue)}
+                  />
+                  <FilterButton name="목록으로"/>
+                </div>)}
                 <Intro profile={profile} />
               </div>
             </div>

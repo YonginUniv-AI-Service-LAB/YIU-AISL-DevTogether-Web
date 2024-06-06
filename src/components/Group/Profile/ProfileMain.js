@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import style from "./Profile.module.css";
-import MoreButton from "../../Button/MoreButton";
-import ScrapButton from "../../Button/ScrapButton";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 
-const Profile = (props) => {
+const ProfileMain = (props) => {
   // 반응형 화면
+  const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
+  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
   const navigate = useNavigate();
@@ -58,11 +58,7 @@ const Profile = (props) => {
       <div className={`${style.circle} ${style.circleImage}`}>
         <img src={props.imagepath} alt={props.imagetext} />
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginRight: '10px', marginLeft: '10px', marginTop: '25px' }}>
-        <ScrapButton nickname={props.nickname} />
-        <MoreButton onClick={handleMoreButtonClick} />
-      </div>
-      <div className={style.information}>
+      <div className={style.information} style={{ marginTop: '60px' }}>
         <div style={{ fontWeight: '900' }}>{props.nickname}</div>
         <div className={style.subject} style={{ fontSize: isMobile ? '12px' : '15px' }}>{subjectText}</div>
         <div style={{ display: 'flex' }}>
@@ -76,4 +72,4 @@ const Profile = (props) => {
   );
 };
 
-export default Profile;
+export default ProfileMain;

@@ -59,7 +59,7 @@
     background-color: #68568E;
     min-width: 400px;
     min-height: 50px;
-    margin-top: 50px;
+    margin-top: 40px;
 }
 
 .form_button:hover {
@@ -71,16 +71,17 @@
 .input {
     border: none;
     outline: none;
-    border-radius: 0%;
+    border-radius: 0;
     max-height: 30px;
-    border-bottom: 0.2px solid #e2e2e2;
-    border-left-width:0; 
-    border-right-width:0; 
-    border-top-width:0;
+    border-bottom: 1px solid #e2e2e2;
+    box-shadow: none;
+    margin-bottom: 10px;
 }
 
-input:focus {
+.input:focus {
     outline: none;
+    border-bottom: 1px solid #68568E; /* 포커스 시 아래 보더 색상 변경 */
+    box-shadow: none; /* 포커스 시 상하좌우 보더 없애기 */
 }
 
 .link {
@@ -162,4 +163,19 @@ input:focus {
     padding-right: 20px;
     font-size: 10px;
     color: #ffffff;
+}
+
+.horizon {
+    display: flex;
+}
+
+.complete {
+    margin-top: 5px;
+    color: blue;
+    display: flex;
+}
+
+.error {
+    margin-top: 5px;
+    color: red;
 }

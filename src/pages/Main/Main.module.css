@@ -1,3 +1,59 @@
-.background {
-    background: linear-gradient(to right bottom, #68568e, #9f5d83);
+/* Main.module.css */
+
+.banner {
+  display: flex;
+  background: linear-gradient(to right bottom, #68568e, #c99ab5);
+  justify-content: center;
+  margin-bottom: 100px;
+}
+.slick-list {
+  display: flex;
+  justify-content: center;
+}
+
+.slick-track {
+  display: flex !important;
+  justify-content: center;
+}
+
+.slick-slide {
+  padding: 0 10px; /* 각 슬라이드 아이템의 좌우 여백을 설정 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sliderItem {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sliderItemInner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.customArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  cursor: pointer;
+}
+
+.customArrowLeft {
+  left: -25px;
+}
+
+.customArrowRight {
+  right: -25px;
+}
+
+.subjectName {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
 }

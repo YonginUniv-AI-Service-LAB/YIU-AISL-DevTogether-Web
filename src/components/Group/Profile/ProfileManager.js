@@ -1,11 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import style from "./Profile.module.css";
-import MoreButton from "../../Button/MoreButton";
-import ScrapButton from "../../Button/ScrapButton";
 import { useMediaQuery } from "react-responsive";
 import { Badge } from 'antd';
 import { data_mentee } from "../../../assets/data/mentee";
-import { data_mentor } from "../../../assets/data/mentor";
 import ManagerModal from '../../../components/Modal/ManagerModal';
 
 const formatDate = (date) => {
@@ -25,6 +22,7 @@ const ProfileManager = ({ imagepath, imagetext, nickname, subject, startDate, en
   const [modalTitle, setModalTitle] = useState('');
   const [modalContent, setModalContent] = useState('');
   const [isReviewMode, setIsReviewMode] = useState(false);
+  const [subjectText, setSubjectText] = useState(subject);
 
   const user = formData;
 
@@ -62,6 +60,38 @@ const ProfileManager = ({ imagepath, imagetext, nickname, subject, startDate, en
     setIsModalOpen(false);
   };
 
+  useEffect(() => {
+    const truncateText = (text, maxWidth, font) => {
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      context.font = font;
+      const ellipsis = " 외 ";
+      const words = text.split(", ");
+      let truncated = "";
+      let truncatedWidth = 0;
+
+      for (let i = 0; i < words.length; i++) {
+        const word = words[i];
+        const newTruncated = truncated ? `${truncated}, ${word}` : word;
+        const newWidth = context.measureText(newTruncated + ellipsis + (words.length - i - 1) + "개").width;
+
+        if (newWidth > maxWidth) {
+          return truncated + ellipsis + (words.length - i) + "개";
+        }
+
+        truncated = newTruncated;
+        truncatedWidth = newWidth;
+      }
+
+      return truncated;
+    };
+
+    const maxWidth = isMobile ? 150 : 180; // 원하는 최대 너비를 설정
+    const font = isMobile ? "12px Arial" : "15px Arial";
+
+    setSubjectText(truncateText(subject, maxWidth, font));
+  }, [subject, isMobile]);
+
   return (
     <div>
       <div className={style.managebg} style={{ width: isMobile ? '176px' : '200px' }}>
@@ -73,7 +103,7 @@ const ProfileManager = ({ imagepath, imagetext, nickname, subject, startDate, en
         </div>
         <div className={style.information}>
           <span style={{ fontWeight: '900' }}>{nickname}</span><br />
-          <span style={{ fontSize: isMobile ? '12px' : '15px' }}>{subject}</span><br />
+          <span style={{ fontSize: isMobile ? '12px' : '15px' }}>{subjectText}</span><br />
           {status !== '신청' ? (
             <>
               <span style={{ fontSize: isMobile ? '12px' : '15px' }}>
