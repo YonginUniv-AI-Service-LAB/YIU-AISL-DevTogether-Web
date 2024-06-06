@@ -10,6 +10,8 @@ import Intro from './intro';
 import ListButton from '../../components/Button/ListButton';
 import { Dropdown, Menu, Button, message } from 'antd';
 import { IoMdMore } from "react-icons/io";
+import NavigateSelect from '../../components/Select/NavigateSelect';
+import FilterButton from '../../components/Button/FilterButton';
 
 const MenteeDetailPage = () => {
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
@@ -77,6 +79,18 @@ const handleListback = () => {
             </div> }
             <div style={{ flex: '1',marginTop:'10px', marginLeft: '10px' }}>
               <div>
+              {isMobile && ( <div style={{display:'flex', justifyContent:'space-between', alignContent:'center', alignItems:'center' }}>
+                <NavigateSelect
+                  placeholder="목록"
+                  style={{marginTop:'10px'}}
+                  options={[
+                      { value: '학생 찾기', label: '학생' },
+                      { value: '선생님 찾기', label: '선생님' },
+                          ]}
+                  onChange={(newValue) => handleCategoryClick(newValue)}
+                />
+                <FilterButton name="목록으로"/>
+              </div>)}
                 <Intro profile={profile} />
               </div>
             </div>

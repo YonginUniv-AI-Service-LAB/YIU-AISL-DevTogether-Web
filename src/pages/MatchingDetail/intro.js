@@ -211,6 +211,7 @@ const Intro = ({ profile }) => {
   return (
     <div style={{ marginLeft: !isMobile ? '30px' : '', marginTop: '20px' }}>
       <div className={style.head}>
+
         <div style={{ fontSize: '25px', fontWeight: '600' }}>프로필 상세보기</div>
         <div style={{ display: 'flex' }}>
           <div style={{ marginRight: '10px' }}>

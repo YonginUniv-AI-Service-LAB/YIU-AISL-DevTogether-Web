@@ -43,6 +43,7 @@ const SignUpMain = ({ resetState }) => {
   const [name, setName] = useRecoilState(nameStateAtom);
   const [nickname, setNickname] = useRecoilState(nicknameStateAtom);
   const [gender, setGender] = useRecoilState(genderStateAtom);
+  const [phone, setPhone] = useState('');
 
   const [selectedYear, setSelectedYear] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
@@ -70,50 +71,20 @@ const SignUpMain = ({ resetState }) => {
       setIsCodeVerified(null);
       setRemainingTime(180);
       setTimerId(null);
+      setPhone('');
+      setName('');
+      setNickname('');
+      setGender(null);
+      setSelectedYear('');
+      setSelectedMonth('');
+      setSelectedDay('');
+      setAge(null);
+      setQuestion(null);
+      setAnswer('');
 
       setReset(false); // 초기화 후 resetState를 다시 false로 설정
     }
   }, [resetState]);
-
-
-//   const handleIdChange = async (e) => {
-//     const value = e.target.value;
-    
-//     if (value === '' || /^[a-zA-Z0-9]+$/.test(value)) {
-//       setId(value);
-//       setIdErrorMessage('');
-//       setIdError(false);
-
-//       if (value !== '') {
-//         if (value.length < 5 || value.length > 15) {
-//           setId('');
-//           setIdErrorMessage('아이디는 5글자 이상, 15글자 이하로 입력해주세요.');
-//           setIdError(true);
-//         } else if (!/[a-zA-Z]/.test(value) || !/\d/.test(value)) {
-//           setId('');
-//           setIdErrorMessage('아이디에는 최소 1개의 영문자와 숫자가 포함되어야 합니다.');
-//           setIdError(true);
-//         } else {
-//           const isDuplicate = data_id.includes(value);
-//           setIdduplication(isDuplicate);
-//           if (isDuplicate) {
-//             setId('');
-//             setIdErrorMessage('아이디 중복');
-//             setIdError(true);
-//           } else {
-//             setIdErrorMessage('');
-//           }
-//         }
-//       } else {
-//         setIdduplication(null);
-//       }
-//     } else {
-//       setId('')
-//       setIdErrorMessage('아이디에는 영문자, 숫자만 입력 가능합니다.');
-//       setIdError(true);
-//       setIdduplication(null);
-//     }
-//   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -165,7 +136,6 @@ const SignUpMain = ({ resetState }) => {
     setEmailId(e.target.value);
     setEmail(`${e.target.value}@${selectedDomain}`);
   };
-
 
   const handleDomainChange = (value) => {
     if (value === 'type') {
@@ -221,11 +191,10 @@ const SignUpMain = ({ resetState }) => {
     // clearInterval(timerId);
   };
 
-  
   const generateYearOptions = () => {
     const currentYear = new Date().getFullYear();
     const startYear = 1940;
-    const endYear = currentYear - 0; 
+    const endYear = currentYear;
   
     const options = [];
     for (let year = endYear; year >= startYear; year--) {
@@ -246,9 +215,7 @@ const SignUpMain = ({ resetState }) => {
     setSelectedMonth(newValue);
     setDayOptions(generateDayOptions(newValue));
   };
-  
 
-  
   const monthDays = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
   
   const generateDayOptions = (selectedMonth) => {
@@ -309,6 +276,21 @@ const SignUpMain = ({ resetState }) => {
     setGender(newValue);
   }
 
+  const handlePhoneChange = (e) => {
+    const value = e.target.value.replace(/[^\d]/g, ''); // 숫자 이외의 문자 제거
+  
+    let formattedPhone = '';
+    if (value.length > 3 && value.length <= 7) {
+      formattedPhone = `${value.slice(0, 3)}-${value.slice(3)}`;
+    } else if (value.length > 7) {
+      formattedPhone = `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7, 11)}`;
+    } else {
+      formattedPhone = value;
+    }
+  
+    setPhone(formattedPhone);
+  };
+
   const handleAgeChange = (e) => {
     setAge(e.target.value)
   }
@@ -324,42 +306,9 @@ const SignUpMain = ({ resetState }) => {
   return (
     <div style={{ marginTop: '40px', width:'400px' }}>
       <Form name="register_main" initialValues={{ remember: true }}>
-      <Form.Item name="email">
+        <Form.Item name="email">
           <div>이메일</div>
           <div className={style.horizon}>
-            {/* <Input.Group compact>
-              <Input
-                placeholder="이메일"
-                value={emailId}
-                spellCheck={false}
-                onChange={handleInputChange}
-                style={{ width: 130 }}
-              />
-              <Input
-                style={{ width: '40px', textAlign: 'center' }}
-                value="@"
-                disabled
-              />
-              <Input
-                style={{ width: '100px' }}
-                placeholder={selectedDomain ? '' : '직접 입력'}
-                value={selectedDomain || ''}
-                disabled={domainInputDisabled}
-                onChange={handleDomainInputChange}
-              />
-            </Input.Group>
-            <Select
-              style={{ width: 'auto' }}
-              onChange={handleDomainChange}
-              defaultValue="type"
-            >
-              <Select.Option value="type">직접 입력</Select.Option>
-              <Select.Option value="yiu.ac.kr">yiu.ac.kr</Select.Option>
-              <Select.Option value="naver.com">naver.com</Select.Option>
-              <Select.Option value="google.com">google.com</Select.Option>
-              <Select.Option value="nate.com">nate.com</Select.Option>
-              <Select.Option value="kakao.com">kakao.com</Select.Option>
-            </Select> */}
             <Input
                 placeholder="이메일"
                 value={emailId}
@@ -391,17 +340,6 @@ const SignUpMain = ({ resetState }) => {
           <div style={{ height: '0px' }}>
           {isCodeVerified === true && <div className={style.complete}>인증 완료</div>}
           </div>
-          {/* {!selectedbutton &&
-            <Button
-            type="primary"
-            htmlType="submit"
-            className={style.check_button}
-            style={{marginTop:'10px'}}
-            onClick={handleSendVerificationCode}
-            >
-              인증 번호 전송
-            </Button>}
-          {isCodeVerified === true && <div style={{ color: 'blue', marginTop: '5px' }}>인증 완료</div>} */}
         </Form.Item>
 
         <Form.Item
@@ -473,7 +411,7 @@ const SignUpMain = ({ resetState }) => {
                 <div style={{ height: '0px' }}>
                   {nicknameErrorMessage && <div style={{ color: 'red' }}>{nicknameErrorMessage}</div>}
                 </div>
-        </Form.Item>
+            </Form.Item>
         </div>
 
         <div className={style.horizon}>
@@ -496,9 +434,9 @@ const SignUpMain = ({ resetState }) => {
                 />
             </Form.Item>
 
-            <Form.Item name="age">
-                <div>나이</div>
-                <Input placeholder="나이" suffix="세" style={{ width: 195}} onChange={handleAgeChange}/>
+            <Form.Item name="phone" style={{marginRight:'10px'}}>
+                <div>휴대폰 번호</div>
+                <Input placeholder="휴대폰 번호" value={phone} style={{ width: 195}} onChange={handlePhoneChange}/>
             </Form.Item>
         </div>
 
@@ -537,18 +475,11 @@ const SignUpMain = ({ resetState }) => {
                     style={{ width: '400px'}}
                     placeholder="질문"
                     options={[
-                        {
-                        value: '0',
-                        label: '태어난 곳은?',
-                        },
-                        {
-                        value: '1',
-                        label: '출신 초등학교 이름은?',
-                        },
-                        {
-                        value: '2',
-                        label: '좋아하는 캐릭터는?',
-                        }
+                      { value: '0', label: '인생에서 제일 행복했던 순간은 언제인가요?' },
+                      { value: '1', label: '태어난 곳은 어디인가요?' },
+                      { value: '2', label: '제일 좋아하는 음식은 무엇인가요?' },
+                      { value: '3', label: '출신 초등학교는 어디인가요?' },
+                      { value: '4', label: '좋아하는 캐릭터는 무엇인가요?' },
                     ]}
                     onChange={handleQuestionChange}
                 />

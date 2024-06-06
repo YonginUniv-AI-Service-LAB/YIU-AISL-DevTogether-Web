@@ -46,9 +46,9 @@ const UserPage = () => {
         return <Detail />;
       case "멘토 관리":
         return <Manager />;
-      case "내가 작성한 글":
+      case "나의 글":
         return <Write />;
-      case "내가 댓글단 글":
+      case "나의 댓글":
         return <Commented />;
       case "스크랩":
         return <Scraped />;
@@ -68,7 +68,8 @@ const UserPage = () => {
     {!isMobile && <div className={style.background2}>
                 <div style={{paddingBottom:'200px'}}></div>
                 <Body
-                    sentence2="나의 프로필과 정보를 한 눈에"
+                    sentence1 ="나의 프로필과 정보를 한 눈에"
+                    sentence2="마이페이지에서 나의 기록과 성과를 확인해보세요"
                     title="마이페이지"
                     imageSrc={Userimg} // 이미지 경로를 전달합니다.
                 />
@@ -76,7 +77,8 @@ const UserPage = () => {
             {isMobile && <div className={style.background2}>
                 <div style={{paddingBottom:'100px'}}></div>
                 <Body
-                    sentence2="나의 프로필과 정보를 한 눈에"
+                    sentence1 ="나의 프로필과 정보를 한 눈에"
+                    sentence2="마이페이지에서 나의 기록과 성과를 확인해보세요"
                     title="마이페이지"
                 />
             </div>}
@@ -148,8 +150,8 @@ const UserPage = () => {
               >
                 <Option value="내 정보">내 정보</Option>
                 <Option value="멘토 관리">멘토 관리</Option>
-                <Option value="내가 작성한 글">내가 작성한 글</Option>
-                <Option value="내가 댓글단 글">내가 댓글단 글</Option>
+                <Option value="나의 글">나의 글</Option>
+                <Option value="나의 댓글">나의 댓글</Option>
                 <Option value="스크랩">스크랩</Option>
                 <Option value="알림">알림</Option>
               </Select>
