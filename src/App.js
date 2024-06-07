@@ -46,10 +46,12 @@ import BoardDetail from "./pages/Board/BoardDetail";
 import TermOfService from "./pages/Term/TermOfService";
 import PrivacyPolicy from "./pages/Term/PrivacyPolicy";
 import TestPage from "./pages/Test/Test";
+import ScrollToTop from "./ScrollToTop";
 
 function App(props) {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Layout>
         <Routes>
           <Route exact path="/test" element={<TestPage />} />

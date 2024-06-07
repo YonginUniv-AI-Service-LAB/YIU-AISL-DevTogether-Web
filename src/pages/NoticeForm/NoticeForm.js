@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useLocation, useNavigate } from "react-router-dom";
 import PageHeader from "../../components/Group/PageHeader/PageHeader";
@@ -14,10 +14,14 @@ import PageHeaderImage from "../../assets/images/PageHeaderImage/inquiry.svg";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   NoticeFormDataAtom,
+  NoticeFormFilesAtom,
   NoticeFormTypeAtom,
 } from "../../recoil/atoms/notice";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import testImg1 from "../../assets/images/yiu_logo.jpg";
+import testImg2 from "../../assets/images/devtogether_logo.png";
+import { authFileAPI } from "../../api";
 
 const { Dragger } = Upload;
 // const getBase64 = (file) =>
@@ -67,6 +71,11 @@ const NoticeFormPage = (props) => {
   const formType = useRecoilValue(NoticeFormTypeAtom);
   // 폼 데이터 세팅
   const [formData, setFormData] = useRecoilState(NoticeFormDataAtom);
+  // // 파일을 저장할 상태 추가
+  // const [files, setFiles] = useState([]);
+  // 파일 리스트 세팅
+  const existingFiles = useRecoilValue(NoticeFormFilesAtom);
+  const [files, setFiles] = useState(existingFiles);
 
   // 등록된 queryClient를 가져옴
   const queryClient = useQueryClient();
@@ -74,31 +83,25 @@ const NoticeFormPage = (props) => {
   // 공지사항 생성
   const createData = useMutation({
     mutationFn: async (data) => {
+      // FormData 형식에 데이터를 넣어줘야 함!
       const formData = new FormData();
-      formData.append("title", data.title.value);
-      formData.append("contents", data.contents.value);
-      // formData.append("img", img);
+      formData.append("title", data.title);
+      formData.append("contents", data.contents);
+      formData.append("noticeCategory", data.noticeCategory);
+      files.forEach((file) => {
+        formData.append("file", file);
+      });
 
-      await axios
-        .post(process.env.REACT_APP_CREATE_NOTICE, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      await authFileAPI.post("/admin/notice", formData, {
+        transformRequest: [
+          function () {
+            return formData;
           },
-          transformRequest: [
-            function () {
-              return formData;
-            },
-          ],
-        })
-        .then((response) => {
-          return true;
-        })
-        .catch((err) => {
-          return false;
-        });
+        ],
+      });
     },
     onSuccess: (data, variables) => {
+      // 공지사항 등록 성공 메세지
       message.success("공지사항 등록 완료");
       // 공지사항 목록 리로드
       queryClient.invalidateQueries("공지사항");
@@ -109,27 +112,33 @@ const NoticeFormPage = (props) => {
       console.log("실패: ", e);
       message.error("잠시 후에 다시 시도해주세요");
     },
-    // onSettled: () => {
-    //   console.log("결과에 관계 없이 무언가 실행됨");
-    // },
   });
 
   // 공지사항 수정
   const updateData = useMutation({
-    mutationFn: async (data) =>
-      await axios({
-        method: "PUT",
-        url: "/공지사항",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Bearer`,
-        },
-        data: data,
-      }),
-    // authAPI.put("/공지사항", {
-    //   data: data,
-    // }),
+    mutationFn: async (data) => {
+      // FormData 형식에 데이터를 넣어줘야 함!
+      const formData = new FormData();
+      formData.append("noticeId", data.noticeId);
+      formData.append("title", data.title);
+      formData.append("contents", data.contents);
+      formData.append("noticeCategory", data.noticeCategory);
+      files.forEach((file) => {
+        if (file.originFileObj) {
+          formData.append("file", file.originFileObj);
+        }
+      });
+
+      await authFileAPI.put("/admin/notice", formData, {
+        transformRequest: [
+          function () {
+            return formData;
+          },
+        ],
+      });
+    },
     onSuccess: (data, variables) => {
+      // 공지사항 수정 성공 메세지
       message.success("공지사항 수정 완료");
       // 공지사항 목록 리로드
       queryClient.invalidateQueries("공지사항");
@@ -137,25 +146,23 @@ const NoticeFormPage = (props) => {
       navigate(-1);
     },
     onError: (e) => {
+      console.log("실패: ", e);
       message.error("잠시 후에 다시 시도해주세요");
     },
-    // onSettled: () => {
-    //   console.log("결과에 관계 없이 무언가 실행됨");
-    // },
   });
 
   // 데이터
   const [form, setForm] = useState({
-    noticeid: {
-      value: formType === "update" ? formData.noticeid : 0,
+    noticeId: {
+      value: formType === "update" ? formData.noticeId : 0,
       type: "textInput",
       // rules: {
       //   isRequired: true,
       // },
-      valid: false,
+      valid: true,
     },
-    category: {
-      value: formType === "update" ? formData.category : null,
+    noticeCategory: {
+      value: formType === "update" ? formData.noticeCategory : null,
       type: "textInput",
       rules: {
         isRequired: true,
@@ -196,22 +203,71 @@ const NoticeFormPage = (props) => {
     console.log(`selected ${value}`);
     setForm((prevState) => ({
       ...prevState,
-      category: {
-        ...prevState.category,
+      noticeCategory: {
+        ...prevState.noticeCategory,
         value: value,
       },
     }));
   };
 
-  const normFile = (e) => {
-    console.log("Upload event:", e);
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e?.fileList;
+  const handleUploadChange = ({ fileList }) => {
+    setFiles(fileList.map((file) => file.originFileObj));
   };
-  const onFinish = () => {
-    navigate(-1);
+
+  // const handleUploadChange = ({ fileList }) => {
+  //   setFiles(fileList);
+  // };
+
+  // 파일 삭제 핸들러
+  const handleRemoveFile = (file) => {
+    console.log("삭제: ", file);
+    setFiles(files.filter((item) => item.uid !== file.uid));
+  };
+
+  useEffect(() => {
+    setFiles(existingFiles);
+  }, [existingFiles]);
+
+  // 유효성 검사 함수
+  const validateForm = (form) => {
+    let isValid = true;
+    const updatedForm = Object.keys(form).reduce((acc, key) => {
+      const isRequired = form[key].rules?.isRequired || false;
+      const value = form[key].value;
+      let valid = true;
+
+      if (isRequired && !value.trim()) {
+        valid = false;
+        isValid = false;
+      }
+
+      acc[key] = { ...form[key], valid };
+      return acc;
+    }, {});
+
+    setForm(updatedForm);
+    return isValid;
+  };
+
+  // 제출
+  const onSubmitForm = () => {
+    // 데이터 준비
+    let data = Object.keys(form).reduce((acc, key) => {
+      acc[key] = form[key].value;
+      return acc;
+    }, {});
+
+    // // 유효성 검사
+    // const isFormValid = validateForm(form);
+    // if (!isFormValid) {
+    //   message.error("질문과 답변을 모두 입력해주세요");
+    //   return;
+    // }
+
+    console.log("data: ", data);
+
+    // API 요청
+    formType === "create" ? createData.mutate(data) : updateData.mutate(data);
   };
 
   return (
@@ -246,12 +302,12 @@ const NoticeFormPage = (props) => {
           label={<FormLabelText text="카테고리" />}
           style={{ marginBottom: 30 }}
           required
-          id={"category"}
+          id={"noticeCategory"}
         >
           <Select
-            id={"category"}
-            value={form.category.value}
-            defaultValue={form.category.value}
+            id={"noticeCategory"}
+            value={form.noticeCategory.value}
+            defaultValue={form.noticeCategory.value}
             onChange={handleChange}
             placeholder={`카테고리 선택`}
             size="large"
@@ -306,43 +362,32 @@ const NoticeFormPage = (props) => {
           />
         </Form.Item>
 
-        {/* <Form.Item
-          name="upload"
-          label="Upload"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
-          extra="longgggggggggggggggggggggggggggggggggg"
-        >
-          <Upload name="logo" action="/upload.do" listType="picture">
-            <Button icon={<UploadOutlined />}>Click to upload</Button>
-          </Upload>
-        </Form.Item> */}
-
         <Form.Item
           label={<FormLabelText text="파일" />}
           style={{ marginBottom: 30 }}
           extra={"jpg, png, hwp 등"}
         >
-          <Form.Item
-            name="dragger"
-            valuePropName="fileList"
-            getValueFromEvent={normFile}
-            noStyle
+          <Upload.Dragger
+            name="files"
+            multiple
+            maxCount={5}
+            beforeUpload={() => false}
+            onChange={handleUploadChange}
+            fileList={files}
+            onRemove={handleRemoveFile}
           >
-            <Upload.Dragger name="files" action="/upload.do" maxCount={5}>
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">
-                업로드하려면 파일을 클릭하거나 이 영역으로 드래그하세요.
-              </p>
-              <p className="ant-upload-hint">최대 5개 업로드 가능</p>
-            </Upload.Dragger>
-          </Form.Item>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">
+              업로드하려면 파일을 클릭하거나 이 영역으로 드래그하세요.
+            </p>
+            <p className="ant-upload-hint">최대 5개 업로드 가능</p>
+          </Upload.Dragger>
         </Form.Item>
 
         <Form.Item>
-          <DefaultButton text="게시" onClick={() => onFinish()} />
+          <DefaultButton text="게시" onClick={() => onSubmitForm()} />
         </Form.Item>
       </Form>
     </div>

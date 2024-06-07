@@ -8,11 +8,14 @@ import {
   EditOutlined,
   ExclamationCircleOutlined,
   MoreOutlined,
+  StarOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
-import { Button, Popconfirm, Spin, message } from "antd";
+import { Button, Popconfirm, Spin, message, Upload } from "antd";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   NoticeFormDataAtom,
+  NoticeFormFilesAtom,
   NoticeFormTypeAtom,
 } from "../../recoil/atoms/notice";
 import dayjs from "dayjs";
@@ -20,6 +23,7 @@ import { useQuery } from "@tanstack/react-query";
 import { defaultAPI } from "../../api";
 import LoadingSpin from "../../components/Spin/LoadingSpin";
 import GetDataErrorView from "../../components/Result/GetDataError";
+import styles from "./NoticeDetail.module.css";
 
 const NoticeDetailPage = (props) => {
   const {
@@ -32,6 +36,7 @@ const NoticeDetailPage = (props) => {
       const res = await defaultAPI.get(
         `/notice/detail?noticeId=${location.state.data.noticeId}`
       );
+      console.log("공지사항 상세보기: ", res.data);
       return res.data;
     },
   });
@@ -51,17 +56,19 @@ const NoticeDetailPage = (props) => {
   const setFormType = useSetRecoilState(NoticeFormTypeAtom);
   // 폼 데이터 세팅
   const [formData, setFormData] = useRecoilState(NoticeFormDataAtom);
+  // 폼 파일 데이터 세팅
+  const [formFiles, setFormFiles] = useRecoilState(NoticeFormFilesAtom);
 
   const updateConfirm = (e) => {
     console.log(e);
     // message.success("Click on Yes");
     setFormType("update");
-    setFormData(location.state.data);
+    setFormData(notice);
+    setFormFiles(notice.filesList);
     navigate("/notice/form");
   };
   const updateCancel = (e) => {
     console.log(e);
-    // message.error("Click on No");
   };
 
   const deleteConfirm = (e) => {
@@ -71,7 +78,15 @@ const NoticeDetailPage = (props) => {
   };
   const deleteCancel = (e) => {
     console.log(e);
-    // message.error("Click on No");
+  };
+
+  const handleDownload = (fileUrl, fileName) => {
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   if (isLoading) return <LoadingSpin />;
@@ -112,14 +127,13 @@ const NoticeDetailPage = (props) => {
               fontSize: 17,
               fontWeight: "700",
               color: colors.text_body_color,
-              marginTop: 30,
+              marginTop: 10,
               marginBottom: 30,
               whiteSpace: "pre-wrap",
             }}
           >
             {/* 임시 - 컬럼명 오류 */}
-            <span>{dayjs(notice.createAt).format("YYYY.MM.DD")}</span>
-            {/* <span>{location.state.data.createdAt}</span> */}
+            <span>{dayjs(notice.createdAt).format("YYYY.MM.DD")}</span>
             {"  |  "}
             <span>{notice.noticeCategory}</span>
           </p>
@@ -161,6 +175,33 @@ const NoticeDetailPage = (props) => {
         <p style={{ fontWeight: "600", whiteSpace: "pre-line", marginTop: 30 }}>
           {notice.contents}
         </p>
+        {notice.filesList && notice.filesList.length > 0 && (
+          <div style={{ marginTop: 50 }}>
+            <p style={{ fontWeight: "bold" }}>첨부 파일</p>
+            <div
+              style={{
+                // marginTop: 30,
+                backgroundColor: colors.gray_light,
+                borderRadius: 10,
+                padding: 20,
+                paddingTop: 30,
+              }}
+            >
+              {notice.filesList.map((file, index) => (
+                <Button
+                  key={index}
+                  onClick={() => handleDownload(file.url, file.originName)}
+                  style={{
+                    marginBottom: 10,
+                    marginRight: 10,
+                  }}
+                >
+                  {file.originName}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
