@@ -11,7 +11,7 @@ import SignUpMain from './SignUpMain';
 import SignUpSub from './SignUpSub';
 import Register from './Register';
 
-const SignInPage = ( ) => {
+const SignUpPage = ( ) => {
   // 반응형 화면
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
@@ -130,4 +130,4 @@ const SignInPage = ( ) => {
   );
 };
 
-export default SignInPage;
+export default SignUpPage;

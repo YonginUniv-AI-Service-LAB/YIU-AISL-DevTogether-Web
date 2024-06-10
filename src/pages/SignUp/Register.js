@@ -4,7 +4,6 @@ import { Button, Form, Input, Select } from 'antd';
 import { useRecoilState } from 'recoil';
 import { resetStateAtom, idStateAtom, passwordStateAtom, emailStateAtom, 
     nameStateAtom, nicknameStateAtom, genderStateAtom, ageStateAtom, questionStateAtom, answerStateAtom } from '../../recoil/atoms/register';
-import { data_id } from '../../assets/data/id';
 import { CiRead, CiUnread } from "react-icons/ci";
 import axios from 'axios';
 
@@ -49,8 +48,10 @@ const SignUpMain = ({ resetState }) => {
   const [selectedMonth, setSelectedMonth] = useState('');
   const [selectedDay, setSelectedDay] = useState('');
   const [age, setAge] = useRecoilState(ageStateAtom);
-  const [question, setQuestion] = useRecoilState(questionStateAtom)
-  const [answer, setAnswer] = useRecoilState(answerStateAtom)
+  const [question, setQuestion] = useRecoilState(questionStateAtom);
+  const [answer, setAnswer] = useRecoilState(answerStateAtom);
+  
+  const [isNicknameChecked, setIsNicknameChecked] = useState(null);
 
   useEffect(() => {
     if (resetState) {
@@ -81,6 +82,7 @@ const SignUpMain = ({ resetState }) => {
       setAge(null);
       setQuestion(null);
       setAnswer('');
+      setIsNicknameChecked(null);
 
       setReset(false); // 초기화 후 resetState를 다시 false로 설정
     }
@@ -158,11 +160,8 @@ const SignUpMain = ({ resetState }) => {
     setSelectedButton(true);
     setRemainingTime(180);
     try {
-      const response = await axios.post('https://api.example.com/send_verification_code', {
-        email: email,
-      });
       // 서버로부터의 응답 처리
-      console.log('인증 번호 전송 성공:', response.data);
+      console.log('인증 번호 전송 성공');
     } catch (error) {
       // 오류 처리
       console.error('인증 번호 전송 실패:', error);
@@ -189,6 +188,11 @@ const SignUpMain = ({ resetState }) => {
   const handleVerifyCode = () => {
     setIsCodeVerified(true); // 임시로 true로 설정합니다. 실제 로직은 여기에 구현되어야 합니다.
     // clearInterval(timerId);
+  };
+
+  const handleNicknameCheck = async () => {
+    // 서버와 연결된 실제 API 호출 대신, 닉네임 중복 확인이 성공했다고 가정합니다.
+    setIsNicknameChecked(true);
   };
 
   const generateYearOptions = () => {
@@ -264,17 +268,19 @@ const SignUpMain = ({ resetState }) => {
         } else {
             setNickname(value);
             setNicknameErrorMessage('');
+            setIsNicknameChecked(null); // Reset the nickname check status
         }
     } else {
         setNicknameErrorMessage('한/영, 숫자만 입력 가능합니다.');
         setNickname('');
+        setIsNicknameChecked(null); // Reset the nickname check status
     }
-};
+  };
 
   // 성별 선택 함수
   const handleGenderChange = (newValue) => {
     setGender(newValue);
-  }
+  };
 
   const handlePhoneChange = (e) => {
     const value = e.target.value.replace(/[^\d]/g, ''); // 숫자 이외의 문자 제거
@@ -292,23 +298,23 @@ const SignUpMain = ({ resetState }) => {
   };
 
   const handleAgeChange = (e) => {
-    setAge(e.target.value)
-  }
+    setAge(e.target.value);
+  };
 
   const handleQuestionChange = (newValue) => {
-    setQuestion(newValue)
-  }
+    setQuestion(newValue);
+  };
 
   const handleAnswerChange = (e) => {
-    setAnswer(e.target.value)
-  }
+    setAnswer(e.target.value);
+  };
 
   return (
     <div style={{ marginTop: '40px', width:'400px' }}>
       <Form name="register_main" initialValues={{ remember: true }}>
         <Form.Item name="email">
           <div>이메일</div>
-          <div className={style.horizon}>
+          <div className={style.nicknameContainer}>
             <Input
                 placeholder="이메일"
                 value={emailId}
@@ -375,15 +381,13 @@ const SignUpMain = ({ resetState }) => {
 
         <Form.Item name="confirmPassword" dependencies={['password']}>
           <div>비밀번호 확인</div>
-          <div className={style.horizon}>
-            <Input type={showconfirmPassword ? "text" : "password"} placeholder="비밀번호 확인" style={{maxHeight:'32px'}}
+          <Input type={showconfirmPassword ? "text" : "password"} placeholder="비밀번호 확인" style={{maxHeight:'32px'}}
             suffix={ // 비밀번호 보이기/가리기 아이콘
                     <Button
                       type="text"
                       icon={showconfirmPassword ? <CiRead /> : <CiUnread />}
                       onClick={toggleconfirmPasswordVisibility}
                     /> }onChange={handleConfirmPasswordChange} disabled={password === '' || !password || passwordErrorMessage}/>
-          </div>
           <div style={{ height: '0px' }}>
             {passwordMatch === true && <div className={style.complete}>비밀번호 확인 완료</div>}
             {passwordMatch === false && <div className={style.error}>비밀번호가 다릅니다.</div>}
@@ -399,22 +403,6 @@ const SignUpMain = ({ resetState }) => {
                 </div>
             </Form.Item>
 
-            <Form.Item name="nickname" style={{ marginRight:'10px'}} >
-                <div>닉네임</div>
-                <Input 
-                placeholder="닉네임"
-                maxLength={12}
-                style={{width: 195}}
-                spellCheck={false}
-                onChange={handleNicknameChange}
-                />
-                <div style={{ height: '0px' }}>
-                  {nicknameErrorMessage && <div style={{ color: 'red' }}>{nicknameErrorMessage}</div>}
-                </div>
-            </Form.Item>
-        </div>
-
-        <div className={style.horizon}>
             <Form.Item name="gender" style={{marginRight:'10px'}}>
                 <div>성별</div>
                 <Select
@@ -433,10 +421,33 @@ const SignUpMain = ({ resetState }) => {
                     onChange={handleGenderChange}
                 />
             </Form.Item>
+        </div>
 
-            <Form.Item name="phone" style={{marginRight:'10px'}}>
-                <div>휴대폰 번호</div>
-                <Input placeholder="휴대폰 번호" value={phone} style={{ width: 195}} onChange={handlePhoneChange}/>
+        <div className={style.horizon} style={{ display: 'flex', alignItems: 'center' }}>
+            <Form.Item name="nickname" style={{ width: '100%' }} >
+                <div>닉네임</div>
+                <div className={style.nicknameContainer}>
+                  <Input 
+                  placeholder="닉네임"
+                  maxLength={12}
+                  spellCheck={false}
+                  onChange={handleNicknameChange}
+                  />
+                  <Button
+                  type="primary"
+                  htmlType="submit"
+                  className={style.check_button}
+                  style={{marginLeft:'10px'}}
+                  onClick={handleNicknameCheck}
+                  >
+                    닉네임 중복 확인
+                  </Button>
+                </div>
+                <div style={{ height: '0px' }}>
+                  {nicknameErrorMessage && <div style={{ color: 'red' }}>{nicknameErrorMessage}</div>}
+                  {isNicknameChecked === true && <div className={style.complete}>사용 가능한 닉네임입니다.</div>}
+                  {isNicknameChecked === false && <div className={style.error}>이미 사용 중인 닉네임입니다.</div>}
+                </div>
             </Form.Item>
         </div>
 
@@ -450,13 +461,13 @@ const SignUpMain = ({ resetState }) => {
                     onChange={(value) => setSelectedYear(value)}
                 />
                 <Select
-                    style={{ width: 80, marginRight:'10px' }}
+                    style={{ width: 90, marginRight:'10px' }}
                     placeholder="월"
                     options={generateMonthOptions()}
                     onChange={handleMonthChange}
                 />
                 <Select
-                    style={{ width: 80, marginRight:'10px' }}
+                    style={{ width: 90, marginRight:'10px' }}
                     placeholder="일"
                     options={dayOptions}
                     onChange={(value) => setSelectedDay(value)}
@@ -465,7 +476,7 @@ const SignUpMain = ({ resetState }) => {
                   value={age}
                   disabled
                   suffix="세"
-                  style={{ width: 60 }}
+                  style={{ width: 90 }}
                 />
             </div>
         </Form.Item>

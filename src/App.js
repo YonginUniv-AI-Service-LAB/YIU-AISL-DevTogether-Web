@@ -46,6 +46,7 @@ import BoardDetail from "./pages/Board/BoardDetail";
 import TermOfService from "./pages/Term/TermOfService";
 import PrivacyPolicy from "./pages/Term/PrivacyPolicy";
 import TestPage from "./pages/Test/Test";
+import CompletePage from "./pages/SignUp/Complete";
 
 function App(props) {
   return (
@@ -55,6 +56,7 @@ function App(props) {
           <Route exact path="/test" element={<TestPage />} />
           <Route exact path="/*" element={<MainPage />} />
           <Route exact path="/signup" element={<SignUpPage />} />
+          <Route exact path="/complete" element={<CompletePage />} />
           <Route exact path="/signin" element={<SignInPage />} />
           <Route exact path="/changepwd" element={<ChangePwdPage />} />
           <Route exact path="/push" element={<PushListPage />} />

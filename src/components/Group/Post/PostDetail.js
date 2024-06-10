@@ -20,19 +20,19 @@ import MenuDropdown from "../../Dropdown/MenuDropdown";
 const PostDetail = (post) => {
   const [liked, setLiked] = useRecoilState(postLikeState(post.id));
   const [likes, setLikes] = useRecoilState(postLikesState(post.id));
-  const [views, setViews] = useRecoilState(postViewsState(post.id));
-  const view = useRecoilValue(postViewState(post.id));
+  // const [views, setViews] = useRecoilState(postViewsState(post.id));
+  // const view = useRecoilValue(postViewState(post.id));
   const setView = useSetRecoilState(postViewState(post.id));
   const [comments, setComments] = useRecoilState(postCommentsState(post.id));
   const scraped = useRecoilValue(posterScrapState(post.id));
   const setScraped = useSetRecoilState(posterScrapState(post.id));
 
-  useEffect(() => {
-    if (view === false) {
-      setView(true);
-      setViews(views + 1);
-    }
-  }, [view, setView, views, setViews]);
+  // useEffect(() => {
+  //   if (view === false) {
+  //     setView(true);
+  //     setViews(views + 1);
+  //   }
+  // }, [view, setView, views, setViews]);
 
   const toggleLike = () => {
     setLiked(!liked);
@@ -99,8 +99,8 @@ const PostDetail = (post) => {
         <img className={style.contnentsimage} src={post.img} alt='게시물 이미지' style={{ marginTop: "25px" }} />
       </div>
       <div className={`${style.horizon} ${style.record}`}>
-        <FaEye style={{ color: 'gray' }} /> <span style={{ marginLeft: "10px" }}>{views}</span>
-        <span style={{ opacity: '0.3', marginLeft: "10px" }}> | </span>
+        {/* <FaEye style={{ color: 'gray' }} /> <span style={{ marginLeft: "10px" }}>{views}</span>
+        <span style={{ opacity: '0.3', marginLeft: "10px" }}> | </span> */}
         <FaHeart style={{ marginLeft: "10px", color: 'gray' }} />
         <span style={{ marginLeft: "10px" }}>{likes}</span>
         <span style={{ opacity: '0.3', marginLeft: "10px" }}> | </span> <FaCommentAlt style={{ marginLeft: "10px", color: 'gray' }} /> <span style={{ marginLeft: "10px" }}>{comments}</span>

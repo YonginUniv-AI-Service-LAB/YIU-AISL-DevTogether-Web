@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import style from "./MatchingDetail.module.css";
 import { Select, Input } from 'antd';
+import Selfintro from "./selfintro";
 
 const Studyintro = ({ profile, isEditing }) => {
   // studyData가 존재하지 않을 경우를 대비하여 기본 값을 설정합니다.
   const initialStudyData = profile.studyData || { content: '', schedule: '', feeDescription: '', test: '' };
   const [studyData, setStudyData] = useState(initialStudyData);
+
+  const { TextArea } = Input;
 
   const formatTextWithLineBreaks = (text) => {
     return { __html: text.replace(/\n/g, '<br />') };
@@ -23,7 +26,8 @@ const Studyintro = ({ profile, isEditing }) => {
 
   return (
     <div className={style.contents}>
-      <div className={style.border} style={{ marginTop: '30px', marginLeft: '10px'}}>
+      <Selfintro/>
+      <div className={style.border} style={{ marginTop: '30px'}}>
         <div style={{ fontSize: '20px', fontWeight: '900' }}>과외 소개</div>
         <div style={{ marginTop: '10px' }}>
             <div 
@@ -33,21 +37,21 @@ const Studyintro = ({ profile, isEditing }) => {
         </div>
       </div>
 
-      <div className={style.border} style={{ marginTop: '30px', marginLeft: '10px' }}>
+      <div className={style.border} style={{ marginTop: '30px'}}>
         <div style={{ fontSize: '20px', fontWeight: '900' }}>과목</div>
         <div style={{ marginTop: '10px' }}>
           <div style={{color:'#444444', fontSize:'16px'}}>{profile.subject.join(', ')}</div>
         </div>
       </div>
 
-      <div className={style.border} style={{ marginTop: '30px', marginLeft: '10px' }}>
+      <div className={style.border} style={{ marginTop: '30px'}}>
         <div style={{ fontSize: '20px', fontWeight: '900' }}>과외 방식</div>
         <div style={{ marginTop: '10px' }}>
           <div style={{color:'#444444', fontSize:'16px'}}>{profile.method === 0 ? '대면' : profile.method === 1 ? '비대면' : '블렌딩'}</div>
         </div>
       </div>
 
-      <div className={style.border} style={{ marginTop: '30px', marginLeft: '10px' }}>
+      <div className={style.border} style={{ marginTop: '30px'}}>
         <div style={{ fontSize: '20px', fontWeight: '900' }}>과외 일정</div>
         <div style={{ marginTop: '10px' }}>
             <div 
@@ -57,25 +61,22 @@ const Studyintro = ({ profile, isEditing }) => {
         </div>
       </div>
 
-      <div className={style.border} style={{ marginTop: '30px', marginLeft: '10px' }}>
+      <div className={style.border} style={{ marginTop: '30px' }}>
         <div style={{ fontSize: '20px', fontWeight: '900' }}>과외비</div>
         <div style={{ marginTop: '10px' }}>
             <div>
-                <div style={{marginBottom:'20px'}}>
-                <span style={{marginRight:'10px', opacity:'0.5'}}>최소 금액</span>{formatCurrency(profile.fee)}원
-                </div>    
-                <div 
-                style={{color:'#444444', fontSize:'16px'}} 
-                dangerouslySetInnerHTML={formatTextWithLineBreaks(studyData.feeDescription || '등록된 과외비 설명이 없습니다.')} 
-                />
-            </div>
+              <span style={{marginRight:'10px', opacity:'0.5'}}>최소 금액</span>{formatCurrency(profile.fee)}원
+            </div>    
         </div>
       </div>
 
-      <div className={style.border} style={{ marginTop: '30px', marginLeft: '10px' }}>
-        <div style={{ fontSize: '20px', fontWeight: '900' }}>시범 과외</div>
+      <div className={style.border} style={{ marginTop: '30px'}}>
+        <div style={{ fontSize: '20px', fontWeight: '900' }}>어필</div>
         <div style={{ marginTop: '10px' }}>
-            <div style={{color:'#444444', fontSize:'16px'}}>{studyData.test || '등록된 시범 과외 정보가 없습니다.'}</div>
+            <div 
+              style={{color:'#444444', fontSize:'16px'}} 
+              dangerouslySetInnerHTML={formatTextWithLineBreaks(studyData.pr || '등록된 어필 내용이 없습니다.')} 
+            />
         </div>
       </div>
     </div>

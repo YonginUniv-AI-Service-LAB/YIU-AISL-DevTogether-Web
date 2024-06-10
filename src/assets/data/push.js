@@ -3,145 +3,212 @@ export const data_push = [
     id: 1,
     category: "과외 신청",
     title: "과외 신청",
-    contents: `
-      닉네임: m_iiin_u
-      과목: Java, React
-      지역: 충남 천안시 서북구
-      과외 방식: 대면
-      과외비: 1,000,000원
-      과외일정: 주말 2시간
-      추가 요구 사항: 기본부터 차근차근 가르쳐주세요.
-    `,
+    subject: "Java, React",
+    location: "충남 천안시 서북구",
+    method: "대면",
+    fee: "1,000,000원",
+    schedule: "주말 2시간",
+    additionalRequest: "기본부터 차근차근 가르쳐주세요.",
     createdAt: "2024.04.14",
-    file: [],
     nickname: "m_iiin_u",
     userImage: "/keroro.png",
-    introduction: "민우인데요",
-    scraped: false,
+    name: "조민우",
+    gender: 0,
+    age: 27,
     read: false,
   },
   {
     id: 2,
-    category: "과외 신청",
-    title: "과외 신청",
-    contents: `
-      닉네임: m_iiin_u
-      과목: Java, React
-      지역: 충남 천안시 서북구
-      과외 방식: 대면
-      과외비: 1,000,000원
-      과외일정: 주말 2시간
-      추가 요구 사항: 기본부터 차근차근 가르쳐주세요.
-    `,
-    createdAt: "2024.04.15",
-    file: [],
-    nickname: "m_iiin_u",
-    userImage: "/keroro.png",
-    introduction: "민우인데요",
-    scraped: false,
+    category: "과외 수락",
+    title: "과외 수락",
+    createdAt: "2024.04.20",
+    nickname: "springlady",
+    userImage: "/springlady.png",
     read: false,
   },
   {
     id: 3,
-    category: "쪽지",
-    title: "새로운 쪽지",
-    contents: `
-       kingyesuh님께서 새로운 쪽지를 보냈습니다.
-    `,
-    createdAt: "2024.04.16",
-    file: [],
-    nickname: "kingyesuh",
-    userImage: "/yesuh.png",
-    introduction: "예서입니다.",
-    scraped: false,
-    read: true,
+    category: "과외 거절",
+    title: "과외 거절",
+    createdAt: "2024.04.22",
+    nickname: "winterboy",
+    userImage: "/winterboy.png",
+    read: false,
   },
   {
     id: 4,
-    category: "과외 신청",
-    title: "과외 신청",
-    contents: `
-      닉네임: jomainew
-      과목: Python
-      지역: 서울 강남구
-      과외 방식: 비대면
-      과외비: 800,000원
-      과외일정: 평일 저녁
-      추가 요구 사항: 코딩 테스트 준비
-    `,
-    createdAt: "2024.04.17",
-    file: [],
-    nickname: "jomainew",
-    userImage: "/jomainew.png",
-    introduction: "민우입니다.",
-    scraped: false,
-    read: true,
+    category: "게시글 좋아요",
+    title: "게시글 좋아요",
+    contents: "정말 멋진 글입니다.",
+    createdAt: "2024.04.23",
+    nickname: "summergirl",
+    userImage: "/summergirl.png",
+    read: false,
   },
   {
     id: 5,
-    category: "댓글.",
+    category: "댓글",
     title: "새로운 댓글",
-    contents: `
-      ~~글에 새로운 댓글이 달렸습니다.
-    `,
-    createdAt: "2024.04.18",
-    file: [],
-    nickname: "summergirl",
-    userImage: "/summergirl.png",
-    introduction: "여름입니다.",
-    scraped: false,
-    read: true,
+    contents: "Java, React에 대한 질문입니다.",
+    createdAt: "2024.04.24",
+    nickname: "autumnguy",
+    userImage: "/autumnguy.png",
+    read: false,
   },
   {
     id: 6,
-    category: "쪽지",
-    title: "새로운 쪽지",
-    contents: `
-    winterboy님께서 새로운 쪽지를 보냈습니다.
-    `,
-    createdAt: "2024.04.19",
-    file: [],
+    category: "댓글 좋아요",
+    title: "댓글 좋아요",
+    contents: "정말 멋진 글입니다.",
+    createdAt: "2024.04.25",
     nickname: "winterboy",
     userImage: "/winterboy.png",
-    introduction: "겨울입니다.",
-    scraped: false,
     read: false,
   },
   {
     id: 7,
-    category: "과외 신청",
-    title: "과외 신청",
-    contents: `
-      닉네임: springlady
-      과목: 데이터베이스
-      지역: 부산 해운대구
-      과외 방식: 대면
-      과외비: 1,200,000원
-      과외일정: 주말 오전
-      추가 요구 사항: 심화 학습
-    `,
-    createdAt: "2024.04.20",
-    file: [],
-    nickname: "springlady",
-    userImage: "/springlady.png",
-    introduction: "봄입니다.",
-    scraped: false,
+    category: "문의",
+    title: "문의 답변",
+    contents: "문의하신 사항에 대한 답변입니다.",
+    createdAt: "2024.04.26",
+    nickname: "admin",
+    userImage: "/admin.png",
     read: false,
   },
   {
     id: 8,
+    category: "쪽지",
+    title: "새로운 쪽지",
+    contents: "m_iiin_u님께서 새로운 쪽지를 보냈습니다.",
+    createdAt: "2024.04.27",
+    nickname: "m_iiin_u",
+    userImage: "/keroro.png",
+    read: false,
+  },
+  {
+    id: 9,
+    category: "과외 신청",
+    title: "과외 신청",
+    subject: "Python",
+    location: "서울 강남구",
+    method: "비대면",
+    fee: "800,000원",
+    schedule: "평일 저녁",
+    additionalRequest: "코딩 테스트 준비",
+    createdAt: "2024.04.28",
+    nickname: "jomainew",
+    userImage: "/jomainew.png",
+    name: "민우입니다.",
+    gender: 0,
+    age: 27,
+    read: false,
+  },
+  {
+    id: 10,
+    category: "과외 수락",
+    title: "과외 수락",
+    createdAt: "2024.04.29",
+    nickname: "jomainew",
+    userImage: "/jomainew.png",
+    read: false,
+  },
+  {
+    id: 11,
+    category: "과외 거절",
+    title: "과외 거절",
+    createdAt: "2024.04.30",
+    nickname: "springlady",
+    userImage: "/springlady.png",
+    read: false,
+  },
+  {
+    id: 12,
+    category: "게시글 좋아요",
+    title: "게시글 좋아요",
+    contents: "정말 좋은 글입니다.",
+    createdAt: "2024.05.01",
+    nickname: "springlady",
+    userImage: "/springlady.png",
+    read: false,
+  },
+  {
+    id: 13,
     category: "댓글",
     title: "새로운 댓글",
-    contents: `
-      ~~글에 새로운 댓글이 달렸습니다.
-    `,
-    createdAt: "2024.04.21",
-    file: [],
+    contents: "Node.js에 대한 질문입니다.",
+    createdAt: "2024.05.02",
+    nickname: "m_iiin_u",
+    userImage: "/keroro.png",
+    read: false,
+  },
+  {
+    id: 14,
+    category: "댓글 좋아요",
+    title: "댓글 좋아요",
+    contents: "매우 유익한 정보입니다.",
+    createdAt: "2024.05.03",
+    nickname: "summergirl",
+    userImage: "/summergirl.png",
+    read: false,
+  },
+  {
+    id: 15,
+    category: "문의",
+    title: "문의 답변",
+    contents: "문의하신 내용에 대해 답변드립니다.",
+    createdAt: "2024.05.04",
+    nickname: "admin",
+    userImage: "/admin.png",
+    read: false,
+  },
+  {
+    id: 16,
+    category: "쪽지",
+    title: "새로운 쪽지",
+    contents: "springlady님께서 새로운 쪽지를 보냈습니다.",
+    createdAt: "2024.05.05",
+    nickname: "springlady",
+    userImage: "/springlady.png",
+    read: false,
+  },
+  {
+    id: 17,
+    category: "쪽지",
+    title: "새로운 쪽지",
+    contents: "autumnguy님께서 새로운 쪽지를 보냈습니다.",
+    createdAt: "2024.05.06",
     nickname: "autumnguy",
     userImage: "/autumnguy.png",
-    introduction: "가을입니다.",
-    scraped: false,
-    read: true,
+    read: false,
+  },
+  {
+    id: 18,
+    category: "쪽지",
+    title: "새로운 쪽지",
+    contents: "winterboy님께서 새로운 쪽지를 보냈습니다.",
+    createdAt: "2024.05.07",
+    nickname: "winterboy",
+    userImage: "/winterboy.png",
+    read: false,
+  },
+  {
+    id: 19,
+    category: "게시글 좋아요",
+    title: "게시글 좋아요",
+    contents: "매우 흥미로운 글입니다.",
+    createdAt: "2024.05.08",
+    nickname: "jomainew",
+    userImage: "/jomainew.png",
+    read: false,
+  },
+  {
+    id: 20,
+    category: "댓글 좋아요",
+    title: "댓글 좋아요",
+    contents: "정말 멋진 댓글입니다.",
+    createdAt: "2024.05.09",
+    nickname: "jomainew",
+    userImage: "/jomainew.png",
+    read: false,
   }
-  ];
-  
+];
