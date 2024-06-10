@@ -56,25 +56,29 @@
 }
 
 .form_button {
-    background-color: #68568E;
+    background-color: #68568E !important;
+    border-color: #68568E !important;
     min-height: 50px;
     margin-top: 10px;
     min-width: 400px;
 }
 
 .form_button:hover {
-    background-color: #A499BB;
+    background-color: #A499BB !important;
+    border-color: #A499BB !important;
     min-height: 50px;
 }
 
 
 .check_button {
-    background-color: #68568E;
+    background-color: #68568E !important;
+    border-color: #68568E !important;
     max-width: 150px;
 }
 
 .check_button:hover {
-    background-color: #A499BB;
+    background-color: #A499BB !important;
+    border-color: #A499BB !important;
     max-width: 150px;
 }
 
@@ -171,16 +175,29 @@
 
 .horizon {
     display: flex;
-}
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .nicknameContainer {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    width: 100%;
+  }
+  
+  .nicknameContainer input {
+    flex: 1;
+  }
+  
 
 .complete {
     margin-top: 5px;
     color: blue;
-    display: flex;
-    justify-content: flex-end;
 }
 
 .error {
     margin-top: 5px;
     color: red;
 }
+

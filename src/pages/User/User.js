@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import style from "./UserInfo.module.css";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +15,6 @@ import Push from "./Push";
 import { data_push } from "../../assets/data/push"; // 알림 데이터
 import Body from "../../components/Group/Body/Body";
 import Userimg from '../../assets/images/PageHeaderImage/user.svg';
-import Sidebar from "../../components/Group/Sidebar/Sidebar";
 
 const { Option } = Select;
 
@@ -29,6 +28,12 @@ const UserPage = () => {
   const [formData, setFormData] = useState(data_mentee[2]);
   const [selectedCategory, setSelectedCategory] = useState("내 정보");
   const [notifications, setNotifications] = useState(data_push);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    // 알림 수를 초기화
+    setUnreadCount(notifications.filter(notification => !notification.read).length);
+  }, [notifications]);
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
@@ -36,6 +41,14 @@ const UserPage = () => {
 
   const handleBellClick = () => {
     handleCategoryClick("알림");
+  };
+
+  const handleNotificationClick = (notification) => {
+    setNotifications((prevNotifications) =>
+      prevNotifications.map((item) =>
+        item.id === notification.id ? { ...item, read: true } : item
+      )
+    );
   };
 
   const renderContent = () => {
@@ -53,23 +66,21 @@ const UserPage = () => {
       case "스크랩":
         return <Scraped />;
       case "알림":
-        return <Push/>;
+        return <Push notifications={notifications} onNotificationClick={handleNotificationClick} />;
       default:
         return <Detail />;
     }
   };
 
-  const unreadCount = notifications.filter(notification => !notification.read).length;
-
   const user = formData;
-  
+
   return (
    <div> 
     {!isMobile && <div className={style.background2}>
                 <div style={{paddingBottom:'200px'}}></div>
                 <Body
                     sentence1 ="나의 프로필과 정보를 한 눈에"
-                    sentence2="마이페이지에서 나의 기록과 성과를 확인해보세요"
+                    sentence2="마이페이지에서 나의 기록과 성과를 확인"
                     title="마이페이지"
                     imageSrc={Userimg} // 이미지 경로를 전달합니다.
                 />

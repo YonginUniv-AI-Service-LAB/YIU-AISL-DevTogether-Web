@@ -30,8 +30,8 @@ const Post = (props) => {
 
   const [scraped, setScraped] = useRecoilState(posterScrapState(props.id));
   const likes = useRecoilValue(postLikesState(props.id));
-  const [views, setViews] = useRecoilState(postViewsState(props.id)); // 변경된 부분
-  const view = useRecoilValue(postViewState(props.id));
+  // const [views, setViews] = useRecoilState(postViewsState(props.id)); 
+  // const view = useRecoilValue(postViewState(props.id));
   const setView = useSetRecoilState(postViewState(props.id)); // 조회 상태 변경 함수 추가
   const [comments, setComments] = useRecoilState(postCommentsState(props.id));
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -44,10 +44,10 @@ const Post = (props) => {
       // 예시 URL 경로: `/board/detail/${props.id}`
       // id를 포함하여 해당 경로로 이동
       navigate(`/board/detail/${props.id}`);
-      if (view === false) {
-        setView(true);
-        setViews(prevViews => prevViews + 1); // 변경된 부분
-      }
+      // if (view === false) {
+      //   setView(true);
+      //   setViews(prevViews => prevViews + 1); 
+      // }
     }
   };
 
@@ -130,8 +130,8 @@ const Post = (props) => {
             </div>
           </div>
           <div style={{ marginTop: '20px' }}>
-                <CiRead /> {views}
-                <span style={{ opacity: '0.3' }}> | </span> <BiLike /> {likes}
+                {/* <CiRead /> {views} */}
+                 <BiLike /> {likes}
                 <span style={{ opacity: '0.3' }}> | </span> <GoComment /> {comments}
                 <span style={{ opacity: '0.3' }}> | </span> {props.createdAt}
               </div>
