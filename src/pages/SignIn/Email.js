@@ -17,7 +17,7 @@ const Email = () => {
     const [form] = Form.useForm();
     const [email, setEmail] = useRecoilState(emailStateAtom);
     const [emailId, setEmailId] = useState('');
-    const [selectedDomain, setSelectedDomain] = useState('');
+    const [selectedDomain, setSelectedDomain] = useState('yiu.ac.kr');
     const [selectedYear, setSelectedYear] = useState(undefined);
     const [selectedMonth, setSelectedMonth] = useState(undefined);
     const [selectedDay, setSelectedDay] = useState(undefined);
@@ -26,7 +26,7 @@ const Email = () => {
     const [name, setName] = useState('');
     const [findidOpen, setFindidOpen] = useState(false);
     const [findpasswordOpen, setFindpasswordOpen] = useState(false);
-    const [domainInputDisabled, setDomainInputDisabled] = useState(false);
+    const [domainInputDisabled, setDomainInputDisabled] = useState(true);
     const [selectedbutton, setSelectedbutton] = useState(false);
     const [isCodeVerified, setIsCodeVerified] = useState(null);
     const [verificationCode, setVerificationCode] = useState('');
@@ -51,13 +51,7 @@ const Email = () => {
     };
 
     const handleDomainChange = (value) => {
-        if (value === 'type') {
-            setSelectedDomain('');
-            setDomainInputDisabled(false);
-        } else {
-            setSelectedDomain(value);
-            setDomainInputDisabled(true);
-        }
+        setSelectedDomain(value);
         setEmail(`${emailId}@${value}`);
     };
 
@@ -214,8 +208,8 @@ const Email = () => {
     useEffect(() => {
         if (!findpasswordOpen) {
             setEmailId('');
-            setSelectedDomain('');
-            setDomainInputDisabled(false);
+            setSelectedDomain('yiu.ac.kr');
+            setDomainInputDisabled(true);
             setSelectedbutton(false);
             setIsCodeVerified(null);
             setVerificationCode('');
@@ -353,17 +347,16 @@ const Email = () => {
                                 />
                                 <Input
                                     style={{ width: '31%' }}
-                                    placeholder={domainInputDisabled ? '' : '직접 입력'}
-                                    value={selectedDomain || ''}
+                                    value={selectedDomain}
                                     disabled={domainInputDisabled}
                                     onChange={handleDomainInputChange}
                                 />
                                 <Select
                                     style={{ width: '31%' }}
                                     onChange={handleDomainChange}
-                                    value={domainInputDisabled ? selectedDomain : 'type'}
+                                    value={selectedDomain}
                                 >
-                                    <Select.Option value="type">직접 입력</Select.Option>
+                                    {/* <Select.Option value="type">직접 입력</Select.Option> */}
                                     <Select.Option value="yiu.ac.kr">yiu.ac.kr</Select.Option>
                                     <Select.Option value="naver.com">naver.com</Select.Option>
                                     <Select.Option value="google.com">google.com</Select.Option>

@@ -48,11 +48,11 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
   };
 
   // 조회순 정렬 함수
-  const sortViews = (data) => {
-    return data.slice().sort((a, b) => {
-      return b.views - a.views;
-    });
-  };
+  // const sortViews = (data) => {
+  //   return data.slice().sort((a, b) => {
+  //     return b.views - a.views;
+  //   });
+  // };
 
   // 정렬 버튼 클릭 핸들러
   const handleSort = (sortType) => {
@@ -65,9 +65,9 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
       case '1':
         sortedData = sortPopular(data_board);
         break;
-      case '2':
-        sortedData = sortViews(data_board);
-        break;
+      // case '2':
+      //   sortedData = sortViews(data_board);
+      //   break;
       default:
         break;
     }
@@ -151,7 +151,7 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
 
   // 글 작성 페이지로 이동하는 함수
   const handleWritePost = () => {
-    navigate("/user");
+    navigate("/board/form");
   };
 
   const maxCombinedLength = isMobile ? 20 : isTablet ? 50 : 80; // 화면 크기에 따른 최대 글자 수 설정
@@ -210,7 +210,6 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
                     <div className={style.sort}> 
                       <SortButton text="최신순" onClick={() => handleSort('0')} />
                       <SortButton text="인기순" onClick={() => handleSort('1')} />
-                      <SortButton text="조회순" onClick={() => handleSort('2')} />
                     </div>
                     )}
                     {isMobile && (
@@ -232,7 +231,6 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
                         options={[
                             { value: '0', label: '최신순' },
                             { value: '1', label: '인기순' },
-                            { value: '2', label: '조회순' }
                           ]}
                         onChange={(newValue) => handleSort(newValue)}
                         />
@@ -255,7 +253,6 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
                       : post.contents}
                     createdAt={post.createdAt}
                     likes={post.likes}
-                    views={post.views}
                     comment={post.comment}
                     img={post.img}
                     nickname={post.nickname}

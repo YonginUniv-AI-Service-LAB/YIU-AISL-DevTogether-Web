@@ -64,7 +64,7 @@
 .border {
   padding: 20px;
   box-sizing: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(124, 6, 6, 0.1);
   border-radius: 10px;
   }
 
@@ -267,3 +267,5 @@
   .basicInfo, .careerInfo {
     flex: 1;
   }
+
+  

@@ -5,6 +5,7 @@ import { data_mentee } from '../../../assets/data/mentee';
 import { data_study } from '../../../assets/data/study';
 import { editStateAtom } from "../../../recoil/atoms/mypage";
 import { useRecoilState } from "recoil";
+import Selfinfo from "./Selfinfo";
 
 const Studyinfo = ( ) => {
 
@@ -31,7 +32,8 @@ const Studyinfo = ( ) => {
 
   return (
     <div className={style.contents}>
-      <div className={style.border} style={{ marginTop: '30px', marginLeft: '10px'}}>
+      <Selfinfo/>
+      <div className={style.border} style={{ marginTop: '30px'}}>
         <div style={{ fontSize: '20px', fontWeight: '900' }}>과외 소개</div>
         <div style={{ marginTop: '10px' }}>
           {isEditing ? (
@@ -50,27 +52,27 @@ const Studyinfo = ( ) => {
           ) : (
             <div 
               style={{color:'#444444', fontSize:'16px'}} 
-              dangerouslySetInnerHTML={formatTextWithLineBreaks(studyData.content)} 
+              dangerouslySetInnerHTML={formatTextWithLineBreaks(studyData.content|| '등록된 과외소개가 없습니다.')} 
             />
           )}
         </div>
       </div>
 
-      <div className={style.border} style={{ marginTop: '30px', marginLeft: '10px' }}>
+      <div className={style.border} style={{ marginTop: '30px'}}>
         <div style={{ fontSize: '20px', fontWeight: '900' }}>과목</div>
         <div style={{ marginTop: '10px' }}>
           <div style={{color:'#444444', fontSize:'16px'}}>{user.subject.join(', ')}</div>
         </div>
       </div>
 
-      <div className={style.border} style={{ marginTop: '30px', marginLeft: '10px' }}>
+      <div className={style.border} style={{ marginTop: '30px'}}>
         <div style={{ fontSize: '20px', fontWeight: '900' }}>과외 방식</div>
         <div style={{ marginTop: '10px' }}>
           <div style={{color:'#444444', fontSize:'16px'}}>{user.method === 0 ? '대면' : user.method === 1 ? '비대면' : '블렌딩'}</div>
         </div>
       </div>
 
-      <div className={style.border} style={{ marginTop: '30px', marginLeft: '10px' }}>
+      <div className={style.border} style={{ marginTop: '30px'}}>
         <div style={{ fontSize: '20px', fontWeight: '900' }}>과외 일정</div>
         <div style={{ marginTop: '10px' }}>
           {isEditing ? (
@@ -94,57 +96,37 @@ const Studyinfo = ( ) => {
         </div>
       </div>
 
-      <div className={style.border} style={{ marginTop: '30px', marginLeft: '10px' }}>
+      <div className={style.border} style={{ marginTop: '30px'}}>
         <div style={{ fontSize: '20px', fontWeight: '900' }}>과외비</div>
         <div style={{ marginTop: '10px' }}>
-          {isEditing ? (
             <div>
-                <div style={{marginBottom:'20px'}}>
+                <div>
                 <span style={{marginRight:'10px', opacity:'0.5'}}>최소 금액</span>{formatCurrency(user.fee)}원
                 </div> 
-                <TextArea 
-                value={studyData.feeDescription}
-                onChange={(e) => setStudyData({ ...studyData, feeDescription: e.target.value })}
-                placeholder={placeholderfee}
-                rows={2}
-                showCount
-                maxLength={100}
-                style={{
-                    height: 120,
-                    resize: 'none',
-                }}  
-                />
             </div>
-          ) : (
-            <div>
-                <div style={{marginBottom:'20px'}}>
-                <span style={{marginRight:'10px', opacity:'0.5'}}>최소 금액</span>{formatCurrency(user.fee)}원
-                </div>    
-                <div 
-                style={{color:'#444444', fontSize:'16px'}} 
-                dangerouslySetInnerHTML={formatTextWithLineBreaks(studyData.feeDescription || '등록된 과외비 설명이 없습니다.')} 
-                />
-            </div>
-          )}
         </div>
       </div>
 
-      <div className={style.border} style={{ marginTop: '30px', marginLeft: '10px' }}>
-        <div style={{ fontSize: '20px', fontWeight: '900' }}>시범 과외</div>
+      <div className={style.border} style={{ marginTop: '30px'}}>
+        <div style={{ fontSize: '20px', fontWeight: '900' }}>어필</div>
         <div style={{ marginTop: '10px' }}>
-          {isEditing ? (
-            <Select
-              value={studyData.test}
-              onChange={(value) => setStudyData({ ...studyData, test: value })}
-              options={[
-                { value: '무료', label: '무료' },
-                { value: '유료', label: '유료' },
-                { value: '불가', label: '불가' },
-              ]}
-              style={{ width: '100%' }}
+        {isEditing ? (
+            <TextArea 
+              value={studyData.pr}
+              onChange={(e) => setStudyData({ ...studyData, pr: e.target.value })}
+              placeholder={placeholderschedule}
+              showCount
+              maxLength={100}
+              style={{
+                height: 120,
+                resize: 'none',
+              }}
             />
           ) : (
-            <div style={{color:'#444444', fontSize:'16px'}}>{studyData.test || '등록된 시범 과외 정보가 없습니다.'}</div>
+            <div 
+              style={{color:'#444444', fontSize:'16px'}} 
+              dangerouslySetInnerHTML={formatTextWithLineBreaks(studyData.pr || '등록된 어필 내용이 없습니다.')} 
+            />
           )}
         </div>
       </div>

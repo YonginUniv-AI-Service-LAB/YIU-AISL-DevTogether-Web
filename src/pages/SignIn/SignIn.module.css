@@ -56,14 +56,16 @@
 }
 
 .form_button {
-    background-color: #68568E;
+    background-color: #68568E !important;
+    border-color: #68568E !important;
     min-width: 400px;
     min-height: 50px;
     margin-top: 40px;
 }
 
 .form_button:hover {
-    background-color: #A499BB;
+    background-color: #A499BB !important;
+    border-color: #A499BB !important;
     min-width: 400px;
     min-height: 50px;
 }

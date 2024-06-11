@@ -93,7 +93,7 @@ const Selfintro = ({ profile }) => {
 
   return (
     <div className={style.contents}>
-      <div style={{ display: 'flex', flexDirection: 'column', marginTop: '30px', marginLeft: '10px'  }}>
+      <div style={{ display: 'flex', flexDirection: 'column', marginTop: '30px'}}>
         <div style={{ display: 'flex', flexDirection: !isMobile ? 'row' : 'column', justifyContent: 'space-between' }}>
           <div className={style.border} style={{ flex: '1', marginRight: '20px' }}>
             <span style={{ fontSize: '20px', fontWeight: '900' }}>기본 정보</span>
@@ -168,26 +168,9 @@ const Selfintro = ({ profile }) => {
           </div>
 
           <div className={style.border} style={{ flex: '1', marginLeft: !isMobile ? '20px' : '', marginTop: !isMobile ? '': '30px' }}>
-            <div style={{display:'flex', justifyContent:'space-between'}}>
-               <span style={{ fontSize: '20px', fontWeight: '900' }}>경력</span>
-            </div>
-              <div>
-                {career.length > 0 && career.some(item => item.trim() !== '') ? (
-                career.filter(item => item.trim() !== '').map((item, index) => (
-                    <div key={index} style={{ marginTop: '15px', marginLeft: '5px' }}>
-                    <Badge status="default" text={item} />
-                    </div>
-                ))
-                ) : (
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '100px' }}>등록된 경력이 없습니다.</div>
-                )}
-              </div>
+            <span style={{ fontSize: '20px', fontWeight: '900' }}>포트폴리오</span>
+            <div style={{ display: 'flex', alignContent: 'center', justifyContent: 'center', marginTop: '100px' }}>등록된 포트폴리오가 없습니다.</div>
           </div>
-        </div>
-
-        <div className={style.border} style={{ marginTop: '30px', minHeight:'400px' }}>
-          <span style={{ fontSize: '20px', fontWeight: '900' }}>포트폴리오</span>
-          <div style={{ display: 'flex', alignContent: 'center', justifyContent: 'center', marginTop: '100px' }}>등록된 포트폴리오가 없습니다.</div>
         </div>
       </div>
     </div>

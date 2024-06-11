@@ -10,6 +10,8 @@ import NormalButton from "../../../components/Button/NormalButton";
 import { editStateAtom } from "../../../recoil/atoms/mypage";
 import { useRecoilState } from "recoil";
 
+const { TextArea } = Input;
+
 const Selfinfo = () => {
   const ismiddle = useMediaQuery({ maxWidth: 1226, minWidth: 768 });
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
@@ -29,6 +31,7 @@ const Selfinfo = () => {
     Array.isArray(formData.method) ? formData.method.map(m => m.toString()) : [formData.method.toString()]
   );
   const [career, setCareer] = useState(formData.career);
+  const [portfolio, setPortfolio] = useState(formData.portfolio);
 
   const formatCurrency = (amount) => {
     if (!amount) return '';
@@ -114,19 +117,23 @@ const Selfinfo = () => {
     setSelectedMethod(value);
   };
 
-  const handleCareerInputChange = (value, index) => {
-    const updatedCareer = [...career];
-    updatedCareer[index] = value;
-    setCareer(updatedCareer);
-  };
+  // const handleCareerInputChange = (value, index) => {
+  //   const updatedCareer = [...career];
+  //   updatedCareer[index] = value;
+  //   setCareer(updatedCareer);
+  // };
 
-  const handleAddCareerInput = () => {
-    setCareer([...career, '']);
-  };
+  // const handleAddCareerInput = () => {
+  //   setCareer([...career, '']);
+  // };
 
-  const handleDeleteCareer = (index) => {
-    const updatedCareer = career.filter((_, i) => i !== index);
-    setCareer(updatedCareer);
+  // const handleDeleteCareer = (index) => {
+  //   const updatedCareer = career.filter((_, i) => i !== index);
+  //   setCareer(updatedCareer);
+  // };
+
+  const handlePortfolioChange = (e) => {
+    setPortfolio(e.target.value);
   };
 
   return (
@@ -270,43 +277,23 @@ const Selfinfo = () => {
         </div>
 
         <div className={style.border} style={{ flex: '1', marginLeft: isMobile ? '0' : '20px', marginBottom: isMobile ? '20px' : '0' }}>
-          <div style={{display:'flex', justifyContent:'space-between'}}>
-            <span style={{ fontSize: '20px', fontWeight: '900' }}>경력</span>
-            {isEditing && (<NormalButton name="경력 추가" style={{fontSize:'12px', paddingLeft:'10px', paddingRight:'10px', marginRight:'10px'}} onClick={handleAddCareerInput} />)}
+          <span style={{ fontSize: '20px', fontWeight: '900' }}>포트폴리오</span>
+          <div style={{ marginTop: '20px' }}>
+            {isEditing ? (
+              <TextArea
+                value={portfolio}
+                placeholder="포트폴리오 링크"
+                onChange={handlePortfolioChange}
+                rows={4}
+                style={{ resize: 'none' }}
+              />
+            ) : (
+              <div style={{ display: 'flex', alignContent: 'center', justifyContent: 'center', marginTop: '100px' }}>
+                {portfolio ? portfolio : '등록된 포트폴리오가 없습니다.'}
+              </div>
+            )}
           </div>
-          {isEditing ? (
-            <div>
-              {career.map((item, index) => (
-                <div key={index} style={{ display: 'flex', alignItems: 'center', marginTop: '15px' }}>
-                  <Input
-                    value={item}
-                    placeholder="경력을 입력하세요"
-                    onChange={(e) => handleCareerInputChange(e.target.value, index)}
-                    style={{ marginRight: '10px' }}
-                    suffix={<div onClick={() => handleDeleteCareer(index)} style={{ cursor: 'pointer', opacity:'0.5' }}>X</div>}
-                  />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div>
-              {career.length > 0 ? (
-                career.map((item, index) => (
-                  <div key={index} style={{ marginTop: '15px', marginLeft: '5px' }}>
-                    <Badge status="default" text={item} />
-                  </div>
-                ))
-              ) : (
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '100px' }}>등록된 경력이 없습니다.</div>
-              )}
-            </div>
-          )}
         </div>
-      </div>
-
-      <div className={style.border} style={{ marginTop: '30px' }}>
-        <span style={{ fontSize: '20px', fontWeight: '900' }}>포트폴리오</span>
-        <div style={{ display: 'flex', alignContent: 'center', justifyContent: 'center', marginTop: '100px' }}>등록된 포트폴리오가 없습니다.</div>
       </div>
     </div>
   );

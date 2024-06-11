@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import style from "./MatchingDetail.module.css";
 import { useMediaQuery } from "react-responsive";
-import { Tabs, Modal, Input, Form, Button, Select, message, Dropdown, Menu} from 'antd';
+import { Tabs, Modal, Input, Form, Button, Select, message, Dropdown, Menu } from 'antd';
 import { FaRegBookmark, FaBookmark } from "react-icons/fa";
 import { TfiWrite } from "react-icons/tfi";
 import { FaRegPaperPlane } from "react-icons/fa";
@@ -106,7 +106,7 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
           label="과외일정"
         >
           <TextArea 
-              placeholder="원하는 과외 일정을 입력해주세요" 
+              placeholder={`원하는 과외 일정을 입력해주세요\n\n예1 ) 1주일에 2번 2시간씩\n예2 )월요일, 수요일, 금요일 18:00~21:00\n`} 
               rows={4}
               showCount
               maxLength={100}
@@ -127,7 +127,7 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
           label="추가 요구 사항"
         >
           <TextArea 
-              placeholder="추가 요구 사항을 입력해주세요" 
+              placeholder={`추가 요구 사항을 입력해주세요\n\n예) 과외 방식 및 위치, 과외비 등 과외와 관련된 자세한 내용을 입력해주세요`}  
               rows={4}
               showCount
               maxLength={100}
@@ -260,16 +260,15 @@ const Intro = ({ profile }) => {
         size={"large"}
         onChange={handleTab}
         items={[
-          { label: '과외 소개', key: '1' },
-          { label: '본인 소개', key: '2' },
-          { label: '리뷰', key: '3' },
+          { label: '소개', key: '1' },
+          { label: '리뷰', key: '2' },
         ]}
         style={{ flex: 1, marginTop: '25px' }}
       />
 
       {tab === '1' && <Studyintro profile={profile} />}
-      {tab === '2' && <Selfintro profile={profile} />}
-      {tab === '3' && <Reviewintro profile={profile} />}
+      {tab === '2' && <Reviewintro profile={profile} />}
+      {/* {tab === '3' && <Reviewintro profile={profile} />} */}
 
       <ApplyModal
         visible={isModalVisible}
