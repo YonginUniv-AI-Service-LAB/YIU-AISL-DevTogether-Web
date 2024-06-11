@@ -18,3 +18,9 @@ export const NoticeFormDataAtom = atom({
   key: "NoticeFormDataAtom",
   default: {},
 });
+
+// 공지사항 form 파일 데이터
+export const NoticeFormFilesAtom = atom({
+  key: "NoticeFormFilesAtom",
+  default: [],
+});

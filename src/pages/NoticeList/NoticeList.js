@@ -35,7 +35,7 @@ const NoticeListPage = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["notice"],
+    queryKey: ["공지사항"],
     queryFn: async () => {
       const res = await defaultAPI.get("/notice");
       return res.data;
@@ -166,7 +166,7 @@ const NoticeListPage = () => {
             return {
               onClick: (event) => {
                 navigate("/notice/detail", { state: { data: record } });
-              }, // click row
+              },
             };
           }}
           pagination={{
@@ -174,23 +174,16 @@ const NoticeListPage = () => {
           }}
           rowClassName={styles.table_row}
         >
-          {/* 임시 - 컬럼 오타 */}
           <Column
             title="작성일"
-            dataIndex="createAt"
-            key="createAt"
+            dataIndex="createdAt"
+            key="createdAt"
             // defaultFilteredValue={(data) => dayjs(data).format("YYYY-MM-DD")}
-            width={60}
+            width={80}
             render={(text, row, index) => {
               return <>{dayjs(text).format("YYYY.MM.DD")}</>;
             }}
           />
-          {/* <Column
-            title="작성일"
-            dataIndex="createdAt"
-            key="createdAt"
-            width={60}
-          /> */}
           <Column
             title="카테고리"
             dataIndex="noticeCategory"
