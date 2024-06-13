@@ -9,7 +9,7 @@ import pageState from "../../recoil/atoms/login";
 import { resetStateAtom, passwordStateAtom, emailStateAtom, nameStateAtom, nicknameStateAtom, genderStateAtom, ageStateAtom, roleStateAtom, questionStateAtom, answerStateAtom } from '../../recoil/atoms/register';
 import SignUpMain from './SignUpMain';
 import SignUpSub from './SignUpSub';
-import Register from './Register';
+import RegisterPage from './Register';
 
 const SignUpPage = ( ) => {
   // 반응형 화면
@@ -119,7 +119,7 @@ const SignUpPage = ( ) => {
           <div>
             {/* <SignUpMain resetState={resetState}/>
             <SignUpSub resetState={resetState}/> */}
-            <Register/>
+            <RegisterPage/>
             <Button type="primary" htmlType="submit" className={style.form_button} onClick={handleRegister}>
                     가입하기
             </Button>

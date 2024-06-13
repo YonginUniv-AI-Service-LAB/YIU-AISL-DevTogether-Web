@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import style from "./SignUp.module.css";
-import { Button, Form, Input, Select } from 'antd';
+import { Button, Form, Input, Select, message } from 'antd';
 import { useRecoilState } from 'recoil';
 import { resetStateAtom, idStateAtom, passwordStateAtom, emailStateAtom, 
     nameStateAtom, nicknameStateAtom, genderStateAtom, ageStateAtom, questionStateAtom, answerStateAtom } from '../../recoil/atoms/register';
 import { CiRead, CiUnread } from "react-icons/ci";
+import { defaultAPI } from '../../api';
+import { useMutation } from 'react-query';
 import axios from 'axios';
 
-const SignUpMain = ({ resetState }) => {
+const RegisterPage = ({ resetState }) => {
   const [reset, setReset] = useRecoilState(resetStateAtom);
 
   const possible = /^[a-zA-Z0-9!@]+$/;
@@ -19,8 +21,8 @@ const SignUpMain = ({ resetState }) => {
   const [idduplication, setIdduplication] = useState(null);
   const [idError, setIdError] = useState(false);
 
-  const [showPassword, setShowPassword] = useState(false); // 비밀번호 보기 토글 상태
-  const [showconfirmPassword, setShowconfirmPassword] = useState(false); // 비밀번호 보기 토글 상태
+  const [showPassword, setShowPassword] = useState(false);
+  const [showconfirmPassword, setShowconfirmPassword] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useRecoilState(passwordStateAtom);
   const [passwordMatch, setPasswordMatch] = useState(null);
@@ -84,7 +86,7 @@ const SignUpMain = ({ resetState }) => {
       setAnswer('');
       setIsNicknameChecked(null);
 
-      setReset(false); // 초기화 후 resetState를 다시 false로 설정
+      setReset(false);
     }
   }, [resetState]);
 
@@ -96,7 +98,6 @@ const SignUpMain = ({ resetState }) => {
     setShowconfirmPassword(!showconfirmPassword);
   };
 
-  // 비밀번호 입력
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setConfirmPassword('');
@@ -130,7 +131,7 @@ const SignUpMain = ({ resetState }) => {
       setPasswordMatch(false);
     } else {
       setConfirmPassword(value);
-      setPasswordMatch(true); // 비밀번호 확인 여부 판단
+      setPasswordMatch(true);
     }
   };
 
@@ -156,17 +157,141 @@ const SignUpMain = ({ resetState }) => {
     setEmail(`${emailId}@${value}`);
   };
 
-  const handleSendVerificationCode = async () => {
-    setSelectedButton(true);
-    setRemainingTime(180);
-    try {
-      // 서버로부터의 응답 처리
-      console.log('인증 번호 전송 성공');
-    } catch (error) {
-      // 오류 처리
-      console.error('인증 번호 전송 실패:', error);
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    const koreanRegex = /^[가-힣]*$/;
+
+    if (koreanRegex.test(value)) {
+      setName(value);
+      setNameErrorMessage('');
+    } else {
+      setNameErrorMessage('한글만 입력 가능합니다.');
+      setName('');
     }
   };
+
+  const handleNicknameChange = (e) => {
+    const value = e.target.value;
+    const nicknameRegex = /^[a-zA-Z0-9가-힣]*$/;
+
+    if (nicknameRegex.test(value)) {
+        if (value.length > 12) {
+            setNicknameErrorMessage('최대 12글자 입니다.');
+            setNickname('');
+        } else {
+            setNickname(value);
+            setNicknameErrorMessage('');
+            setIsNicknameChecked(null);
+        }
+    } else {
+        setNicknameErrorMessage('한/영, 숫자만 입력 가능합니다.');
+        setNickname('');
+        setIsNicknameChecked(null);
+    }
+  };
+
+  const handleGenderChange = (newValue) => {
+    setGender(newValue);
+  };
+
+  const handlePhoneChange = (e) => {
+    const value = e.target.value.replace(/[^\d]/g, '');
+
+    let formattedPhone = '';
+    if (value.length > 3 && value.length <= 7) {
+      formattedPhone = `${value.slice(0, 3)}-${value.slice(3)}`;
+    } else if (value.length > 7) {
+      formattedPhone = `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7, 11)}`;
+    } else {
+      formattedPhone = value;
+    }
+
+    setPhone(formattedPhone);
+  };
+
+  const handleAgeChange = (e) => {
+    setAge(e.target.value);
+  };
+
+  const handleQuestionChange = (newValue) => {
+    setQuestion(newValue);
+  };
+
+  const handleAnswerChange = (e) => {
+    setAnswer(e.target.value);
+  };
+
+  const handleMonthChange = (newValue) => {
+    setSelectedMonth(newValue);
+    setDayOptions(generateDayOptions(newValue));
+  };
+
+  const sendEmailVerificationCode = useMutation({
+    mutationFn: async (email) =>
+      await axios({
+        method: "POST",
+        url: "/register/email",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: { email },
+      }),
+    onSuccess: () => {
+      message.success("인증번호가 전송되었습니다.");
+      setSelectedButton(true);
+      setRemainingTime(180);
+    },
+    onError: (e) => {
+      console.log("실패: ", e);
+      message.error("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
+    },
+  });
+
+  const verifyEmailCode = useMutation({
+    mutationFn: async ({ email, verificationCode }) =>
+      await axios({
+        method: "POST",
+        url: "/register/email/verify",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: { email, verificationCode },
+      }),
+    onSuccess: () => {
+      message.success("이메일 인증에 성공했습니다.");
+      setIsCodeVerified(true);
+    },
+    onError: (e) => {
+      console.log("실패: ", e);
+      message.error("이메일 인증에 실패했습니다. 다시 시도해주세요.");
+      setIsCodeVerified(false);
+    },
+  });
+
+  const checkNicknameAvailability = useMutation({
+    mutationFn: async (nickname) =>
+      await axios({
+        method: "POST",
+        url: "/nickname",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: { nickname },
+      }),
+    onSuccess: (data) => {
+      if (data.data) {
+        message.success("사용 가능한 닉네임입니다.");
+        setIsNicknameChecked(true);
+      } else {
+        message.error("이미 사용 중인 닉네임입니다.");
+        setIsNicknameChecked(false);
+      }
+    },
+    onError: (e) => {
+      console.log("실패: ", e);
+      message.error("닉네임 중복 확인에 실패했습니다. 다시 시도해주세요.");
+    },
+  });
 
   useEffect(() => {
     if (selectedbutton) {
@@ -183,17 +308,6 @@ const SignUpMain = ({ resetState }) => {
       setSelectedButton(false);
     }
   }, [remainingTime]);
-
-  // 이메일 인증번호 확인 로직
-  const handleVerifyCode = () => {
-    setIsCodeVerified(true); // 임시로 true로 설정합니다. 실제 로직은 여기에 구현되어야 합니다.
-    // clearInterval(timerId);
-  };
-
-  const handleNicknameCheck = async () => {
-    // 서버와 연결된 실제 API 호출 대신, 닉네임 중복 확인이 성공했다고 가정합니다.
-    setIsNicknameChecked(true);
-  };
 
   const generateYearOptions = () => {
     const currentYear = new Date().getFullYear();
@@ -215,12 +329,7 @@ const SignUpMain = ({ resetState }) => {
     });
   };
 
-  const handleMonthChange = (newValue) => {
-    setSelectedMonth(newValue);
-    setDayOptions(generateDayOptions(newValue));
-  };
-
-  const monthDays = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+  const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   
   const generateDayOptions = (selectedMonth) => {
     const daysInMonth = monthDays[selectedMonth - 1]; 
@@ -241,74 +350,6 @@ const SignUpMain = ({ resetState }) => {
     }
   }, [selectedYear, selectedMonth, selectedDay]);
 
-  // 이름 변경 함수
-  // 이름 입력 (한글만 허용)
-  const handleNameChange = (e) => {
-    const value = e.target.value;
-    const koreanRegex = /^[가-힣]*$/;
-
-    if (koreanRegex.test(value)) {
-      setName(value);
-      setNameErrorMessage('');
-    } else {
-      setNameErrorMessage('한글만 입력 가능합니다.');
-      setName('');
-    }
-  };
-
-  // 닉네임 변경 함수
-  const handleNicknameChange = (e) => {
-    const value = e.target.value;
-    const nicknameRegex = /^[a-zA-Z0-9가-힣]*$/;
-
-    if (nicknameRegex.test(value)) {
-        if (value.length > 12) {
-            setNicknameErrorMessage('최대 12글자 입니다.');
-            setNickname('');
-        } else {
-            setNickname(value);
-            setNicknameErrorMessage('');
-            setIsNicknameChecked(null); // Reset the nickname check status
-        }
-    } else {
-        setNicknameErrorMessage('한/영, 숫자만 입력 가능합니다.');
-        setNickname('');
-        setIsNicknameChecked(null); // Reset the nickname check status
-    }
-  };
-
-  // 성별 선택 함수
-  const handleGenderChange = (newValue) => {
-    setGender(newValue);
-  };
-
-  const handlePhoneChange = (e) => {
-    const value = e.target.value.replace(/[^\d]/g, ''); // 숫자 이외의 문자 제거
-  
-    let formattedPhone = '';
-    if (value.length > 3 && value.length <= 7) {
-      formattedPhone = `${value.slice(0, 3)}-${value.slice(3)}`;
-    } else if (value.length > 7) {
-      formattedPhone = `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7, 11)}`;
-    } else {
-      formattedPhone = value;
-    }
-  
-    setPhone(formattedPhone);
-  };
-
-  const handleAgeChange = (e) => {
-    setAge(e.target.value);
-  };
-
-  const handleQuestionChange = (newValue) => {
-    setQuestion(newValue);
-  };
-
-  const handleAnswerChange = (e) => {
-    setAnswer(e.target.value);
-  };
-
   return (
     <div style={{ marginTop: '40px', width:'400px' }}>
       <Form name="register_main" initialValues={{ remember: true }}>
@@ -324,21 +365,21 @@ const SignUpMain = ({ resetState }) => {
             />
             {(!selectedbutton || isCodeVerified) &&
             <Button
-            type="primary"
-            htmlType="submit"
-            className={style.check_button}
-            style={{marginLeft:'10px'}}
-            onClick={handleSendVerificationCode}
+              type="primary"
+              htmlType="submit"
+              className={style.check_button}
+              style={{marginLeft:'10px'}}
+              onClick={() => sendEmailVerificationCode.mutate(email)}
             >
               인증 번호 전송
             </Button>}
             {(selectedbutton && !isCodeVerified) &&
             <Button
-            type="primary"
-            htmlType="submit"
-            className={style.check_button}
-            style={{marginLeft:'10px'}}
-            onClick={handleSendVerificationCode}
+              type="primary"
+              htmlType="submit"
+              className={style.check_button}
+              style={{marginLeft:'10px'}}
+              onClick={() => sendEmailVerificationCode.mutate(email)}
             >
               인증 번호 재전송
             </Button>}
@@ -350,12 +391,23 @@ const SignUpMain = ({ resetState }) => {
 
         <Form.Item
           name="verificationCode"
-          style={{ display: selectedbutton === true && !isCodeVerified ? 'block' : 'none' }} // 인증번호가 확인되면 숨김 처리
+          style={{ display: selectedbutton === true && !isCodeVerified ? 'block' : 'none' }}
         >
           <div>인증 번호</div>
           <div className={style.horizon} style={{display:'flex', alignItems:'center' }}>
-            <Input placeholder="인증번호" value={verificationCode} style={{maxWidth: '100px', maxHeight: '30px'}} onChange={(e) => setVerificationCode(e.target.value)} />
-            <Button type="primary" htmlType="submit" className={style.check_button} style={{marginLeft:'10px'}} onClick={handleVerifyCode}>
+            <Input
+              placeholder="인증번호"
+              value={verificationCode}
+              style={{maxWidth: '100px', maxHeight: '30px'}}
+              onChange={(e) => setVerificationCode(e.target.value)}
+            />
+            <Button
+              type="primary"
+              htmlType="submit"
+              className={style.check_button}
+              style={{marginLeft:'10px'}}
+              onClick={() => verifyEmailCode.mutate({ email, verificationCode })}
+            >
               이메일 인증
             </Button>
           </div>
@@ -366,14 +418,19 @@ const SignUpMain = ({ resetState }) => {
 
         <Form.Item name="password">
           <div>비밀번호</div>
-          <Input type={showPassword ? "text" : "password"} placeholder="비밀번호" style={{maxHeight:'32px'}}
-          suffix={ // 비밀번호 보이기/가리기 아이콘
-                    <Button
-                      type="text"
-                      icon={showPassword ? <CiRead /> : <CiUnread />}
-                      onClick={togglePasswordVisibility}
-                    /> }
-                    onChange={handlePasswordChange} />
+          <Input
+            type={showPassword ? "text" : "password"}
+            placeholder="비밀번호"
+            style={{maxHeight:'32px'}}
+            suffix={
+              <Button
+                type="text"
+                icon={showPassword ? <CiRead /> : <CiUnread />}
+                onClick={togglePasswordVisibility}
+              />
+            }
+            onChange={handlePasswordChange}
+          />
           <div style={{ height: '0px' }}>
             {passwordErrorMessage && <div className={style.error}>{passwordErrorMessage}</div>}
           </div>
@@ -381,13 +438,20 @@ const SignUpMain = ({ resetState }) => {
 
         <Form.Item name="confirmPassword" dependencies={['password']}>
           <div>비밀번호 확인</div>
-          <Input type={showconfirmPassword ? "text" : "password"} placeholder="비밀번호 확인" style={{maxHeight:'32px'}}
-            suffix={ // 비밀번호 보이기/가리기 아이콘
-                    <Button
-                      type="text"
-                      icon={showconfirmPassword ? <CiRead /> : <CiUnread />}
-                      onClick={toggleconfirmPasswordVisibility}
-                    /> }onChange={handleConfirmPasswordChange} disabled={password === '' || !password || passwordErrorMessage}/>
+          <Input
+            type={showconfirmPassword ? "text" : "password"}
+            placeholder="비밀번호 확인"
+            style={{maxHeight:'32px'}}
+            suffix={
+              <Button
+                type="text"
+                icon={showconfirmPassword ? <CiRead /> : <CiUnread />}
+                onClick={toggleconfirmPasswordVisibility}
+              />
+            }
+            onChange={handleConfirmPasswordChange}
+            disabled={password === '' || !password || passwordErrorMessage}
+          />
           <div style={{ height: '0px' }}>
             {passwordMatch === true && <div className={style.complete}>비밀번호 확인 완료</div>}
             {passwordMatch === false && <div className={style.error}>비밀번호가 다릅니다.</div>}
@@ -395,120 +459,113 @@ const SignUpMain = ({ resetState }) => {
         </Form.Item>
 
         <div className={style.horizon}>
-            <Form.Item name="name" style={{marginRight:'10px'}}>
-                <div>이름</div>
-                <Input placeholder="이름" style={{ width: 195}} onChange={handleNameChange}/>
-                <div style={{ height: '0px' }}>
-                  {nameErrorMessage && <div style={{ color: 'red' }}>{nameErrorMessage}</div>}
-                </div>
-            </Form.Item>
+          <Form.Item name="name" style={{marginRight:'10px'}}>
+            <div>이름</div>
+            <Input placeholder="이름" style={{ width: 195}} onChange={handleNameChange}/>
+            <div style={{ height: '0px' }}>
+              {nameErrorMessage && <div style={{ color: 'red' }}>{nameErrorMessage}</div>}
+            </div>
+          </Form.Item>
 
-            <Form.Item name="gender" style={{marginRight:'10px'}}>
-                <div>성별</div>
-                <Select
-                    style={{ width: '195px'}}
-                    placeholder="성별"
-                    options={[
-                        {
-                        value: '0',
-                        label: '남자',
-                        },
-                        {
-                        value: '1',
-                        label: '여자',
-                        }
-                    ]}
-                    onChange={handleGenderChange}
-                />
-            </Form.Item>
+          <Form.Item name="gender" style={{marginRight:'10px'}}>
+            <div>성별</div>
+            <Select
+              style={{ width: '195px'}}
+              placeholder="성별"
+              options={[
+                { value: '0', label: '남자' },
+                { value: '1', label: '여자' },
+              ]}
+              onChange={handleGenderChange}
+            />
+          </Form.Item>
         </div>
 
         <div className={style.horizon} style={{ display: 'flex', alignItems: 'center' }}>
-            <Form.Item name="nickname" style={{ width: '100%' }} >
-                <div>닉네임</div>
-                <div className={style.nicknameContainer}>
-                  <Input 
-                  placeholder="닉네임"
-                  maxLength={12}
-                  spellCheck={false}
-                  onChange={handleNicknameChange}
-                  />
-                  <Button
-                  type="primary"
-                  htmlType="submit"
-                  className={style.check_button}
-                  style={{marginLeft:'10px'}}
-                  onClick={handleNicknameCheck}
-                  >
-                    닉네임 중복 확인
-                  </Button>
-                </div>
-                <div style={{ height: '0px' }}>
-                  {nicknameErrorMessage && <div style={{ color: 'red' }}>{nicknameErrorMessage}</div>}
-                  {isNicknameChecked === true && <div className={style.complete}>사용 가능한 닉네임입니다.</div>}
-                  {isNicknameChecked === false && <div className={style.error}>이미 사용 중인 닉네임입니다.</div>}
-                </div>
-            </Form.Item>
+          <Form.Item name="nickname" style={{ width: '100%' }} >
+            <div>닉네임</div>
+            <div className={style.nicknameContainer}>
+              <Input 
+                placeholder="닉네임"
+                maxLength={12}
+                spellCheck={false}
+                onChange={handleNicknameChange}
+              />
+              <Button
+                type="primary"
+                htmlType="submit"
+                className={style.check_button}
+                style={{marginLeft:'10px'}}
+                onClick={() => checkNicknameAvailability.mutate(nickname)}
+              >
+                닉네임 중복 확인
+              </Button>
+            </div>
+            <div style={{ height: '0px' }}>
+              {nicknameErrorMessage && <div style={{ color: 'red' }}>{nicknameErrorMessage}</div>}
+              {isNicknameChecked === true && <div className={style.complete}>사용 가능한 닉네임입니다.</div>}
+              {isNicknameChecked === false && <div className={style.error}>이미 사용 중인 닉네임입니다.</div>}
+            </div>
+          </Form.Item>
         </div>
 
         <Form.Item name="age">
-            <div>생년월일</div>
-            <div className={style.horizon}>
-                <Select
-                    style={{ width: 100, marginRight:'10px' }}
-                    placeholder="출생년도"
-                    options={generateYearOptions()}
-                    onChange={(value) => setSelectedYear(value)}
-                />
-                <Select
-                    style={{ width: 90, marginRight:'10px' }}
-                    placeholder="월"
-                    options={generateMonthOptions()}
-                    onChange={handleMonthChange}
-                />
-                <Select
-                    style={{ width: 90, marginRight:'10px' }}
-                    placeholder="일"
-                    options={dayOptions}
-                    onChange={(value) => setSelectedDay(value)}
-                />
-                <Input
-                  value={age}
-                  disabled
-                  suffix="세"
-                  style={{ width: 90 }}
-                />
-            </div>
+          <div>생년월일</div>
+          <div className={style.horizon}>
+            <Select
+              style={{ width: 100, marginRight:'10px' }}
+              placeholder="출생년도"
+              options={generateYearOptions()}
+              onChange={(value) => setSelectedYear(value)}
+            />
+            <Select
+              style={{ width: 90, marginRight:'10px' }}
+              placeholder="월"
+              options={generateMonthOptions()}
+              onChange={handleMonthChange}
+            />
+            <Select
+              style={{ width: 90, marginRight:'10px' }}
+              placeholder="일"
+              options={dayOptions}
+              onChange={(value) => setSelectedDay(value)}
+            />
+            <Input
+              value={age}
+              disabled
+              suffix="세"
+              style={{ width: 90 }}
+            />
+          </div>
         </Form.Item>
         <Form.Item name="question">
-                <div>아이디 찾기 질문</div>
-                <Select
-                    style={{ width: '400px'}}
-                    placeholder="질문"
-                    options={[
-                      { value: '0', label: '인생에서 제일 행복했던 순간은 언제인가요?' },
-                      { value: '1', label: '태어난 곳은 어디인가요?' },
-                      { value: '2', label: '제일 좋아하는 음식은 무엇인가요?' },
-                      { value: '3', label: '출신 초등학교는 어디인가요?' },
-                      { value: '4', label: '좋아하는 캐릭터는 무엇인가요?' },
-                    ]}
-                    onChange={handleQuestionChange}
-                />
-            </Form.Item>
-
-        <Form.Item name="answer" style={{ marginRight:'10px'}} >
-                <div>답변</div>
-                <Input 
-                placeholder="답변"
-                style={{width: 400}}
-                spellCheck={false}
-                onChange={handleAnswerChange}
-                />
+          <div>아이디 찾기 질문</div>
+          <Select
+            style={{ width: '400px'}}
+            placeholder="질문"
+            options={[
+              { value: '0', label: '인생에서 제일 행복했던 순간은 언제인가요?' },
+              { value: '1', label: '태어난 곳은 어디인가요?' },
+              { value: '2', label: '제일 좋아하는 음식은 무엇인가요?' },
+              { value: '3', label: '출신 초등학교는 어디인가요?' },
+              { value: '4', label: '좋아하는 캐릭터는 무엇인가요?' },
+            ]}
+            onChange={handleQuestionChange}
+          />
         </Form.Item>
 
+        <Form.Item name="answer" style={{ marginRight:'10px'}} >
+          <div>답변</div>
+          <Input 
+            placeholder="답변"
+            style={{width: 400}}
+            spellCheck={false}
+            onChange={handleAnswerChange}
+          />
+        </Form.Item>
       </Form>
     </div>  
   );
 };
 
-export default SignUpMain;
+export default RegisterPage;
