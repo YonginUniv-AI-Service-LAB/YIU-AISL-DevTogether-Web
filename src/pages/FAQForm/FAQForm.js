@@ -72,7 +72,7 @@ const FAQFormPage = () => {
   // FAQ 생성
   const createData = useMutation({
     mutationFn: async (data) =>
-      await axios({
+      await authAPI.post({
         method: "POST",
         url: "/faq",
         headers: {
