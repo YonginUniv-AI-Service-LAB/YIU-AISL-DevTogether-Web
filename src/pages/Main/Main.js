@@ -1,20 +1,26 @@
 import React from "react";
 import { useMediaQuery } from "react-responsive";
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { Carousel } from 'antd';
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { Carousel } from "antd";
 import ProfileMain from "../../components/Group/Profile/ProfileMain";
-import { data_mentee } from '../../assets/data/mentee';
-import { data_mentor } from '../../assets/data/mentor';
-import { data_subject } from '../../assets/data/subject';
+import { data_mentee } from "../../assets/data/mentee";
+import { data_mentor } from "../../assets/data/mentor";
+import { data_subject } from "../../assets/data/subject";
 import style from "./Main.module.css";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { defaultAPI } from "../../api";
+import LoadingSpin from "../../components/Spin/LoadingSpin";
+import GetDataErrorView from "../../components/Result/GetDataError";
 
 // Custom arrow component
 const CustomArrow = ({ direction, onClick }) => (
   <div
-    className={`${style.customArrow} ${direction === 'left' ? style.customArrowLeft : style.customArrowRight}`}
+    className={`${style.customArrow} ${
+      direction === "left" ? style.customArrowLeft : style.customArrowRight
+    }`}
     onClick={onClick}
   >
-    {direction === 'left' ? <LeftOutlined /> : <RightOutlined />}
+    {direction === "left" ? <LeftOutlined /> : <RightOutlined />}
   </div>
 );
 
@@ -60,50 +66,128 @@ const MainPage = () => {
     ],
   };
 
+  // 등록된 queryClient를 가져옴
+  const queryClient = useQueryClient();
+
+  // 메인 데이터 조회
+  const {
+    data: main,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["main"],
+    queryFn: async () => {
+      const res = await defaultAPI.get("/main");
+      return res.data;
+    },
+  });
+
+  if (isLoading) return <LoadingSpin />;
+  if (error) return <GetDataErrorView />;
+
   return (
     <div>
       {/* 광고성 영역 */}
       {!isMobile && (
         <div className={style.banner}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div style={{ color: 'white', alignContent: 'center', marginRight: '50px' }}>
-              <div style={{ marginBottom: '80px' }}>
-                <span style={{ fontSize: '2vw', fontWeight: '400' }}>멘토와 함께하는 맞춤형 코딩</span><br />
-                <span style={{ fontSize: '2.5vw', fontWeight: '900' }}>코딩 과외 플랫폼</span><br />
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div
+              style={{
+                color: "white",
+                alignContent: "center",
+                marginRight: "50px",
+              }}
+            >
+              <div style={{ marginBottom: "80px" }}>
+                <span style={{ fontSize: "2vw", fontWeight: "400" }}>
+                  멘토와 함께하는 맞춤형 코딩
+                </span>
+                <br />
+                <span style={{ fontSize: "2.5vw", fontWeight: "900" }}>
+                  코딩 과외 플랫폼
+                </span>
+                <br />
               </div>
               <div>
-                <span style={{ fontSize: '2.5vw', fontWeight: '900' }}>DevTogether</span>
+                <span style={{ fontSize: "2.5vw", fontWeight: "900" }}>
+                  DevTogether
+                </span>
               </div>
             </div>
-            <img src='./main.png' alt="메인 이미지" style={{ width: '30vw', height: '30vw', marginTop: '' }} />
+            <img
+              src="./main.png"
+              alt="메인 이미지"
+              style={{ width: "30vw", height: "30vw", marginTop: "" }}
+            />
           </div>
         </div>
       )}
 
       {isMobile && (
         <div className={style.banner}>
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div style={{ color: 'white', alignContent: 'center', marginBottom: '20px', marginTop: '20px' }}>
-              <div style={{ marginBottom: '10px' }}>
-                <span style={{ fontSize: '15px', fontWeight: '400' }}>멘토와 함께하는 맞춤형 코딩</span><br />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <div
+              style={{
+                color: "white",
+                alignContent: "center",
+                marginBottom: "20px",
+                marginTop: "20px",
+              }}
+            >
+              <div style={{ marginBottom: "10px" }}>
+                <span style={{ fontSize: "15px", fontWeight: "400" }}>
+                  멘토와 함께하는 맞춤형 코딩
+                </span>
+                <br />
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div style={{ fontSize: '18px', fontWeight: '900', marginRight: '10px' }}>코딩 과외 플랫폼</div>
-                <div style={{ fontSize: '20px', fontWeight: '900' }}>DevTogether</div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: "900",
+                    marginRight: "10px",
+                  }}
+                >
+                  코딩 과외 플랫폼
+                </div>
+                <div style={{ fontSize: "20px", fontWeight: "900" }}>
+                  DevTogether
+                </div>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      <div style={{
-        marginLeft: breakpoints.isMobile ? '5%' : breakpoints.isTablet ? 30 : breakpoints.isLargeTablet ? '10%' : '15%',
-        marginRight: breakpoints.isMobile ? '5%' : breakpoints.isTablet ? 30 : breakpoints.isLargeTablet ? '10%' : '15%',
-      }}>
-
+      <div
+        style={{
+          marginLeft: breakpoints.isMobile
+            ? "5%"
+            : breakpoints.isTablet
+            ? 30
+            : breakpoints.isLargeTablet
+            ? "10%"
+            : "15%",
+          marginRight: breakpoints.isMobile
+            ? "5%"
+            : breakpoints.isTablet
+            ? 30
+            : breakpoints.isLargeTablet
+            ? "10%"
+            : "15%",
+        }}
+      >
         {/* 멘티 프로필 섹션 */}
         <div className={style.profileSection}>
-          <div style={{fontSize:'25px', fontWeight:'bold'}}>학생 프로필 미리보기</div>
+          <div style={{ fontSize: "25px", fontWeight: "bold" }}>
+            학생 프로필 미리보기
+          </div>
           <Carousel arrows infinite={false} {...sliderSettings}>
             {menteeProfiles.map((mentee) => (
               <div key={mentee.id} className={style.sliderItem}>
@@ -125,8 +209,10 @@ const MainPage = () => {
         </div>
 
         {/* 멘토 프로필 섹션 */}
-        <div style={{marginTop:'20px'}}>
-          <div style={{fontSize:'25px', fontWeight:'bold'}}>선생님 프로필 미리보기</div>
+        <div style={{ marginTop: "20px" }}>
+          <div style={{ fontSize: "25px", fontWeight: "bold" }}>
+            선생님 프로필 미리보기
+          </div>
           <Carousel arrows infinite={false} {...sliderSettings}>
             {mentorProfiles.map((mentor) => (
               <div key={mentor.id} className={style.sliderItem}>
@@ -148,8 +234,16 @@ const MainPage = () => {
         </div>
 
         {/* 인기 있는 과목 섹션 */}
-        <div style={{marginTop:'20px'}}>
-          <div style={{marginBottom:'25px', fontSize:'25px', fontWeight:'bold'}}>인기 있는 과목</div>
+        <div style={{ marginTop: "20px" }}>
+          <div
+            style={{
+              marginBottom: "25px",
+              fontSize: "25px",
+              fontWeight: "bold",
+            }}
+          >
+            인기 있는 과목
+          </div>
           <Carousel arrows infinite={false} {...sliderSettings}>
             {subjects.map((subject, index) => (
               <div key={index} className={style.sliderItem}>

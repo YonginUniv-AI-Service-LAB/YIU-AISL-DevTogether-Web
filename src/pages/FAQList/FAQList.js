@@ -2,7 +2,6 @@ import { Button, Collapse, Popconfirm, Spin, theme } from "antd";
 import React, { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useLocation, useNavigate } from "react-router-dom";
-import { data_faq } from "../../assets/data/faq";
 import PageHeader from "../../components/Group/PageHeader/PageHeader";
 import { colors } from "../../assets/colors";
 import Accordion from "react-bootstrap/Accordion";
@@ -11,7 +10,6 @@ import { useAccordionButton } from "react-bootstrap/AccordionButton";
 import Card from "react-bootstrap/Card";
 import styles from "./FAQList.module.css";
 import PageHeaderImage from "../../assets/images/PageHeaderImage/faq.svg";
-import axios from "axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authAPI, defaultAPI } from "../../api";
 import HoverEventButton from "../../components/Button/HoverEventButton";
@@ -70,9 +68,6 @@ const FAQListPage = (props) => {
     onError: (e) => {
       message.error("잠시 후에 다시 시도해주세요");
     },
-    // onSettled: () => {
-    //   console.log("결과에 관계 없이 무언가 실행됨");
-    // },
   });
 
   // 임시
