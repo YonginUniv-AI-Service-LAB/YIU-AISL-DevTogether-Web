@@ -19,8 +19,8 @@ import {
   NoticeFormTypeAtom,
 } from "../../recoil/atoms/notice";
 import dayjs from "dayjs";
-import { useQuery } from "@tanstack/react-query";
-import { defaultAPI } from "../../api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { authAPI, defaultAPI } from "../../api";
 import LoadingSpin from "../../components/Spin/LoadingSpin";
 import GetDataErrorView from "../../components/Result/GetDataError";
 import styles from "./NoticeDetail.module.css";
@@ -38,6 +38,26 @@ const NoticeDetailPage = (props) => {
       );
       console.log("공지사항 상세보기: ", res.data);
       return res.data;
+    },
+  });
+
+  const deleteData = useMutation({
+    mutationFn: async () =>
+      await authAPI.delete("/admin/report", {
+        noticeId: notice.noticeId,
+      }),
+    onSuccess: () => {
+      message.success("공지사항이 삭제되었습니다");
+      navigate(-1);
+    },
+    onError: (e) => {
+      //     console.log("실패: ", e);
+      //     message.error("잠시 후에 다시 시도해주세요");
+      // 403: 권한없음
+      // 404: id 없음
+      // 404:회원없 음
+      // 400:데이터미입력
+      // 500 : 내부 서부오류 (그 외)
     },
   });
 
@@ -72,9 +92,7 @@ const NoticeDetailPage = (props) => {
   };
 
   const deleteConfirm = (e) => {
-    console.log(e);
-    message.success("공지사항 삭제 완료");
-    navigate(-1);
+    deleteData.mutate();
   };
   const deleteCancel = (e) => {
     console.log(e);

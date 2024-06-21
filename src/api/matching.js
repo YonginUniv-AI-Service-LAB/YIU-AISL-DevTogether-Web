@@ -28,7 +28,7 @@
 // const 멘토_스크랩 = useMutation({
 //   mutationFn: async (data) =>
 //     await authAPI.post("/scrap/mentor", {
-//       data: { scrapId: data },
+//       scrapId: data
 //     }),
 //   onSuccess: () => {
 // 메시지 따로 없이 그냥 스크랩 표시만 해주면 될듯?
@@ -44,7 +44,7 @@
 // const 멘티_스크랩 = useMutation({
 //   mutationFn: async (data) =>
 //     await authAPI.post("/scrap/mentee", {
-//       data: { scrapId: data },
+//     scrapId: data
 //     }),
 //   onSuccess: () => {
 // 메시지 따로 없이 그냥 스크랩 표시만 해주면 될듯?
@@ -90,7 +90,7 @@
 // const 신청_수락 = useMutation({
 //   mutationFn: async (data) =>
 //     await authAPI.put("/matching/application", {
-//       data: { matchingId: data },
+//       matchingId: data
 //     }),
 //   onSuccess: () => {
 //  message.success("신청을 수락했습니다!");
@@ -108,7 +108,7 @@
 // const 신청_삭제 = useMutation({
 //   mutationFn: async (data) =>
 //     await authAPI.delete("/matching/application", {
-//       data: { matchingId: data },
+//       matchingId: data
 //     }),
 //   onSuccess: () => {
 //   },
@@ -123,7 +123,7 @@
 // const 신청_거절 = useMutation({
 //   mutationFn: async (data) =>
 //     await authAPI.put("/matching/refusal", {
-//       data: { matchingId: data },
+//      matchingId: data
 //     }),
 //   onSuccess: () => {
 //  message.success("신청을 거절했습니다!");
@@ -141,7 +141,7 @@
 // const 신청_확정 = useMutation({
 //   mutationFn: async (data) =>
 //     await authAPI.post("/matching/confirmation", {
-//       data: { matchingId: data },
+//        matchingId: data
 //     }),
 //   onSuccess: () => {
 //  message.success("매칭이 확정되었습니다!");
@@ -157,7 +157,7 @@
 // const 신청_종료 = useMutation({
 //   mutationFn: async (data) =>
 //     await authAPI.post("/matching/end", {
-//       data: { matchingId: data },
+//         matchingId: data
 //     }),
 //   onSuccess: () => {
 //  message.success("매칭이 종료되었습니다!");
