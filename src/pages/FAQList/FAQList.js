@@ -50,9 +50,7 @@ const FAQListPage = (props) => {
   const deleteData = useMutation({
     mutationFn: (data) =>
       authAPI.delete("/faq", {
-        data: {
-          faqId: data,
-        },
+        faqId: data,
       }),
     onSuccess: (data, variables) => {
       message.success("FAQ 삭제 완료");

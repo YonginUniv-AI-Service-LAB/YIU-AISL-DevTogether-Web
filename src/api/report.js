@@ -2,14 +2,12 @@
 // const 신고하기 = useMutation({
 //   mutationFn: async (data) =>
 //     await authAPI.post("/report", {
-//       data: {
-//         contents: data.contents,
-//         to_user_id: data.to_user_id,
-//         from_user_id: data.from_user_id,
-//         type: data.type,
-//         type_id: data.type_id,
-//         category: data.category,
-//       },
+//       contents: data.contents,
+//       to_user_id: data.to_user_id,
+//       from_user_id: data.from_user_id,
+//       type: data.type,
+//       type_id: data.type_id,
+//       category: data.category,
 //     }),
 //   onSuccess: () => {
 //     // 신고 접수 성공 메시지
@@ -19,10 +17,10 @@
 //   },
 //   onError: (e) => {
 //     //     console.log("실패: ", e);
-//       //     message.error("잠시 후에 다시 시도해주세요");
-// //       400: 데이터 미입력
-// // 403: 권한없음
-// // 404: to_user_id 없음
+//     //     message.error("잠시 후에 다시 시도해주세요");
+//     //       400: 데이터 미입력
+//     // 403: 권한없음
+//     // 404: to_user_id 없음
 //   },
 // });
 
@@ -43,10 +41,8 @@
 // const 신고_처리 = useMutation({
 //   mutationFn: async (data) =>
 //     await authAPI.put("/report", {
-//       data: {
-//             reportId: data.reportId,
-//           status: data.status,
-//       },
+//       reportId: data.reportId,
+//       status: data.status,
 //     }),
 //   onSuccess: () => {
 //     // 신고 처리 성공 메시지
@@ -56,8 +52,8 @@
 //   },
 //   onError: (e) => {
 //     //     console.log("실패: ", e);
-//       //     message.error("잠시 후에 다시 시도해주세요");
-// //       400: 데이터 미입력
-// // 403: 권한없음
+//     //     message.error("잠시 후에 다시 시도해주세요");
+//     //       400: 데이터 미입력
+//     // 403: 권한없음
 //   },
 // });

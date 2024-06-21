@@ -99,9 +99,7 @@
 // const 게시글_삭제 = useMutation({
 //   mutationFn: async (data) =>
 //     await authAPI.delete("/board", {
-//       data: {
-//         boardId: data.boardId,
-//       },
+//       boardId: data.boardId,
 //     }),
 //   onSuccess: () => {
 //     // 게시글 삭제 성공 메시지
@@ -122,13 +120,11 @@
 // const 게시글_좋아요 = useMutation({
 //   mutationFn: async (data) =>
 //     await authAPI.post("/board/like", {
-//       data: {
-//         boardId: data.boardId,
-//         count: data.count,
-//       },
+//       boardId: data.boardId,
+//       count: data.count,
 //     }),
-//     onSuccess: () => {
-//       // 메시지 없이 좋아요 버튼 표시만 하면 될듯?
+//   onSuccess: () => {
+//     // 메시지 없이 좋아요 버튼 표시만 하면 될듯?
 //   },
 //   onError: (e) => {
 //     //     console.log("실패: ", e);
@@ -140,103 +136,93 @@
 // });
 
 // 🌈 게시글 스크랩
-// const 게시글_스크랩 = useMutation({
-//   mutationFn: async (data) =>
-//     await authAPI.post("/board/scrap", {
-//       data: {
-//         boardId: data.boardId,
-//       },
-//     }),
-//   onSuccess: () => {
-//     // 메시지 없이 스크랩 버튼 표시 하면 될듯?
-//   },
-//   onError: (e) => {
-//     //     console.log("실패: ", e);
-//     //     message.error("잠시 후에 다시 시도해주세요");
-//     // 403: 권한 없음
-//     // 404: id 없음
-//   },
-// });
+const 게시글_스크랩 = useMutation({
+  mutationFn: async (data) =>
+    await authAPI.post("/board/scrap", {
+      boardId: data.boardId,
+    }),
+  onSuccess: () => {
+    // 메시지 없이 스크랩 버튼 표시 하면 될듯?
+  },
+  onError: (e) => {
+    //     console.log("실패: ", e);
+    //     message.error("잠시 후에 다시 시도해주세요");
+    // 403: 권한 없음
+    // 404: id 없음
+  },
+});
 
 // 🌈 댓글 등록
-// const 댓글_등록 = useMutation({
-//   mutationFn: async (data) =>
-//     await authAPI.post("/board/comment", {
-//       data: {
-//         boardId: data.boardId,
-//         contents: data.contents,
-//       },
-//     }),
-//     onSuccess: () => {
-//       // 화면 업데이트 진행
-//   },
-//   onError: (e) => {
-//     //     console.log("실패: ", e);
-//     //     message.error("잠시 후에 다시 시도해주세요");
-//     // 403: 권한 없음
-//     // 404: id 없음
-//     // 400: 데이터 미입력
-//   },
-// });
+const 댓글_등록 = useMutation({
+  mutationFn: async (data) =>
+    await authAPI.post("/board/comment", {
+      boardId: data.boardId,
+      contents: data.contents,
+    }),
+  onSuccess: () => {
+    // 화면 업데이트 진행
+  },
+  onError: (e) => {
+    //     console.log("실패: ", e);
+    //     message.error("잠시 후에 다시 시도해주세요");
+    // 403: 권한 없음
+    // 404: id 없음
+    // 400: 데이터 미입력
+  },
+});
 
 // 🌈 댓글_삭제
-// const 댓글_삭제 = useMutation({
-//   mutationFn: async (data) =>
-//     await authAPI.delete("/board/comment", {
-//       data: {
-//         commentId: data.commentId,
-//       },
-//     }),
-//     onSuccess: () => {
-//     message.success("댓글이 삭제되었습니다");
-//     // 화면 업데이트
-//   },
-//   onError: (e) => {
-//     //     console.log("실패: ", e);
-//     //     message.error("잠시 후에 다시 시도해주세요");
-//     // 403: 권한 없음
-//     // 404: id 없음
-//     // 400: 데이터 미입력
-//   },
-// });
+const 댓글_삭제 = useMutation({
+  mutationFn: async (data) =>
+    await authAPI.delete("/board/comment", {
+      commentId: data.commentId,
+    }),
+  onSuccess: () => {
+    message.success("댓글이 삭제되었습니다");
+    // 화면 업데이트
+  },
+  onError: (e) => {
+    //     console.log("실패: ", e);
+    //     message.error("잠시 후에 다시 시도해주세요");
+    // 403: 권한 없음
+    // 404: id 없음
+    // 400: 데이터 미입력
+  },
+});
 
 // 🌈 댓글 수정
-// const 댓글_수정 = useMutation({
-//   mutationFn: async (data) =>
-//     await authAPI.put("/board/comment", {
-//       data: {
-//         commentId: data.commentId,
-//         contents: data.contents,
-//       },
-//     }),
-//     onSuccess: () => {
-//       // 화면 업데이트 진행
-//   },
-//   onError: (e) => {
-//     //     console.log("실패: ", e);
-//     //     message.error("잠시 후에 다시 시도해주세요");
-//     // 403: 권한 없음
-//     // 404: id 없음
-//     // 400: 데이터 미입력
-//   },
-// });
+const 댓글_수정 = useMutation({
+  mutationFn: async (data) =>
+    await authAPI.put("/board/comment", {
+      commentId: data.commentId,
+      contents: data.contents,
+    }),
+  onSuccess: () => {
+    // 화면 업데이트 진행
+  },
+  onError: (e) => {
+    //     console.log("실패: ", e);
+    //     message.error("잠시 후에 다시 시도해주세요");
+    // 403: 권한 없음
+    // 404: id 없음
+    // 400: 데이터 미입력
+  },
+});
 
 // 🌈 댓글 좋아요
-// const 댓글_좋아요 = useMutation({
-//   mutationFn: async (data) =>
-//     await authAPI.post("/board/comment/like", {
-//       data: {
-//         id: data.id,
-//       },
-//     }),
-//     onSuccess: () => {
-//       // 메시지 없이 댓글 좋아요 버튼 표시만 하면 될듯?
-//   },
-//   onError: (e) => {
-//     //     console.log("실패: ", e);
-//     //     message.error("잠시 후에 다시 시도해주세요");
-//     // 403: 권한 없음
-//     // 404: id 없음
-//     // 409: 데이터 중복
-//   },
-// });
+const 댓글_좋아요 = useMutation({
+  mutationFn: async (data) =>
+    await authAPI.post("/board/comment/like", {
+      id: data.id,
+    }),
+  onSuccess: () => {
+    // 메시지 없이 댓글 좋아요 버튼 표시만 하면 될듯?
+  },
+  onError: (e) => {
+    //     console.log("실패: ", e);
+    //     message.error("잠시 후에 다시 시도해주세요");
+    // 403: 권한 없음
+    // 404: id 없음
+    // 409: 데이터 중복
+  },
+});

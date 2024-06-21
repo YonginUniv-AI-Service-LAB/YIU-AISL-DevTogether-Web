@@ -19,12 +19,10 @@
 // const 알림_확인 = useMutation({
 //   mutationFn: async (data) =>
 //     await authAPI.put("/user/push", {
-//       data: { id: data },
+//       id: data,
 //     }),
-//   onSuccess: () => {
-//   },
-//   onError: (e) => {
-//   },
+//   onSuccess: () => {},
+//   onError: (e) => {},
 // });
 
 // 🌈 내 정보 조회

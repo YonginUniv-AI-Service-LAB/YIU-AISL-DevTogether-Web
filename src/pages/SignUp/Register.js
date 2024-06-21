@@ -44,6 +44,7 @@ const RegisterPage = ({ resetState }) => {
   const [selectedDomain, setSelectedDomain] = useState("");
   const [domainInputDisabled, setDomainInputDisabled] = useState(false);
 
+  const [verificationNumber, setVerificationNumber] = useState(null);
   const [verificationCode, setVerificationCode] = useState("");
   const [selectedbutton, setSelectedButton] = useState(false);
   const [isCodeVerified, setIsCodeVerified] = useState(null);
@@ -248,55 +249,40 @@ const RegisterPage = ({ resetState }) => {
   };
 
   const sendEmailVerificationCode = useMutation({
-    mutationFn: async (email) =>
-      await defaultAPI.post("/register/email", {
-        data: { email: email },
-      }),
-    onSuccess: () => {
+    mutationFn: async () =>
+      await defaultAPI.post("/register/email", { email: emailId }),
+    onSuccess: (res) => {
+      console.log("결과: ", res);
+      setVerificationNumber(res.data);
       message.success("인증번호가 전송되었습니다.");
       setSelectedButton(true);
       setRemainingTime(180);
     },
     onError: (e) => {
-      console.log("실패: ", e);
+      console.log("베이스유알엘: ", process.env.REACT_APP_API_URL);
+      console.log("이메일", emailId);
+      console.log("실패: ", e.request);
       message.error("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
     },
   });
 
   // ❗️❗️❗️ 이메일 인증번호 확인하는 API 없음 => 이메일 인증시 받은 response 데이터 저장해서 비교!!!
-  const verifyEmailCode = useMutation({
-    mutationFn: async ({ email, verificationCode }) =>
-      await axios({
-        method: "POST",
-        url: "/register/email/verify",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: { email, verificationCode },
-      }),
-    onSuccess: () => {
+  const verifyEmailCode = () => {
+    if (parseInt(verificationCode) === parseInt(verificationNumber)) {
       message.success("이메일 인증에 성공했습니다.");
       setIsCodeVerified(true);
-    },
-    onError: (e) => {
-      console.log("실패: ", e);
+    } else {
       message.error("이메일 인증에 실패했습니다. 다시 시도해주세요.");
       setIsCodeVerified(false);
-    },
-  });
+    }
+  };
 
+    // ❗️ 멘토는 /mentor/nickname로 검사해야함
   const checkNicknameAvailability = useMutation({
-    mutationFn: async (nickname) =>
-      await axios({
-        method: "POST",
-        url: "/nickname",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: { nickname },
-      }),
-    onSuccess: (data) => {
-      if (data.data) {
+    mutationFn: async () =>
+      await defaultAPI.post("/mentee/nickname", { nickname }),
+    onSuccess: (res) => {
+      if (res.data) {
         message.success("사용 가능한 닉네임입니다.");
         setIsNicknameChecked(true);
       } else {
@@ -305,7 +291,7 @@ const RegisterPage = ({ resetState }) => {
       }
     },
     onError: (e) => {
-      console.log("실패: ", e);
+      console.log("실패: ", e.request);
       message.error("닉네임 중복 확인에 실패했습니다. 다시 시도해주세요.");
     },
   });
@@ -388,7 +374,7 @@ const RegisterPage = ({ resetState }) => {
                 htmlType="submit"
                 className={style.check_button}
                 style={{ marginLeft: "10px" }}
-                onClick={() => sendEmailVerificationCode.mutate(email)}
+                onClick={() => sendEmailVerificationCode.mutate(emailId)}
               >
                 인증 번호 전송
               </Button>
@@ -435,9 +421,7 @@ const RegisterPage = ({ resetState }) => {
               htmlType="submit"
               className={style.check_button}
               style={{ marginLeft: "10px" }}
-              onClick={() =>
-                verifyEmailCode.mutate({ email, verificationCode })
-              }
+              onClick={() => verifyEmailCode()}
             >
               이메일 인증
             </Button>

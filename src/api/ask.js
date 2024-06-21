@@ -102,9 +102,7 @@
 // const 문의_삭제 = useMutation({
 //   mutationFn: async (data) =>
 //     await authAPI.delete("/ask", {
-//       data: {
-//         askId: data.askId,
-//       },
+//       askId: data.askId,
 //     }),
 //   onSuccess: () => {
 //     // 문의 삭제 성공 메시지
@@ -114,11 +112,11 @@
 //   },
 //   onError: (e) => {
 //     //     console.log("실패: ", e);
-//       //     message.error("잠시 후에 다시 시도해주세요");
-// //       404:회원없음
-// // 404: id 없음
-// // 400: 데이터 미입력
-// // 403- 권한없음(자기가 쓴 글이 아닌데 삭제하려는 경우)
+//     //     message.error("잠시 후에 다시 시도해주세요");
+//     //       404:회원없음
+//     // 404: id 없음
+//     // 400: 데이터 미입력
+//     // 403- 권한없음(자기가 쓴 글이 아닌데 삭제하려는 경우)
 //   },
 // });
 
@@ -126,10 +124,8 @@
 // const 문의_답변 = useMutation({
 //   mutationFn: async (data) =>
 //     await authAPI.post("/admin/ask/answer", {
-//       data: {
-//         askId: data.askId,
-//         answer: data.answer
-//       },
+//       askId: data.askId,
+//       answer: data.answer,
 //     }),
 //   onSuccess: () => {
 //     // 문의 답변 등록 성공 메시지
@@ -139,9 +135,9 @@
 //   },
 //   onError: (e) => {
 //     //     console.log("실패: ", e);
-//       //     message.error("잠시 후에 다시 시도해주세요");
-// // 404: id 없음
-// // 400: 데이터 미입력
-// // 403 권한 없음
+//     //     message.error("잠시 후에 다시 시도해주세요");
+//     // 404: id 없음
+//     // 400: 데이터 미입력
+//     // 403 권한 없음
 //   },
 // });
