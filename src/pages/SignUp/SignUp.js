@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 import style from "./SignUp.module.css";
-import { Button, Checkbox, Form, Input, message } from "antd";
+import { Button, Form, Input, message } from "antd";
 import LogoTitle_Login from "../../components/Group/LOGO/LogoTitle_Login";
-import { RecoilRoot, atom, useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import pageState from "../../recoil/atoms/login";
 import {
   resetStateAtom,
@@ -14,12 +14,11 @@ import {
   nicknameStateAtom,
   genderStateAtom,
   ageStateAtom,
+  birthStateAtom,
   roleStateAtom,
   questionStateAtom,
   answerStateAtom,
 } from "../../recoil/atoms/register";
-import SignUpMain from "./SignUpMain";
-import SignUpSub from "./SignUpSub";
 import RegisterPage from "./Register";
 import { useMutation } from "@tanstack/react-query";
 import { defaultAPI } from "../../api";
@@ -29,7 +28,6 @@ const SignUpPage = () => {
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
   const isMobile = useMediaQuery({ maxWidth: 767 });
-  const isNotMobile = useMediaQuery({ minWidth: 768 });
 
   // 페이지 이동
   const navigate = useNavigate();
@@ -41,6 +39,7 @@ const SignUpPage = () => {
   const nickname = useRecoilValue(nicknameStateAtom);
   const gender = useRecoilValue(genderStateAtom);
   const age = useRecoilValue(ageStateAtom);
+  const birth = useRecoilValue(birthStateAtom);
   const role = useRecoilValue(roleStateAtom);
   const question = useRecoilValue(questionStateAtom);
   const answer = useRecoilValue(answerStateAtom);
@@ -76,6 +75,9 @@ const SignUpPage = () => {
       nickname &&
       gender &&
       age &&
+      birth.year &&
+      birth.month &&
+      birth.day &&
       role &&
       question &&
       answer
@@ -89,36 +91,39 @@ const SignUpPage = () => {
         nickname,
         gender,
         age,
+        birth,
         role,
         question,
         answer
       );
       setRegistercheck(true);
       회원가입.mutate();
-      // 예를 들어, 다른 함수를 호출
-      // anotherFunction();
     } else {
       console.log("모든 필드를 채워주세요.");
     }
   };
 
   const 회원가입 = useMutation({
-    mutationFn: async (data) =>
-      await defaultAPI.post("/register", {
+    mutationFn: async () => {
+      const roleValue = selectedRole === "student" ? 1 : 2;
+      const formattedBirth = `${birth.year}${birth.month.padStart(2, '0')}${birth.day.padStart(2, '0')}`;
+      return await defaultAPI.post("/register", {
         email: email,
         pwd: password,
         name: name,
         nickname: nickname,
-        role: 1,
+        role: roleValue, // 역할에 따른 값 설정
         gender: gender,
         age: age,
-        birth: "011105",
+        birth: formattedBirth, // 생년월일을 'yyyymmdd' 형식의 문자열로 변환하여 전송
         question: question,
         answer: answer,
-      }),
+      });
+    },
     onSuccess: () => {
-      // 회원가입 성공 후 1) 회원가입 성공 메세지 => 로그인 화면 OR 2) 회원가입 성공 화면
-      message.success("성공");
+      // 회원가입 성공 후 CompletePage로 이동
+      message.success("회원가입에 성공했습니다.");
+      navigate('/complete'); // CompletePage 경로로 이동
     },
     onError: (e) => {
       console.log("실패: ", e.request);
@@ -133,7 +138,6 @@ const SignUpPage = () => {
     <div
       style={{
         marginTop: isMobile ? 50 : 100,
-        // marginBottom: isMobile ? 50 : 200,
         marginLeft: isMobile ? "5%" : isTablet ? 30 : "20%",
         marginRight: isMobile ? "5%" : isTablet ? 30 : "20%",
         display: isMobile ? null : "flex",
@@ -216,8 +220,6 @@ const SignUpPage = () => {
             </div>
           </div>
           <div>
-            {/* <SignUpMain resetState={resetState}/>
-            <SignUpSub resetState={resetState}/> */}
             <RegisterPage />
             <Button
               type="primary"

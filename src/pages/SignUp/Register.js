@@ -13,6 +13,7 @@ import {
   ageStateAtom,
   questionStateAtom,
   answerStateAtom,
+  birthStateAtom,
 } from "../../recoil/atoms/register";
 import { CiRead, CiUnread } from "react-icons/ci";
 import { defaultAPI } from "../../api";
@@ -40,10 +41,6 @@ const RegisterPage = ({ resetState }) => {
   const [passwordMatch, setPasswordMatch] = useState(null);
 
   const [email, setEmail] = useRecoilState(emailStateAtom);
-  const [emailId, setEmailId] = useState("");
-  const [selectedDomain, setSelectedDomain] = useState("");
-  const [domainInputDisabled, setDomainInputDisabled] = useState(false);
-
   const [verificationNumber, setVerificationNumber] = useState(null);
   const [verificationCode, setVerificationCode] = useState("");
   const [selectedbutton, setSelectedButton] = useState(false);
@@ -65,6 +62,7 @@ const RegisterPage = ({ resetState }) => {
   const [age, setAge] = useRecoilState(ageStateAtom);
   const [question, setQuestion] = useRecoilState(questionStateAtom);
   const [answer, setAnswer] = useRecoilState(answerStateAtom);
+  const [birth, setBirth] = useRecoilState(birthStateAtom);
 
   const [isNicknameChecked, setIsNicknameChecked] = useState(null);
 
@@ -79,9 +77,6 @@ const RegisterPage = ({ resetState }) => {
       setPasswordMatch(null);
       setPasswordErrorMessage("");
       setEmail("");
-      setEmailId("");
-      setSelectedDomain("");
-      setDomainInputDisabled(false);
       setVerificationCode("");
       setSelectedButton(false);
       setIsCodeVerified(null);
@@ -97,6 +92,7 @@ const RegisterPage = ({ resetState }) => {
       setAge(null);
       setQuestion(null);
       setAnswer("");
+      setBirth({ year: "", month: "", day: "" });
       setIsNicknameChecked(null);
 
       setReset(false);
@@ -154,26 +150,8 @@ const RegisterPage = ({ resetState }) => {
     }
   };
 
-  const handleInputChange = (e) => {
-    setEmailId(e.target.value);
-    setEmail(`${e.target.value}@${selectedDomain}`);
-  };
-
-  const handleDomainChange = (value) => {
-    if (value === "type") {
-      setSelectedDomain("");
-      setDomainInputDisabled(false);
-    } else {
-      setDomainInputDisabled(true);
-      setSelectedDomain(value);
-      setEmail(`${emailId}@${value}`);
-    }
-  };
-
-  const handleDomainInputChange = (e) => {
-    const value = e.target.value;
-    setSelectedDomain(value);
-    setEmail(`${emailId}@${value}`);
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
   };
 
   const handleNameChange = (e) => {
@@ -243,14 +221,25 @@ const RegisterPage = ({ resetState }) => {
     setAnswer(e.target.value);
   };
 
-  const handleMonthChange = (newValue) => {
-    setSelectedMonth(newValue);
-    setDayOptions(generateDayOptions(newValue));
+  const handleYearChange = (value) => {
+    setBirth({ ...birth, year: value });
+    setSelectedYear(value);
+  };
+
+  const handleMonthChange = (value) => {
+    setBirth({ ...birth, month: value });
+    setSelectedMonth(value);
+    setDayOptions(generateDayOptions(value));
+  };
+
+  const handleDayChange = (value) => {
+    setBirth({ ...birth, day: value });
+    setSelectedDay(value);
   };
 
   const sendEmailVerificationCode = useMutation({
     mutationFn: async () =>
-      await defaultAPI.post("/register/email", { email: emailId }),
+      await defaultAPI.post("/register/email", { email }),
     onSuccess: (res) => {
       console.log("결과: ", res);
       setVerificationNumber(res.data);
@@ -260,13 +249,12 @@ const RegisterPage = ({ resetState }) => {
     },
     onError: (e) => {
       console.log("베이스유알엘: ", process.env.REACT_APP_API_URL);
-      console.log("이메일", emailId);
+      console.log("이메일", email);
       console.log("실패: ", e.request);
       message.error("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
     },
   });
 
-  // ❗️❗️❗️ 이메일 인증번호 확인하는 API 없음 => 이메일 인증시 받은 response 데이터 저장해서 비교!!!
   const verifyEmailCode = () => {
     if (parseInt(verificationCode) === parseInt(verificationNumber)) {
       message.success("이메일 인증에 성공했습니다.");
@@ -347,13 +335,20 @@ const RegisterPage = ({ resetState }) => {
   );
 
   useEffect(() => {
-    if (selectedYear && selectedMonth && selectedDay) {
+    if (birth.year && birth.month && birth.day) {
       const today = new Date();
-      const birthYear = parseInt(selectedYear);
-      let age = today.getFullYear() - birthYear + 1;
+      let age = today.getFullYear() - birth.year + 1;
       setAge(age);
     }
-  }, [selectedYear, selectedMonth, selectedDay]);
+  }, [birth]);
+
+  const questionOptions = [
+    { value: "0", label: "인생에서 제일 행복했던 순간은 언제인가요?" },
+    { value: "1", label: "태어난 곳은 어디인가요?" },
+    { value: "2", label: "제일 좋아하는 음식은 무엇인가요?" },
+    { value: "3", label: "출신 초등학교는 어디인가요?" },
+    { value: "4", label: "좋아하는 캐릭터는 무엇인가요?" },
+  ];
 
   return (
     <div style={{ marginTop: "40px", width: "400px" }}>
@@ -363,9 +358,9 @@ const RegisterPage = ({ resetState }) => {
           <div className={style.nicknameContainer}>
             <Input
               placeholder="이메일"
-              value={emailId}
+              value={email}
               spellCheck={false}
-              onChange={handleInputChange}
+              onChange={handleEmailChange}
               style={{ width: 280 }}
             />
             {(!selectedbutton || isCodeVerified) && (
@@ -374,7 +369,7 @@ const RegisterPage = ({ resetState }) => {
                 htmlType="submit"
                 className={style.check_button}
                 style={{ marginLeft: "10px" }}
-                onClick={() => sendEmailVerificationCode.mutate(emailId)}
+                onClick={() => sendEmailVerificationCode.mutate()}
               >
                 인증 번호 전송
               </Button>
@@ -385,7 +380,7 @@ const RegisterPage = ({ resetState }) => {
                 htmlType="submit"
                 className={style.check_button}
                 style={{ marginLeft: "10px" }}
-                onClick={() => sendEmailVerificationCode.mutate(email)}
+                onClick={() => sendEmailVerificationCode.mutate()}
               >
                 인증 번호 재전송
               </Button>
@@ -528,7 +523,7 @@ const RegisterPage = ({ resetState }) => {
                 htmlType="submit"
                 className={style.check_button}
                 style={{ marginLeft: "10px" }}
-                onClick={() => checkNicknameAvailability.mutate(nickname)}
+                onClick={() => checkNicknameAvailability.mutate()}
               >
                 닉네임 중복 확인
               </Button>
@@ -547,14 +542,14 @@ const RegisterPage = ({ resetState }) => {
           </Form.Item>
         </div>
 
-        <Form.Item name="age">
+        <Form.Item name="birth">
           <div>생년월일</div>
           <div className={style.horizon}>
             <Select
               style={{ width: 100, marginRight: "10px" }}
               placeholder="출생년도"
               options={generateYearOptions()}
-              onChange={(value) => setSelectedYear(value)}
+              onChange={handleYearChange}
             />
             <Select
               style={{ width: 90, marginRight: "10px" }}
@@ -566,7 +561,7 @@ const RegisterPage = ({ resetState }) => {
               style={{ width: 90, marginRight: "10px" }}
               placeholder="일"
               options={dayOptions}
-              onChange={(value) => setSelectedDay(value)}
+              onChange={handleDayChange}
             />
             <Input value={age} disabled suffix="세" style={{ width: 90 }} />
           </div>
@@ -576,16 +571,7 @@ const RegisterPage = ({ resetState }) => {
           <Select
             style={{ width: "400px" }}
             placeholder="질문"
-            options={[
-              {
-                value: "0",
-                label: "인생에서 제일 행복했던 순간은 언제인가요?",
-              },
-              { value: "1", label: "태어난 곳은 어디인가요?" },
-              { value: "2", label: "제일 좋아하는 음식은 무엇인가요?" },
-              { value: "3", label: "출신 초등학교는 어디인가요?" },
-              { value: "4", label: "좋아하는 캐릭터는 무엇인가요?" },
-            ]}
+            options={questionOptions}
             onChange={handleQuestionChange}
           />
         </Form.Item>

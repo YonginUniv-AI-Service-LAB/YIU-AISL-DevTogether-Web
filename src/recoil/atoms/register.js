@@ -45,6 +45,15 @@ export const ageStateAtom = atom({
     default:'',
 });
 
+export const birthStateAtom = atom({
+    key: 'birthState',
+    default: {
+      year: '',
+      month: '',
+      day: '',
+    },
+  });
+
 export const locationStateAtom = atom({
     key: 'locationState',
     default:[],

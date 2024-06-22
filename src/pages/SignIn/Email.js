@@ -5,6 +5,8 @@ import { Button, Form, Input, Modal, Select, message } from 'antd';
 import { useRecoilState } from 'recoil';
 import { CiRead, CiUnread } from "react-icons/ci";
 import { passwordStateAtom, emailStateAtom } from '../../recoil/atoms/register';
+import { useMutation } from '@tanstack/react-query';
+import { defaultAPI } from '../../api';
 
 const Email = () => {
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
@@ -29,7 +31,8 @@ const Email = () => {
     const [domainInputDisabled, setDomainInputDisabled] = useState(true);
     const [selectedbutton, setSelectedbutton] = useState(false);
     const [isCodeVerified, setIsCodeVerified] = useState(null);
-    const [verificationCode, setVerificationCode] = useState('');
+    const [serverVerificationCode, setServerVerificationCode] = useState(''); // 서버에서 받은 인증번호
+    const [userVerificationCode, setUserVerificationCode] = useState(''); // 사용자가 입력한 인증번호
     const [remainingTime, setRemainingTime] = useState(180);
     const [showPassword, setShowPassword] = useState(false); // 비밀번호 보기 토글 상태
     const [showconfirmPassword, setShowconfirmPassword] = useState(false); // 비밀번호 보기 토글 상태
@@ -55,10 +58,35 @@ const Email = () => {
         setEmail(`${emailId}@${value}`);
     };
 
+    const sendEmailVerificationCode = useMutation({
+        mutationFn: async () => await defaultAPI.post("/pwd/email", { email }),
+        onSuccess: (res) => {
+            console.log("결과: ", res);
+            setServerVerificationCode(res.data); // 서버에서 받은 인증번호를 별도의 상태로 저장
+            message.success("인증번호가 전송되었습니다.");
+            setSelectedbutton(true);
+            setRemainingTime(180);
+        },
+        onError: (e) => {
+            console.log("베이스유알엘: ", process.env.REACT_APP_API_URL);
+            console.log("이메일", email);
+            console.log("실패: ", e.request);
+            message.error("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
+        },
+    });
+
+    const verifyEmailCode = () => {
+        if (parseInt(userVerificationCode) === parseInt(serverVerificationCode)) {
+            message.success("이메일 인증에 성공했습니다.");
+            setIsCodeVerified(true);
+        } else {
+            message.error("이메일 인증에 실패했습니다. 다시 시도해주세요.");
+            setIsCodeVerified(false);
+        }
+    };
+
     const handleSendVerificationCode = () => {
-        setSelectedbutton(true);
-        setRemainingTime(180);
-        // Send the verification code logic here
+        sendEmailVerificationCode.mutate();
     };
 
     const handleVerifyCode = () => {
@@ -169,16 +197,52 @@ const Email = () => {
         setShowconfirmPassword(!showconfirmPassword);
     };
 
+    const 이메일_찾기 = useMutation({
+        mutationFn: async (data) => {
+            console.log("전송되는 데이터:", data); // 데이터를 콘솔에 출력
+            return await defaultAPI.post("/email", {
+                name: data.name,
+                birth: data.birth,
+                question: data.question,
+                answer: data.answer,
+            });
+        },
+        onSuccess: (data) => {
+            message.success("이메일 찾기에 성공했습니다.");
+            // response로 이메일 받아서 유저에게 보여주기
+            setFoundEmail(data.email); // 실제 응답 데이터 구조에 맞게 수정
+            setNoMemberFound(false);
+        },
+        onError: (e) => {
+            if (e.response) {
+                switch (e.response.status) {
+                    case 400:
+                        message.error("데이터가 없습니다. 모든 필드를 입력했는지 확인해주세요.");
+                        break;
+                    case 401:
+                        message.error("정보가 일치하지 않습니다. 질문과 답변을 확인해주세요.");
+                        break;
+                    case 404:
+                        message.error("회원 정보를 찾을 수 없습니다. 이름과 생년월일을 확인해주세요.");
+                        break;
+                    default:
+                        message.error("이메일 찾기에 실패했습니다. 다시 시도해주세요.");
+                        break;
+                }
+            } else {
+                message.error("이메일 찾기에 실패했습니다. 다시 시도해주세요.");
+            }
+        },
+    });
+
     const handleOk = () => {
         if (findidOpen) {
-            // 예시로 회원 정보가 일치하지 않는 경우를 처리합니다. 실제 로직에 맞게 수정 필요
-            if (name !== '예상되는 이름' || selectedYear !== '예상되는 출생년도' || selectedMonth !== '예상되는 월' || selectedDay !== '예상되는 일' || question !== '예상되는 질문' || answer !== '예상되는 답변') {
-                setFoundEmail('');
-                setNoMemberFound(true); // 일치하는 회원이 없을 경우 상태 업데이트
-            } else {
-                setFoundEmail('example@example.com');
-                setNoMemberFound(false); // 일치하는 회원이 있는 경우 상태 업데이트
-            }
+            이메일_찾기.mutate({
+                name,
+                birth: `${selectedYear}${selectedMonth}${selectedDay}`,
+                question,
+                answer,
+            });
         }
         if (findpasswordOpen && isCodeVerified && password && confirmPassword && passwordMatch) {
             message.success('비밀번호가 변경되었습니다.');
@@ -212,7 +276,8 @@ const Email = () => {
             setDomainInputDisabled(true);
             setSelectedbutton(false);
             setIsCodeVerified(null);
-            setVerificationCode('');
+            setUserVerificationCode(''); // 수정: userVerificationCode 초기화
+            setServerVerificationCode(''); // 수정: serverVerificationCode 초기화
             setPassword('');
             setPasswordErrorMessage('');
             setConfirmPassword('');
@@ -356,7 +421,6 @@ const Email = () => {
                                     onChange={handleDomainChange}
                                     value={selectedDomain}
                                 >
-                                    {/* <Select.Option value="type">직접 입력</Select.Option> */}
                                     <Select.Option value="yiu.ac.kr">yiu.ac.kr</Select.Option>
                                     <Select.Option value="naver.com">naver.com</Select.Option>
                                     <Select.Option value="google.com">google.com</Select.Option>
@@ -387,18 +451,18 @@ const Email = () => {
                         <div className={style.horizon} style={{ display: 'flex', alignItems: 'center' }}>
                             <Input
                                 placeholder="인증번호"
-                                value={verificationCode}
+                                value={userVerificationCode}
                                 style={{ maxWidth: '100px', maxHeight: '30px' }}
-                                onChange={(e) => setVerificationCode(e.target.value)}
+                                onChange={(e) => setUserVerificationCode(e.target.value)}
                             />
                             <Button
                                 type="primary"
                                 htmlType="submit"
                                 className={style.check_button}
                                 style={{ marginLeft: '15px' }}
-                                onClick={verificationCode ? handleVerifyCode : handleSendVerificationCode}
+                                onClick={userVerificationCode ? handleVerifyCode : handleSendVerificationCode}
                             >
-                                {verificationCode ? '인증 번호 확인' : '인증 번호 재전송'}
+                                {userVerificationCode ? '인증 번호 확인' : '인증 번호 재전송'}
                             </Button>
                         </div>
                         <div style={{ height: '10px' }}>
@@ -406,37 +470,51 @@ const Email = () => {
                         </div>
                     </Form.Item>
 
-                    {isCodeVerified && (<div> <Form.Item name="password">
-                        <div>새 비밀번호</div>
-                        <Input type={showPassword ? "text" : "password"} placeholder="비밀번호" style={{ maxHeight: '32px', width: '470px' }}
-                            suffix={ // 비밀번호 보이기/가리기 아이콘
-                                <Button
-                                    type="text"
-                                    icon={showPassword ? <CiRead /> : <CiUnread />}
-                                    onClick={togglePasswordVisibility}
-                                />}
-                            onChange={handlePasswordChange} />
-                        <div style={{ height: '0px' }}>
-                            {passwordErrorMessage && <div className={style.error}>{passwordErrorMessage}</div>}
-                        </div>
-                    </Form.Item>
-
-                        <Form.Item name="confirmPassword" dependencies={['password']}>
-                            <div>새 비밀번호 확인</div>
-                            <div className={style.horizon}>
-                                <Input type={showconfirmPassword ? "text" : "password"} placeholder="비밀번호 확인" style={{ maxHeight: '32px', width: '470px' }}
-                                    suffix={ // 비밀번호 보이기/가리기 아이콘
+                    {isCodeVerified && (
+                        <div>
+                            <Form.Item name="password">
+                                <div>새 비밀번호</div>
+                                <Input
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="비밀번호"
+                                    style={{ maxHeight: '32px', width: '470px' }}
+                                    suffix={
                                         <Button
                                             type="text"
-                                            icon={showconfirmPassword ? <CiRead /> : <CiUnread />}
-                                            onClick={toggleconfirmPasswordVisibility}
-                                        />} onChange={handleConfirmPasswordChange} disabled={password === '' || !password || passwordErrorMessage} />
-                            </div>
-                            <div style={{ height: '0px' }}>
-                                {passwordMatch === true && <div className={style.complete}>비밀번호 확인 완료</div>}
-                                {passwordMatch === false && <div className={style.error}>비밀번호가 다릅니다.</div>}
-                            </div>
-                        </Form.Item> </div>)}
+                                            icon={showPassword ? <CiRead /> : <CiUnread />}
+                                            onClick={togglePasswordVisibility}
+                                        />}
+                                    onChange={handlePasswordChange}
+                                />
+                                <div style={{ height: '0px' }}>
+                                    {passwordErrorMessage && <div className={style.error}>{passwordErrorMessage}</div>}
+                                </div>
+                            </Form.Item>
+
+                            <Form.Item name="confirmPassword" dependencies={['password']}>
+                                <div>새 비밀번호 확인</div>
+                                <div className={style.horizon}>
+                                    <InputQ
+                                        type={showconfirmPassword ? "text" : "password"}
+                                        placeholder="비밀번호 확인"
+                                        style={{ maxHeight: '32px', width: '470px' }}
+                                        suffix={
+                                            <Button
+                                                type="text"
+                                                icon={showconfirmPassword ? <CiRead /> : <CiUnread />}
+                                                onClick={toggleconfirmPasswordVisibility}
+                                            />}
+                                        onChange={handleConfirmPasswordChange}
+                                        disabled={password === '' || !password || passwordErrorMessage}
+                                    />
+                                </div>
+                                <div style={{ height: '0px' }}>
+                                    {passwordMatch === true && <div className={style.complete}>비밀번호 확인 완료</div>}
+                                    {passwordMatch === false && <div className={style.error}>비밀번호가 다릅니다.</div>}
+                                </div>
+                            </Form.Item>
+                        </div>
+                    )}
                 </div>
             </Modal>
         </div>
