@@ -1,0 +1,231 @@
+.color {
+    background-color:#ffffff;
+}
+
+.background {
+    display: flex;
+    /* margin-left: 200px;
+    margin-right: 150px; */
+}
+
+.background_head{
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1; /* 새로 추가한 부분 */
+}
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1; /* 새로 추가한 부분 */
+}
+
+.horizon {
+    display: flex;
+    align-items: center;
+}
+
+.search {
+    min-width: 300px; 
+}
+
+.head {
+    color: #495057;
+    opacity: 1;
+    font-weight: 600;
+}
+
+.line {
+    border-bottom: 0.5px solid #474747; /* 수평선의 두께와 색상을 설정합니다. */
+    width: 100%;
+    opacity: 0.3;
+    margin-bottom: 10px;
+}
+
+.sort {
+    display: flex;
+}
+
+.neck {
+    display: flex;
+    justify-content: space-between; /* 내부 요소를 컨테이너의 양쪽 끝에 배치합니다. */
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.write {
+    background-color: #f0f0f0;
+    padding-top: 10px;
+    margin-top: 15px;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    padding-right: 20px;
+    padding-left: 20px;
+    border-radius: 15px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+.write:hover {
+    background-color: #eeeeee;
+    color: #9f5d83;
+  }
+
+.save {
+    background-color: #68568e;
+    color: #ffffff;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    padding-right: 25px;
+    padding-left: 25px;
+    border-radius: 15px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 400;
+    margin-left: 30px;
+}
+
+.save:hover {
+    background-color: #A499BB;
+    color: #ffffff;
+  }
+
+.mobilesave {
+    background-color: #68568e;
+    color: #ffffff;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 20px;
+    padding-left: 20px;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 400;
+    margin-right: 10px;
+}
+
+.mobilesave:hover {
+    background-color: #A499BB;
+    color: #ffffff;
+}
+
+.background2 {
+    background: linear-gradient(to right bottom, #68568e, #9f5d83);
+}
+
+/* .fix_head {
+    position: sticky; 
+    top: 0px;
+    z-index: 99;
+    background-color: white;
+} */
+
+.fix_left {
+    position: sticky; /* 이 부분만 추가 */
+    top: 15px;
+    z-index: 99;
+    background-color: white;
+}
+
+.foot {
+    display: flex; 
+    justify-Content: center; 
+    margin-top: 20px;
+}
+
+.page {
+    margin-bottom: 30px;
+    padding-left: 20px;
+    cursor: pointer; 
+}
+
+.page.active {
+    color: #9f5d83; /* 클릭된 숫자의 텍스트 색상 */
+}
+
+.border {
+    margin-top: 30px;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-top: 15px;
+    padding-bottom: 250px;
+    padding-left: 30px;
+    padding-right: 30px;
+    border-left: 1px solid rgba(0, 0, 0, 0.1); /* 왼쪽에 1픽셀 실선 테두리 생성 */
+    border-right: 1px solid rgba(0, 0, 0, 0.1); /* 오른쪽에 1픽셀 실선 테두리 생성 */
+    height: 670px;
+}
+
+.markdown {
+   width: 100%; /* 전체 너비를 사용하도록 설정합니다. */
+   height: 100%;
+}
+
+.markdown.ql-editor {
+   width: 100%; /* 전체 너비를 사용하도록 설정합니다. */
+   height: 500px; 
+}
+
+.side {
+    background-color: #f0f0f0;
+    border-radius: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    margin-left: 30px;
+    padding-top: 40px;
+    padding-bottom: 10px;
+}
+
+
+.input {
+    border-radius: 10px;
+    border-color: #474747;
+    border-style: solid;
+    border-width: 1px;
+    padding: 20px;
+    margin-top: 20px;
+    min-height: 100px;
+    margin-bottom: 40px;
+}
+
+
+
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #68568e;
+    border-radius: 10px;
+    font-weight: 900;
+    font-size: 20px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #A499BB;
+    border-radius: 10px;
+    font-weight: 900;
+    font-size: 20px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.commentFormContainer {
+    position: sticky;
+    top: 0;
+    background-color: white; /* 원하는 배경색으로 설정하세요 */
+    z-index: 1000; /* 다른 요소들 위에 표시되도록 z-index 설정 */
+    padding-bottom: 10px;
+    padding-right: 10px;
+  }

@@ -1,0 +1,183 @@
+.login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0.6;
+}
+
+.head {
+    color: #424242;
+    font-weight: 900;
+    font-size: 35px;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 50px;
+}
+
+.flex {
+    display: flex;
+    justify-content: space-around;
+}
+
+.role {
+    color: #666666;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 17px;
+}
+
+.selected{
+    color:#68568E;
+}
+
+.selectedline {
+    width: 100%;
+    opacity: 0.7;
+    min-width: 200px;
+    border-bottom: 3px solid #68568E;
+    margin-top: 10px;
+}
+
+.line {
+    width: 100%;
+    opacity: 0.7;
+    min-width: 200px;
+    border-bottom: 3px solid #bdbdbd;
+    margin-top: 10px;
+}
+
+
+.form {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+.form_button {
+    background-color: #68568E !important;
+    border-color: #68568E !important;
+    min-width: 400px;
+    min-height: 50px;
+    margin-top: 40px;
+}
+
+.form_button:hover {
+    background-color: #A499BB !important;
+    border-color: #A499BB !important;
+    min-width: 400px;
+    min-height: 50px;
+}
+
+.input {
+    border: none;
+    outline: none;
+    border-radius: 0;
+    max-height: 30px;
+    border-bottom: 1px solid #e2e2e2;
+    box-shadow: none;
+    margin-bottom: 10px;
+}
+
+.input:focus {
+    outline: none;
+    border-bottom: 1px solid #68568E; /* 포커스 시 아래 보더 색상 변경 */
+    box-shadow: none; /* 포커스 시 상하좌우 보더 없애기 */
+}
+
+.link {
+    color: #68568E; /* 텍스트 색상을 변경합니다. */
+    text-decoration: none; /* 밑줄을 표시합니다. */
+    cursor: pointer;
+}
+  
+.link:hover {
+    color: #A499BB;/* 마우스를 올렸을 때 텍스트 색상을 변경합니다. */
+}
+
+.square {
+    border-radius: 10px;
+    height: 800px; /* 틀의 높이 */
+    overflow: hidden; /* 넘치는 부분을 잘라냅니다. */
+    margin-left: 20px;
+}
+
+.square img {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    object-fit: cover;
+}
+
+.background {
+    background-image: url("../../assets/images/PageHeaderImage/login.jpg"); /* 이미지 경로 설정 */
+    background-size: cover;
+    background-position: center;
+    background-color: #68568E;
+    min-height: 900px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    flex: 0.4;
+  }
+
+.body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 수직 가운데 정렬 */
+    align-items: flex-end; /* 오른쪽 정렬 */
+    min-height: 900px;
+}
+
+.side {
+    padding: 40px; /* 내부 여백 설정 */
+    color: #ffffff; /* 텍스트 색상 */
+    font-size: 20px;
+    font-weight: bold; /* 글꼴 굵게 설정 */
+    cursor: pointer; /* 마우스 커서 설정 */
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    width: 180px;
+    display: flex;
+    justify-content: center;
+}
+
+
+.side:hover {
+    background-color: #ffffff; 
+    color: #9f5d83; 
+}
+
+.side_select {
+    padding: 40px; /* 내부 여백 설정 */
+    font-size: 20px;
+    font-weight: bold; /* 글꼴 굵게 설정 */
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background-color: #ffffff; 
+    color: #9f5d83; 
+}
+
+.logo {
+    max-width: 100%;
+    margin-top: 30px;
+    padding-left: 15px;
+    padding-right: 20px;
+    font-size: 10px;
+    color: #ffffff;
+}
+
+.horizon {
+    display: flex;
+}
+
+.complete {
+    margin-top: 5px;
+    color: blue;
+    display: flex;
+}
+
+.error {
+    margin-top: 5px;
+    color: red;
+}

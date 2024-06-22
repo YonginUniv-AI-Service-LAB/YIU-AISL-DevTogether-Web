@@ -1,11 +1,11 @@
 import { selector } from "recoil";
-import { MentoListAtom } from '../atoms/testAtom';
+import { MentorListAtom } from '../atoms/testAtom';
 
-export const TotalMentoSelector = selector({
-  key: "TotalMentoSelector",
+export const TotalMentorSelector = selector({
+  key: "TotalMentorSelector",
   get: ({ get }) => {
-    const TotalMento = get(MentoListAtom);
-    return TotalMento.length;
+    const TotalMentor = get(MentorListAtom);
+    return TotalMentor.length;
   },
 });
 

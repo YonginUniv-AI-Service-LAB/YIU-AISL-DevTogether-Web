@@ -1,0 +1,18 @@
+.body{
+    background-color:#f0f0f0;
+    padding-right: 25px;
+    padding-left: 25px;
+    border-radius: 20px;
+    justify-content: center;
+    cursor: text;
+    color: #495057;
+}
+
+.clearButton {
+    color: #9c9fa1;
+    position: absolute;
+    right: 20px; /* 원하는 위치로 조정하세요 */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}

@@ -1,17 +1,16 @@
 .background{
     background-color:#ffffff;
-    padding-top: 30px;
+    padding-top: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
-    padding-right: 50px;
+    padding-right: 10px;
     border-top-right-radius: 350px;
 }
 
-.body{
-    margin-top: 30px;
-    margin-right: 430px;
-    margin-left: 200px;
-    margin-bottom: 50px;
+.deskbody{
+    margin-top: 15px;
+    margin-right: 15%;
+    margin-left: 15%;
     justify-content: space-between;
     align-items: center;
     display: flex;
@@ -22,17 +21,75 @@
   text-align: left;
 }
 
-.text{
-  font-size: 30px;
+.desktext{
+  font-size: 1.5vw;
   font-weight: 500;
   opacity: 0.7;
   color:#495057;
   line-height: 2;
 }
 
-.title{
-  font-size: 40px;
+.desktitle{
+  font-size: 2vw;
+  font-weight: 800;
+}
+
+.tabbackground{
+  background-color:#ffffff;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-top-right-radius: 150px;
+}
+
+.tabbody{
+  margin-top: 15px;
+  margin-right: 10%;
+  margin-left: 3%;
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+}
+
+.tabtext{
+  font-size: 20px;
+  font-weight: 500;
+  opacity: 0.7;
+  color:#495057;
+  line-height: 2;
+}
+
+.tabtitle{
+  font-size: 25px;
   font-weight: 800;
 }
 
   
+
+@media screen and (min-width: 1450px) {
+  .desktext {
+      font-size: 1.5vw; /* 예시: vw 단위 */
+  }
+  .desktitle {
+      font-size: 2vw; /* 예시: vw 단위 */
+  }
+}
+
+@media screen and (max-width: 1449px) {
+  .desktext {
+      font-size: 22px; /* 예시: px 단위 */
+  }
+  .desktitle {
+      font-size: 30px; /* 예시: px 단위 */
+  }
+}
+
+.mobbackground{
+  background-color:#ffffff;
+  padding-top: 10px;
+  padding-bottom: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-top-right-radius: 80px;
+}

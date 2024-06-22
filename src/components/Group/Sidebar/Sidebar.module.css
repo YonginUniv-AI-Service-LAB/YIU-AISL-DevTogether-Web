@@ -1,26 +1,31 @@
 .background {
-    background-color: #f8f9fa;
-    border-radius: 40px;
+    background-color: #f0f0f0;
+    border-radius: 30px;
     margin-top: 30px;
     margin-bottom: 30px;
+    padding-top: 40px;
+    padding-bottom: 10px;
 }
+
 
 .body {
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
     transition: background-color 0.3s ease;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    padding-left: 20px;
+    padding-left: 25px;
     padding-right: 50px;
-    margin-top: 70px;
-    margin-left: 30px;
-    margin-bottom: 70px;
+    padding-top: 30px;
+    padding-bottom: 30px; 
+    /* margin-top: 30px; */
+    margin-bottom: 30px;
+    margin-left: 25px;
     color: #495057;
     font-size: 18px;
     font-weight: 800;
+    display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .body:hover {
@@ -28,3 +33,30 @@
     color: #9f5d83; 
 }
   
+.fix {
+    position: sticky; /* 이 부분만 추가 */
+    top: 10px;
+    z-index: 100;
+}
+
+.userbody {
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    transition: background-color 0.3s ease;
+    padding-top: 30px;
+    padding-bottom: 30px; 
+    /* margin-top: 30px; */
+    margin-bottom: 30px;
+    color: #495057;
+    font-size: 18px;
+    font-weight: 800;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.userbody:hover {
+    background-color: #ffffff;
+    color: #9f5d83;
+}

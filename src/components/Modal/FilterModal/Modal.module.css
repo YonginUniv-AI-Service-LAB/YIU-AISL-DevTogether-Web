@@ -1,0 +1,130 @@
+.background {
+  background-color: #ffffff;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 1000;
+  transform: translate(-50%, -50%);
+  border-radius: 20px;
+  padding: 30px;
+  opacity: 1;
+}
+
+.flex {
+  display: flex;
+}
+
+.text_title {
+  color:#495057;
+  position: fixed;
+  top: 20px; 
+  left: 35px; 
+  font-weight: 600;
+  font-size: 25px;
+}
+
+
+.close {
+  color:#495057;
+  font-size: 30px;
+  font-weight: 900;
+  position: fixed;
+  top: 5px; 
+  right: 20px; 
+  z-index: 2; 
+  cursor: pointer;
+}
+
+.add {
+  background-color:#f0f0f0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-top: 150px;
+  margin-right: 350px;
+  margin-bottom: 30px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+
+.remove {
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+}
+
+.apply {
+  background-color:#f0f0f0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 20px;
+  padding-left: 20px;
+  margin-top: 30px;
+  border-radius: 15px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.apply:hover {
+  background-color: #eeeeee; 
+  color: #9f5d83; 
+}
+
+.reset {
+  background-color:#f0f0f0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 20px;
+  padding-left: 20px;
+  margin-top: 30px;
+  border-radius: 15px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.reset:hover {
+  background-color: #eeeeee; 
+  color: #9f5d83; 
+}
+
+.age_background {
+  margin-top: 150px;
+  margin-bottom: 10px;
+}
+
+.age {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-left: 7px;
+  padding-right: 7px;
+  border-radius: 10px;
+}
+
+.dash {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.horizon {
+  flex-wrap: wrap;
+  display: flex;
+  justify-content: space-between;
+} 

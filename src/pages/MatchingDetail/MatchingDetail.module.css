@@ -1,0 +1,385 @@
+.color {
+    position: relative;
+    background-color:#ffffff;
+}
+
+.background {
+    display: flex;
+}
+
+.background2 {
+    background: linear-gradient(to right bottom, #68568e, #9f5d83);
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  font-Weight: bold;
+  font-Size: 22px;
+  align-Items: "center";
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  background-Color:#f0f0f0;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.body {
+    display: flex;
+}
+
+.background_head{
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1; /* 새로 추가한 부분 */
+}
+
+.search {
+    min-width: 300px; 
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+    color: #495057;
+    opacity: 1;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+.line {
+    border-bottom: 0.5px solid #474747; /* 수평선의 두께와 색상을 설정합니다. */
+    width: 100%;
+    opacity: 0.7;
+    margin-bottom: 10px;
+}
+
+.situation {
+    background-color: #f0f0f0;
+    border-radius: 30px;
+    margin-top: 40px;
+    padding-top: 10px;
+    padding-bottom: 100px;
+    display: flex;
+    justify-content: center;
+    max-width: 200px;
+}
+
+.fix_head {
+    position: sticky; /* 이 부분만 추가 */
+    top: 0px;
+    z-index: 99;
+    background-color: white;
+}
+
+.fix_left {
+    position: sticky; /* 이 부분만 추가 */
+    top: 15px;
+    z-index: 99;
+    background-color: white;
+    width: 100%;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+}
+
+.page {
+    margin-bottom: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer; 
+}
+
+.page.active {
+    color: #9f5d83; /* 클릭된 숫자의 텍스트 색상 */
+  }
+
+  .outer {
+    display: flex;
+    /* align-items: center; */
+    justify-content: space-between;
+  }
+  
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    justify-content: center;
+  }
+
+.noProfilesMessage {
+    margin-top: 50px;
+}
+
+.tagbg {
+    margin-top: 10px;
+}
+
+.background {
+    display: flex;
+}
+
+.user {
+    display: flex;
+    flex-direction: column;
+    flex:1;
+    background-color: #f0f0f0;
+    border-radius: 25px;
+    min-height: 100px;
+    margin-right: 20px;
+    position: relative; /* 추가 */
+}
+
+.edit {
+    position: absolute; /* 수정 */
+    top: 20px;
+    right: 15px;
+    cursor: pointer;
+}
+
+.side {
+    margin-top: 50px;
+}
+
+.contents {
+    display: flex;
+    flex-direction: column; 
+    flex:3;
+    /* background-color: #f0f0f0;
+    border-radius: 25px; */
+    /* align-items: center;
+    justify-content: center;
+    align-content: center; */
+}
+
+
+.information {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+    padding-bottom: 15px;
+    line-height: 2;
+    justify-content: center;
+    align-items: center;
+}
+
+.circle {
+    margin-top: 80px;
+    width: 150px; /* 원의 지름 */
+    height: 150px; /* 원의 지름 */
+    background-color: #ccc; /* 배경색 */
+    border-radius: 50%; /* 원형으로 만들기 */
+    overflow: hidden; /* 넘치는 부분을 잘라냅니다. */
+}
+
+.circle img {
+    width: 100%; /* 이미지의 너비를 100%로 설정합니다. */
+    height: 100%; /* 이미지의 높이를 100%로 설정합니다. */
+    object-fit: cover; /* 이미지를 원형 영역에 맞게 조절합니다. */
+}
+
+.border {
+  padding: 20px;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  }
+
+.information_my_left {
+    font-size:'20px'; 
+    font-weight: '600';
+    margin-right:'10px';
+}
+
+.mincircle {
+    width: 150px;
+    height: 150px;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+}
+
+.mincircle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.writer {
+    font-size: 35px;
+    font-weight: 900;
+    margin-left: 40px;
+}
+
+.introduction {
+    font-size: 20px;
+    font-weight: 600;
+    color: #a8a8a8;
+    margin-left: 40px;
+}
+
+.horizon {
+    display: flex;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.infoRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .label {
+    font-size: 20px;
+    font-weight: 600;
+    margin-right: 10px;
+    flex: 1;
+    text-align: left;
+  }
+  
+  .value {
+    border: 1px solid #ddd;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background: #f9f9f9;
+    min-width: 200px;
+    max-width: 400px; /* Adjust this value as needed */
+    flex: 2;
+    text-align: left;
+  }
+
+  .inputField {
+    border: 1px solid #ddd;
+    padding: 10px 20px;
+    border-radius: 5px;
+    min-width: 200px;
+    max-width: 400px;
+    flex: 2;
+    text-align: left;
+  }
+
+  .feeField {
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    border-radius: 5px;
+    min-width: 80px;
+    max-width: 180px;
+    flex: 2;
+    text-align: left;
+    height: 30px;
+  }
+
+  .profileImageContainer {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  
+  .profileImage {
+    width: 150px;
+    height: 100px;
+    border: none; /* 테두리 제거 */
+    object-fit: cover;
+  }
+
+  .line {
+    border-bottom: 0.5px solid #474747; /* 수평선의 두께와 색상을 설정합니다. */
+    width: 100%;
+    opacity: 0.3;
+    margin-bottom: 30px;
+}
+
+.vertical {
+  border-left: 0.1px solid #474747; /* 수평선의 두께와 색상을 설정합니다. */
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  opacity: 0.1;
+  padding-left: 10px;
+  padding-right: 10px;
+  flex: 0.1;
+}
+
+/* tabs-custom.css */
+.tab {
+  color: #68568E; /* 탭 텍스트 색깔 변경 */
+  font-weight: bold; /* 폰트 두께 변경 */
+}
+
+.tab:hover {
+  color: red; /* 탭에 마우스를 올렸을 때 색깔 변경 */
+}
+
+.study-info-container {
+    font-family: '맑은 고딕', sans-serif;
+    color: #444444; /* 이미지에서 사용된 글씨 색깔 */
+    line-height: 1.6;
+  }
+  
+  .study-info-title {
+    font-size: 20px;
+    font-weight: 900;
+    margin-top: 30px;
+  }
+  
+  .study-info-content {
+    margin-top: 10px;
+    font-size: 16px; /* 내용 글씨 크기 */
+  }
+  
+  .study-info-content span {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .tabContent {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .selfInfoContainer {
+    display: flex;
+    flex-grow: 1;
+    justify-content: space-between;
+  }
+  
+  .basicInfo, .careerInfo {
+    flex: 1;
+  }
+
+  .reaction {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 25px;
+    border-style: solid;
+    border-width: 0; 
+    border-top-width: 1px; 
+    border-bottom-width: 1px; 
+    border-color: rgba(0, 0, 0, 0.2); 
+    padding: 15px;
+    font-size: 12px;
+    font-weight: 600;
+    color:#6d6d6d;
+}
+
+.like {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: 1;
+}
+
+.bookmark {
+  font-size: 35px;
+  margin-right: 30px;
+  margin-top: -35px;
+}
