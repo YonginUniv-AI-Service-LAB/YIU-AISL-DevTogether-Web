@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useDeferredValue } from "react";
 import style from "./SignUp.module.css";
 import { Button, Form, Input, Select, message } from "antd";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   resetStateAtom,
   idStateAtom,
@@ -13,6 +13,11 @@ import {
   ageStateAtom,
   questionStateAtom,
   answerStateAtom,
+  birthStateAtom,
+  yearStateAtom,
+  monthStateAtom,
+  dayStateAtom,
+  roleStateAtom,
 } from "../../recoil/atoms/register";
 import { CiRead, CiUnread } from "react-icons/ci";
 import { defaultAPI } from "../../api";
@@ -40,7 +45,7 @@ const RegisterPage = ({ resetState }) => {
   const [passwordMatch, setPasswordMatch] = useState(null);
 
   const [email, setEmail] = useRecoilState(emailStateAtom);
-  const [emailId, setEmailId] = useState("");
+  // const [emailId, setEmailId] = useState("");
   const [selectedDomain, setSelectedDomain] = useState("");
   const [domainInputDisabled, setDomainInputDisabled] = useState(false);
 
@@ -59,10 +64,11 @@ const RegisterPage = ({ resetState }) => {
   const [gender, setGender] = useRecoilState(genderStateAtom);
   const [phone, setPhone] = useState("");
 
-  const [selectedYear, setSelectedYear] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState("");
-  const [selectedDay, setSelectedDay] = useState("");
+  const [selectedYear, setSelectedYear] = useRecoilState(yearStateAtom);
+  const [selectedMonth, setSelectedMonth] = useRecoilState(monthStateAtom);
+  const [selectedDay, setSelectedDay] = useRecoilState(dayStateAtom);
   const [age, setAge] = useRecoilState(ageStateAtom);
+  const [role, setRole] = useRecoilState(roleStateAtom);
   const [question, setQuestion] = useRecoilState(questionStateAtom);
   const [answer, setAnswer] = useRecoilState(answerStateAtom);
 
@@ -79,7 +85,6 @@ const RegisterPage = ({ resetState }) => {
       setPasswordMatch(null);
       setPasswordErrorMessage("");
       setEmail("");
-      setEmailId("");
       setSelectedDomain("");
       setDomainInputDisabled(false);
       setVerificationCode("");
@@ -154,27 +159,27 @@ const RegisterPage = ({ resetState }) => {
     }
   };
 
-  const handleInputChange = (e) => {
-    setEmailId(e.target.value);
-    setEmail(`${e.target.value}@${selectedDomain}`);
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    // setEmail(`${e.target.value}@${selectedDomain}`);
   };
 
-  const handleDomainChange = (value) => {
-    if (value === "type") {
-      setSelectedDomain("");
-      setDomainInputDisabled(false);
-    } else {
-      setDomainInputDisabled(true);
-      setSelectedDomain(value);
-      setEmail(`${emailId}@${value}`);
-    }
-  };
+  // const handleDomainChange = (value) => {
+  //   if (value === "type") {
+  //     setSelectedDomain("");
+  //     setDomainInputDisabled(false);
+  //   } else {
+  //     setDomainInputDisabled(true);
+  //     setSelectedDomain(value);
+  //     setEmail(`${emailId}@${value}`);
+  //   }
+  // };
 
-  const handleDomainInputChange = (e) => {
-    const value = e.target.value;
-    setSelectedDomain(value);
-    setEmail(`${emailId}@${value}`);
-  };
+  // const handleDomainInputChange = (e) => {
+  //   const value = e.target.value;
+  //   setSelectedDomain(value);
+  //   setEmail(`${emailId}@${value}`);
+  // };
 
   const handleNameChange = (e) => {
     const value = e.target.value;
@@ -244,13 +249,13 @@ const RegisterPage = ({ resetState }) => {
   };
 
   const handleMonthChange = (newValue) => {
+    console.log("달", newValue);
     setSelectedMonth(newValue);
     setDayOptions(generateDayOptions(newValue));
   };
 
   const sendEmailVerificationCode = useMutation({
-    mutationFn: async () =>
-      await defaultAPI.post("/register/email", { email: emailId }),
+    mutationFn: async () => await defaultAPI.post("/register/email", { email }),
     onSuccess: (res) => {
       console.log("결과: ", res);
       setVerificationNumber(res.data);
@@ -259,8 +264,6 @@ const RegisterPage = ({ resetState }) => {
       setRemainingTime(180);
     },
     onError: (e) => {
-      console.log("베이스유알엘: ", process.env.REACT_APP_API_URL);
-      console.log("이메일", emailId);
       console.log("실패: ", e.request);
       message.error("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
     },
@@ -272,27 +275,22 @@ const RegisterPage = ({ resetState }) => {
       message.success("이메일 인증에 성공했습니다.");
       setIsCodeVerified(true);
     } else {
-      message.error("이메일 인증에 실패했습니다. 다시 시도해주세요.");
+      message.error("이메일 인증번호가 일치하지 않습니다.");
       setIsCodeVerified(false);
     }
   };
 
-    // ❗️ 멘토는 /mentor/nickname로 검사해야함
+  // ❗️ 멘토는 /mentor/nickname로 검사해야함
   const checkNicknameAvailability = useMutation({
-    mutationFn: async () =>
-      await defaultAPI.post("/mentee/nickname", { nickname }),
+    mutationFn: async (role) =>
+      await defaultAPI.post(`/${role}/nickname`, { nickname }),
     onSuccess: (res) => {
-      if (res.data) {
-        message.success("사용 가능한 닉네임입니다.");
-        setIsNicknameChecked(true);
-      } else {
-        message.error("이미 사용 중인 닉네임입니다.");
-        setIsNicknameChecked(false);
-      }
+      message.success("사용 가능한 닉네임입니다.");
+      setIsNicknameChecked(true);
     },
     onError: (e) => {
-      console.log("실패: ", e.request);
-      message.error("닉네임 중복 확인에 실패했습니다. 다시 시도해주세요.");
+      message.error("이미 사용 중인 닉네임입니다.");
+      setIsNicknameChecked(false);
     },
   });
 
@@ -363,9 +361,9 @@ const RegisterPage = ({ resetState }) => {
           <div className={style.nicknameContainer}>
             <Input
               placeholder="이메일"
-              value={emailId}
+              value={email}
               spellCheck={false}
-              onChange={handleInputChange}
+              onChange={handleEmailChange}
               style={{ width: 280 }}
             />
             {(!selectedbutton || isCodeVerified) && (
@@ -374,7 +372,7 @@ const RegisterPage = ({ resetState }) => {
                 htmlType="submit"
                 className={style.check_button}
                 style={{ marginLeft: "10px" }}
-                onClick={() => sendEmailVerificationCode.mutate(emailId)}
+                onClick={() => sendEmailVerificationCode.mutate(email)}
               >
                 인증 번호 전송
               </Button>
@@ -528,7 +526,11 @@ const RegisterPage = ({ resetState }) => {
                 htmlType="submit"
                 className={style.check_button}
                 style={{ marginLeft: "10px" }}
-                onClick={() => checkNicknameAvailability.mutate(nickname)}
+                onClick={() =>
+                  checkNicknameAvailability.mutate(
+                    role == 1 ? "mentor" : "mentee"
+                  )
+                }
               >
                 닉네임 중복 확인
               </Button>
@@ -554,7 +556,10 @@ const RegisterPage = ({ resetState }) => {
               style={{ width: 100, marginRight: "10px" }}
               placeholder="출생년도"
               options={generateYearOptions()}
-              onChange={(value) => setSelectedYear(value)}
+              onChange={(value) => {
+                console.log("년도: ", value);
+                setSelectedYear(value);
+              }}
             />
             <Select
               style={{ width: 90, marginRight: "10px" }}
@@ -566,7 +571,10 @@ const RegisterPage = ({ resetState }) => {
               style={{ width: 90, marginRight: "10px" }}
               placeholder="일"
               options={dayOptions}
-              onChange={(value) => setSelectedDay(value)}
+              onChange={(value) => {
+                console.log("날: ", value);
+                setSelectedDay(value);
+              }}
             />
             <Input value={age} disabled suffix="세" style={{ width: 90 }} />
           </div>

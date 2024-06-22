@@ -5,7 +5,7 @@ import style from "./SignUp.module.css";
 import { Button, Checkbox, Form, Input, message } from "antd";
 import LogoTitle_Login from "../../components/Group/LOGO/LogoTitle_Login";
 import { RecoilRoot, atom, useRecoilState, useRecoilValue } from "recoil";
-import pageState from "../../recoil/atoms/login";
+import { pageState } from "../../recoil/atoms/login";
 import {
   resetStateAtom,
   passwordStateAtom,
@@ -17,6 +17,9 @@ import {
   roleStateAtom,
   questionStateAtom,
   answerStateAtom,
+  yearStateAtom,
+  monthStateAtom,
+  dayStateAtom,
 } from "../../recoil/atoms/register";
 import SignUpMain from "./SignUpMain";
 import SignUpSub from "./SignUpSub";
@@ -42,6 +45,9 @@ const SignUpPage = () => {
   const gender = useRecoilValue(genderStateAtom);
   const age = useRecoilValue(ageStateAtom);
   const role = useRecoilValue(roleStateAtom);
+  const year = useRecoilValue(yearStateAtom);
+  const month = useRecoilValue(monthStateAtom);
+  const day = useRecoilValue(dayStateAtom);
   const question = useRecoilValue(questionStateAtom);
   const answer = useRecoilValue(answerStateAtom);
 
@@ -68,6 +74,8 @@ const SignUpPage = () => {
   };
 
   const handleRegister = () => {
+    const birth = year + month + day;
+    console.log("필드 확인 birth: ", year, "+++", month, "+++", day);
     // 필수 입력 필드가 모두 채워졌는지 확인
     if (
       email &&
@@ -76,6 +84,7 @@ const SignUpPage = () => {
       nickname &&
       gender &&
       age &&
+      birth &&
       role &&
       question &&
       answer
@@ -89,43 +98,44 @@ const SignUpPage = () => {
         nickname,
         gender,
         age,
+        birth,
         role,
         question,
         answer
       );
       setRegistercheck(true);
-      회원가입.mutate();
-      // 예를 들어, 다른 함수를 호출
-      // anotherFunction();
-    } else {
-      console.log("모든 필드를 채워주세요.");
-    }
+      register.mutate();
+    } else message.error("모든 필드를 채워주세요.");
   };
 
-  const 회원가입 = useMutation({
+  const register = useMutation({
     mutationFn: async (data) =>
       await defaultAPI.post("/register", {
         email: email,
         pwd: password,
         name: name,
         nickname: nickname,
-        role: 1,
+        role: role,
         gender: gender,
         age: age,
-        birth: "011105",
+        birth: year + month + day,
         question: question,
         answer: answer,
       }),
     onSuccess: () => {
-      // 회원가입 성공 후 1) 회원가입 성공 메세지 => 로그인 화면 OR 2) 회원가입 성공 화면
-      message.success("성공");
+      message.success("성공"); // 이건 없애도 됨
+      // ❗️ 여기서부터 회원가입 성공 페이지로 넘기고 로직 진행하면 돼!
     },
     onError: (e) => {
-      console.log("실패: ", e.request);
-      message.error("회원가입에 실패했습니다. 입력한 값을 확인해주세요.");
-      // 400: 데이터 미입력
-      // 409: 데이터 중복(nickname) // 예외
-      // 409: 데이터 중복(email)
+      if (e.request.status == 400) message.error("미입력된 정보가 있습니다.");
+      else if (e.request.status == 409)
+        message.error(
+          "이미 존재하는 닉네임입니다. 다른 닉네임을 사용해주세요."
+        );
+      else if (e.request.status == 409)
+        message.error(
+          "이미 존재하는 이메일입니다. 다른 이메일을 사용해주세요."
+        );
     },
   });
 
@@ -178,17 +188,17 @@ const SignUpPage = () => {
               <div>
                 <div
                   className={
-                    selectedRole === "student"
+                    selectedRole === 2
                       ? `${style.role} ${style.selected}`
                       : style.role
                   }
-                  onClick={() => handleRoleSelection("student")}
+                  onClick={() => handleRoleSelection(2)}
                 >
                   학생
                 </div>
                 <div
                   className={
-                    selectedRole === "student" ? style.selectedline : style.line
+                    selectedRole === 2 ? style.selectedline : style.line
                   }
                 ></div>{" "}
                 {/* 선택된 역할에만 라인 표시 */}
@@ -198,17 +208,17 @@ const SignUpPage = () => {
               <div>
                 <div
                   className={
-                    selectedRole === "teacher"
+                    selectedRole === 1
                       ? `${style.role} ${style.selected}`
                       : style.role
                   }
-                  onClick={() => handleRoleSelection("teacher")}
+                  onClick={() => handleRoleSelection(1)}
                 >
                   선생님
                 </div>
                 <div
                   className={
-                    selectedRole === "teacher" ? style.selectedline : style.line
+                    selectedRole === 1 ? style.selectedline : style.line
                   }
                 ></div>{" "}
                 {/* 선택된 역할에만 라인 표시 */}

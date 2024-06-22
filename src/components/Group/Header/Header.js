@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 import { RecoilRoot, atom, useRecoilState } from "recoil";
-import pageState from "../../../recoil/atoms/login";
+import { pageState } from "../../../recoil/atoms/login";
 import {
   Button,
   Dropdown,
@@ -78,15 +78,15 @@ const Header = (props) => {
     navigate(e.key);
   };
 
-  // const funcLogout = () => {
-  //   dispatch(logout());
-  //   sessionStorage.removeItem("accessToken");
-  //   sessionStorage.removeItem("userid");
-  //   sessionStorage.removeItem("name");
-  //   sessionStorage.removeItem("email");
-  //   sessionStorage.removeItem("master");
-  //   navigate("/", { replace: true });
-  // };
+  const Logout = () => {
+    sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("email");
+    sessionStorage.removeItem("name");
+    sessionStorage.removeItem("nickname");
+    sessionStorage.removeItem("role");
+    navigate("/", { replace: true });
+  };
 
   // 네비게이션 메뉴 - 고객센터
   const items = [
@@ -155,9 +155,6 @@ const Header = (props) => {
     },
   ];
 
-  // 임시 설정
-  let login = false;
-
   return (
     <div
       style={{
@@ -216,13 +213,15 @@ const Header = (props) => {
           <div>
             <HeaderNavBtn
               type={"text"}
-              text={login === false ? "로그인" : "마이페이지"}
-              onClick={login === false ? goToLoginPage : goToMyPage}
+              text={sessionStorage.getItem("name") ? "마이페이지" : "로그인"}
+              onClick={
+                sessionStorage.getItem("name") ? goToMyPage : goToLoginPage
+              }
             />
             <HeaderNavBtn
               type={"text"}
-              text={login === false ? "회원가입" : "로그아웃"}
-              onClick={goToSignUpPage}
+              text={sessionStorage.getItem("name") ? "로그아웃" : "회원가입"}
+              onClick={sessionStorage.getItem("name") ? Logout : goToSignUpPage}
             />
           </div>
         )}

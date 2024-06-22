@@ -1,81 +1,98 @@
 import { atom } from "recoil";
 
+export const registerRoleStateAtom = atom({
+  key: "registerRoleStateAtom",
+  default: 2,
+});
 export const resetStateAtom = atom({
-    key: 'resetState',
-    default: false,
+  key: "resetState",
+  default: false,
 });
 
 export const idStateAtom = atom({
-    key: 'idState',
-    default:'',
+  key: "idState",
+  default: "",
 });
 
 export const passwordStateAtom = atom({
-    key: 'passwordState',
-    default:'',
+  key: "passwordState",
+  default: "",
 });
 
 export const emailStateAtom = atom({
-    key: 'emailState',
-    default:'',
+  key: "emailState",
+  default: "",
 });
 
 export const nameStateAtom = atom({
-    key: 'nameState',
-    default:'',
+  key: "nameState",
+  default: "",
 });
 
 export const nicknameStateAtom = atom({
-    key: 'nicknameState',
-    default:'',
+  key: "nicknameState",
+  default: "",
 });
 
 export const genderStateAtom = atom({
-    key: 'genderState',
-    default:'',
+  key: "genderState",
+  default: "",
+});
+
+export const yearStateAtom = atom({
+  key: "yearState",
+  default: "",
+});
+export const monthStateAtom = atom({
+  key: "monthState",
+  default: "",
+});
+export const dayStateAtom = atom({
+  key: "dayState",
+  default: "",
 });
 
 export const methodStateAtom = atom({
-    key: 'methodState',
-    default:[],
+  key: "methodState",
+  default: [],
 });
 
 export const ageStateAtom = atom({
-    key: 'ageState',
-    default:'',
+  key: "ageState",
+  default: "",
 });
 
 export const locationStateAtom = atom({
-    key: 'locationState',
-    default:[],
+  key: "locationState",
+  default: [],
 });
 
 export const subjectStateAtom = atom({
-    key: 'subjectState',
-    default:[],
+  key: "subjectState",
+  default: [],
 });
 
 export const maxfeeStateAtom = atom({
-    key: 'maxfeeState',
-    default:'',
+  key: "maxfeeState",
+  default: "",
 });
 
 export const minfeeStateAtom = atom({
-    key: 'minfeeState',
-    default:'',
+  key: "minfeeState",
+  default: "",
 });
 
 export const roleStateAtom = atom({
-    key: 'roleState',
-    default:'student',
-})
+  key: "roleState",
+  default: 2,
+});
 
 export const answerStateAtom = atom({
-    key: 'answerState',
-    default:'',
-})
+  key: "answerState",
+  default: "",
+});
 
 export const questionStateAtom = atom({
-    key: 'questionState',
-    default:'',
-})
+  key: "questionState",
+  default: "",
+});
