@@ -12,9 +12,14 @@ const BottomLineText = (props) => {
         borderBottomWidth: 2,
         borderBottomStyle: "solid",
         borderBottomColor: colors.text_black_color,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: props.component ? "space-between" : "start",
       }}
     >
       {props.text}
+      {props.component}
     </p>
   );
 };

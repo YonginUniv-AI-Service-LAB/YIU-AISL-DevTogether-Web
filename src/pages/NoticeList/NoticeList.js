@@ -55,9 +55,6 @@ const NoticeListPage = () => {
   // 폼 타입 => 작성
   const setFormType = useSetRecoilState(NoticeFormTypeAtom);
 
-  // 임시
-  const manager = true;
-
   const NoticeListHeader = () => {
     return (
       <div style={{ marginBottom: 10 }}>
@@ -88,9 +85,9 @@ const NoticeListPage = () => {
               onClick={() => setCurCategory("공지")}
             />
             <NoticeCategoryButton
-              title="서비스"
-              current={curCategory === "서비스" ? true : false}
-              onClick={() => setCurCategory("서비스")}
+              title="이벤트"
+              current={curCategory === "이벤트" ? true : false}
+              onClick={() => setCurCategory("이벤트")}
             />
             <NoticeCategoryButton
               title="업데이트"
@@ -133,7 +130,7 @@ const NoticeListPage = () => {
           marginRight: isMobile ? 10 : isTablet ? 80 : "15%",
         }}
       >
-        {manager ? (
+        {sessionStorage.getItem("role") == 0 ? (
           <div style={{ textAlign: "end", marginRight: 20 }}>
             <HoverEventButton
               title={"공지사항 작성"}
@@ -157,7 +154,8 @@ const NoticeListPage = () => {
               ? notice.filter((n) => n.title.includes(searchText))
               : notice.filter(
                   (n) =>
-                    n.category == curCategory && n.title.includes(searchText)
+                    n.noticeCategory == curCategory &&
+                    n.title.includes(searchText)
                 )
           }
           title={() => NoticeListHeader()}

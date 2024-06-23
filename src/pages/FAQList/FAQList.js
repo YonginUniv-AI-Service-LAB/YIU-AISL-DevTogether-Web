@@ -94,7 +94,7 @@ const FAQListPage = (props) => {
           const isTokenRefreshed = await refreshAccessToken();
           setRefresh(true);
           if (isTokenRefreshed) {
-            deleteData.mutate(data);
+            deleteData.mutate();
           } else navigate("/");
         } else message.error("권한이 없습니다.");
       }
@@ -103,9 +103,6 @@ const FAQListPage = (props) => {
         message.error("잠시 후에 다시 시도해주세요.");
     },
   });
-
-  // 임시
-  const manager = true;
 
   // 페이지 이동
   const navigate = useNavigate();
@@ -155,7 +152,7 @@ const FAQListPage = (props) => {
     <div>
       <PageHeader title="자주묻는질문" subtitle="" image={PageHeaderImage} />
       <div style={{ padding: isMobile ? "10%" : "15%" }}>
-        {manager ? (
+        {sessionStorage.getItem("role") == 0 ? (
           <div style={{ textAlign: "end", marginBottom: 30 }}>
             <HoverEventButton
               title={"FAQ 등록"}

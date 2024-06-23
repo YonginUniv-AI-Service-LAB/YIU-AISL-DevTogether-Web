@@ -47,7 +47,8 @@ const NoticeFormPage = (props) => {
   const [formData, setFormData] = useRecoilState(NoticeFormDataAtom);
 
   // 파일 관련 상태 변수
-  const [files, setFiles] = useRecoilState(NoticeFormFilesAtom); // 전체 파일 데이터
+  const [formFiles, setFormFiles] = useRecoilState(NoticeFormFilesAtom); // 전체 파일 데이터
+  const [files, setFiles] = useState([]);
   const [deleteFiles, setDeleteFiles] = useState([]); // 삭제할 기존 파일 fileId 배열
   const [newFiles, setNewFiles] = useState([]); // 새로 추가할 파일 데이터 배열
 
@@ -67,14 +68,11 @@ const NoticeFormPage = (props) => {
       formData.append("title", data.title);
       formData.append("contents", data.contents);
       formData.append("noticeCategory", data.noticeCategory);
-      if (files && files.length > 0) {
-        files.forEach((file) => {
-          formData.append("file", file);
+      if (newFiles.length > 0)
+        newFiles.forEach((file) => {
+          formData.append("file", file.originFileObj); // 새로 추가한 파일 추가
         });
-      } else {
-        formData.append("file", new Blob()); // 빈 Blob 객체를 파일로 추가
-      }
-      console.log("formData", formData);
+      else formData.append("file", new Blob()); // 빈 Blob 객체를 파일로 추가
 
       await authFileAPI.post("/admin/notice", formData, {
         transformRequest: [
@@ -88,7 +86,7 @@ const NoticeFormPage = (props) => {
       // 공지사항 등록 성공 메세지
       message.success("공지사항 등록 완료");
       // 공지사항 목록 리로드
-      queryClient.invalidateQueries("공지사항");
+      queryClient.invalidateQueries("notice");
       // 공지사항 목록으로 이동
       navigate(-1);
     },
@@ -104,12 +102,12 @@ const NoticeFormPage = (props) => {
       formData.append("title", data.title);
       formData.append("contents", data.contents);
       formData.append("noticeCategory", data.noticeCategory);
-      // 삭제할 fileId 추가
-      deleteFiles.forEach((fileId) => formData.append("deleteId", fileId));
-
-      // 새로 추가한 파일 추가
-      newFiles.forEach((file) => formData.append("file", file.originFileObj));
-      // formData.append("file", new Blob()); // 빈 Blob 객체를 파일로 추가
+      formData.append("deleteId", deleteFiles);
+      if (newFiles.length > 0)
+        newFiles.forEach((file) => {
+          formData.append("file", file.originFileObj); // 새로 추가한 파일 추가
+        });
+      else formData.append("file", new Blob()); // 빈 Blob 객체를 파일로 추가
 
       console.log("전송할 데이터", data);
       console.log("전송할 deleteId", deleteFiles);
@@ -128,7 +126,7 @@ const NoticeFormPage = (props) => {
       // 공지사항 등록 성공 메세지
       message.success("공지사항 수정 완료");
       // 공지사항 목록 리로드
-      queryClient.invalidateQueries("공지사항");
+      queryClient.invalidateQueries("notice");
       // 공지사항 목록으로 이동
       navigate(-1);
     },
@@ -237,9 +235,12 @@ const NoticeFormPage = (props) => {
 
   // 파일 업로드 변경 시 처리
   const handleUploadChange = ({ fileList }) => {
+    console.log("fileList: ", fileList);
     setFiles(fileList);
-    // 새로 추가된 파일을 newFiles 배열에 추가
-    setNewFiles(fileList);
+
+    // 새로 추가된 파일만 필터링 (originFileObj가 있는 파일)
+    const addedFiles = fileList.filter((file) => file.type);
+    setNewFiles(addedFiles);
   };
 
   // 파일 삭제 시 처리
@@ -254,10 +255,7 @@ const NoticeFormPage = (props) => {
   };
 
   useEffect(() => {
-    setFiles([]);
-    setDeleteFiles([]);
-    setNewFiles([]);
-    if (formType === "update" && files) {
+    if (formType === "update") {
       setForm((prevState) => ({
         ...prevState,
         noticeCategory: {
@@ -265,22 +263,24 @@ const NoticeFormPage = (props) => {
           value: convertCategory(),
         },
       }));
-      setFiles(
-        files
-          .filter((file) => file.originName) // originName이 있는 파일만 필터링
-          .map((file, index) => ({
-            uid: `${file.fileId}`,
-            name: file.originName,
-            status: "done",
-            url: file.url,
-            originFileObj: new File([file.fileData], file.originName, {
-              type: file.mimeType,
-            }),
-            originName: file.fildId, // originName을 포함
-          }))
-      );
+
+      if (formFiles && formFiles.length > 0) {
+        setFiles(
+          formFiles
+            .filter((file) => file.originName) // originName이 있는 파일만 필터링
+            .map((file, index) => ({
+              uid: `${file.fileId}`,
+              name: file.originName,
+              status: "done",
+              url: file.url,
+              originFileObj: new File([file.fileData], file.originName, {
+                type: file.mimeType,
+              }),
+            }))
+        );
+      }
     }
-  }, [formData, formType]);
+  }, []);
 
   // 유효성 검사 함수
   const validateForm = (form) => {

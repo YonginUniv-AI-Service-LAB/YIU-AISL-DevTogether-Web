@@ -37,11 +37,14 @@ const 로그인 = useMutation({
     }),
   onSuccess: () => {
     // 로그인 후 필요한 정보 저장
-    const { email, name, role, token } = response.data;
+    const { email, user_profile_id, name, nickname, role, token } =
+      response.data;
     sessionStorage.setItem("accessToken", token["accessToken"]);
     sessionStorage.setItem("refreshToken", token["refreshToken"]);
+    sessionStorage.setItem("user_profile_id", user_profile_id);
     sessionStorage.setItem("email", email);
     sessionStorage.setItem("name", name);
+    sessionStorage.setItem("nickname", nickname);
     sessionStorage.setItem("role", role);
 
     // 메인 화면으로 이동
@@ -113,8 +116,10 @@ const 액세스토큰_재발급 = useMutation({
     // 403: 권한 없음 => 세션 만료 처리 하고 다시 로그인 하도록
     sessionStorage.removeItem("accessToken");
     sessionStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("user_profile_id");
     sessionStorage.removeItem("email");
     sessionStorage.removeItem("name");
+    sessionStorage.removeItem("nickname");
     sessionStorage.removeItem("role");
     navigate("/", { replace: true });
     message.error("로그인 세션이 만료되어 로그아웃 됩니다.");
