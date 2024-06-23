@@ -1,5 +1,5 @@
 import { SearchOutlined } from "@ant-design/icons";
-import { Flex, Input, Table, Tag } from "antd";
+import { Button, Flex, Input, Result, Table, Tag } from "antd";
 import React from "react";
 import { useMediaQuery } from "react-responsive";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -12,6 +12,11 @@ import PageHeader from "../../components/Group/PageHeader/PageHeader";
 import styles from "./InquiryList.module.css";
 import Column from "antd/es/table/Column";
 import PageHeaderImage from "../../assets/images/PageHeaderImage/inquiry.svg";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { authAPI } from "../../api";
+import LoadingSpin from "../../components/Spin/LoadingSpin";
+import GetDataErrorView from "../../components/Result/GetDataError";
+import PleaseLoginView from "../../components/Result/PleaseLogin";
 
 const InquriyListPage = () => {
   // 반응형 화면
@@ -22,6 +27,45 @@ const InquriyListPage = () => {
 
   // 페이지 이동
   const navigate = useNavigate();
+
+  // 등록된 queryClient를 가져옴
+  const queryClient = useQueryClient();
+
+  // 문의사항 조회
+  const {
+    data: ask,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["ask"],
+    queryFn: async () => {
+      let res;
+      if (sessionStorage.getItem("role") == 0) res = await authAPI.get("/ask");
+      else res = await authAPI.get("/admin/ask");
+      return res.data;
+    },
+  });
+
+  if (!sessionStorage.getItem("name")) {
+    return (
+      <div>
+        <PageHeader
+          title="문의내역"
+          subtitle="문의내역을 확인해보세요."
+          image={PageHeaderImage}
+        />
+        <PleaseLoginView onClick={() => navigate("/signin")} />
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return <LoadingSpin />;
+  }
+
+  if (error) {
+    return <GetDataErrorView />;
+  }
 
   return (
     <div>
@@ -40,17 +84,12 @@ const InquriyListPage = () => {
       >
         <Table
           size={"middle"}
-          // columns={columns}
-          dataSource={data_ask}
-          // title={() => InquriyListHeader()}
-          // footer={() => "Footer"}
-          onRow={(record, rowIndex) => {
-            return {
-              onClick: (event) => {
-                navigate("/inquiry/detail", { state: { data: record } });
-              }, // click row
-            };
-          }}
+          dataSource={ask} // React Query가 자동으로 관리하는 데이터
+          onRow={(record, rowIndex) => ({
+            onClick: (event) => {
+              navigate("/inquiry/detail", { state: { data: record } });
+            },
+          })}
           pagination={{
             position: ["bottomCenter"],
           }}
@@ -95,5 +134,4 @@ const InquriyListPage = () => {
     </div>
   );
 };
-
 export default InquriyListPage;

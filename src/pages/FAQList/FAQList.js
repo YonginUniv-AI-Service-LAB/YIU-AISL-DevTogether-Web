@@ -11,7 +11,7 @@ import Card from "react-bootstrap/Card";
 import styles from "./FAQList.module.css";
 import PageHeaderImage from "../../assets/images/PageHeaderImage/faq.svg";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { authAPI, defaultAPI } from "../../api";
+import { authAPI, defaultAPI, refreshAccessToken } from "../../api";
 import HoverEventButton from "../../components/Button/HoverEventButton";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { FAQFormDataAtom, FAQFormTypeAtom } from "../../recoil/atoms/faq";
@@ -22,6 +22,7 @@ import {
 } from "@ant-design/icons";
 import LoadingSpin from "../../components/Spin/LoadingSpin";
 import GetDataErrorView from "../../components/Result/GetDataError";
+import axios from "axios";
 
 const FAQListPage = (props) => {
   // 반응형 화면
@@ -29,6 +30,9 @@ const FAQListPage = (props) => {
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const isNotMobile = useMediaQuery({ minWidth: 768 });
+
+  const [data, setData] = useState(null);
+  const [refresh, setRefresh] = useState(false);
 
   // 등록된 queryClient를 가져옴
   const queryClient = useQueryClient();
@@ -48,9 +52,17 @@ const FAQListPage = (props) => {
 
   // FAQ 삭제
   const deleteData = useMutation({
-    mutationFn: (data) =>
-      authAPI.delete("/faq", {
-        faqId: data,
+    mutationFn: async () =>
+      await axios({
+        method: "DELETE",
+        url: "/admin/faq",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+        data: {
+          faqId: data,
+        },
       }),
     onSuccess: (data, variables) => {
       message.success("FAQ 삭제 완료");
@@ -63,8 +75,32 @@ const FAQListPage = (props) => {
       //   return oldData ? oldData.filter((faq) => faq.faqId !== variables) : [];
       // });
     },
-    onError: (e) => {
-      message.error("잠시 후에 다시 시도해주세요");
+    onError: async (e) => {
+      console.log("에러: ", e.request);
+      console.log("faqId: ", data);
+      // 데이터 미입력
+      if (e.request.status == 400) message.error("faq를 다시 선택해주세요.");
+      // 데이터 미입력
+      else if (e.request.status == 404) {
+        message.error("존재하지 않는 FAQ입니다. ");
+        queryClient.invalidateQueries("faq");
+        // FAQ 목록으로 이동
+        navigate(-1);
+      }
+      // 권한 없음 OR 액세스 토큰 만료
+      else if (e.request.status == 401 || e.request.status == 403) {
+        // 액세스토큰 리프레시
+        if (refresh === false) {
+          const isTokenRefreshed = await refreshAccessToken();
+          setRefresh(true);
+          if (isTokenRefreshed) {
+            deleteData.mutate(data);
+          } else navigate("/");
+        } else message.error("권한이 없습니다.");
+      }
+      // 서버 오류
+      else if (e.request.status == 500)
+        message.error("잠시 후에 다시 시도해주세요.");
     },
   });
 
@@ -177,7 +213,10 @@ const FAQListPage = (props) => {
                       <Popconfirm
                         title="공지사항 삭제"
                         description="FAQ를 삭제하시겠습니까?"
-                        onConfirm={() => deleteData.mutate(data.faqId)}
+                        onConfirm={() => {
+                          setData(data.faqId);
+                          deleteData.mutate();
+                        }}
                         okText="삭제"
                         cancelText="취소"
                         icon={

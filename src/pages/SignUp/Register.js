@@ -264,8 +264,9 @@ const RegisterPage = ({ resetState }) => {
       setRemainingTime(180);
     },
     onError: (e) => {
-      console.log("실패: ", e.request);
-      message.error("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
+      if (e.request.status == 400) message.error("이메일을 입력해주세요.");
+      else if (e.request.status == 409)
+        message.error("이미 존재하는 이메일입니다.");
     },
   });
 

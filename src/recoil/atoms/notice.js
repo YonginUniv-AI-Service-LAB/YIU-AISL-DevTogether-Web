@@ -24,3 +24,9 @@ export const NoticeFormFilesAtom = atom({
   key: "NoticeFormFilesAtom",
   default: [],
 });
+
+// 공지사항 삭제할 form 파일 데이터
+export const NoticeDeleteFilesAtom = atom({
+  key: "NoticeDeleteFilesAtom",
+  default: [],
+});
