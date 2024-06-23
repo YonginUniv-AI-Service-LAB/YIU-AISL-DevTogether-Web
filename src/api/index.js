@@ -30,26 +30,35 @@ export const authFileAPI = axios.create({
 });
 
 export const refreshAccessToken = async () => {
-  try {
-    const response = await defaultAPI.post("/token/refresh", {
+  const req = await axios({
+    method: "POST",
+    url: "/token/refresh",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    data: {
       accessToken: sessionStorage.getItem("accessToken"),
       refreshToken: sessionStorage.getItem("refreshToken"),
+    },
+  })
+    .then((response) => {
+      const { accessToken, refreshToken } = response.data;
+      sessionStorage.setItem("accessToken", accessToken);
+      sessionStorage.setItem("refreshToken", refreshToken);
+      return true; // 토큰 갱신 성공
+    })
+    .catch((err) => {
+      console.log("리프레시 결과: ", err.request.status);
+      sessionStorage.removeItem("accessToken");
+      sessionStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("user_profile_id");
+      sessionStorage.removeItem("email");
+      sessionStorage.removeItem("name");
+      sessionStorage.removeItem("nickname");
+      sessionStorage.removeItem("role");
+      message.error("로그인 세션이 만료되어 로그아웃 됩니다.");
+      return false;
     });
-    const { accessToken, refreshToken } = response.data;
-    sessionStorage.setItem("accessToken", accessToken);
-    sessionStorage.setItem("refreshToken", refreshToken);
-    return true; // 토큰 갱신 성공
-  } catch (err) {
-    console.log(err.request.status);
-    sessionStorage.removeItem("accessToken");
-    sessionStorage.removeItem("refreshToken");
-    sessionStorage.removeItem("email");
-    sessionStorage.removeItem("name");
-    sessionStorage.removeItem("nickname");
-    sessionStorage.removeItem("role");
-    message.error("로그인 세션이 만료되어 로그아웃 됩니다.");
-    return false; // 토큰 갱신 실패
-  }
 };
 
 // useMutation({

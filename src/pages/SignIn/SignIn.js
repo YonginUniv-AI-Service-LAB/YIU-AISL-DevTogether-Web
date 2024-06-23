@@ -111,9 +111,10 @@ const SignInPage = () => {
     onSuccess: (res) => {
       // 로그인 후 필요한 정보 저장
       console.log("res.data: ", res.data);
-      const { email, name, role, nickname, token } = res.data;
+      const { email, user_profile_id, name, role, nickname, token } = res.data;
       sessionStorage.setItem("accessToken", token["accessToken"]);
       sessionStorage.setItem("refreshToken", token["refreshToken"]);
+      sessionStorage.setItem("user_profile_id", user_profile_id);
       sessionStorage.setItem("email", email);
       sessionStorage.setItem("name", name);
       sessionStorage.setItem("nickname", nickname);

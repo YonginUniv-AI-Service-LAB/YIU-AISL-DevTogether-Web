@@ -81,6 +81,7 @@ const Header = (props) => {
   const Logout = () => {
     sessionStorage.removeItem("accessToken");
     sessionStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("user_profile_id");
     sessionStorage.removeItem("email");
     sessionStorage.removeItem("name");
     sessionStorage.removeItem("nickname");
