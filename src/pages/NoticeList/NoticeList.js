@@ -35,7 +35,7 @@ const NoticeListPage = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["공지사항"],
+    queryKey: ["notice"],
     queryFn: async () => {
       const res = await defaultAPI.get("/notice");
       return res.data;

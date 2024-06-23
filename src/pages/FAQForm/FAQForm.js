@@ -8,7 +8,7 @@ import { Input, Form, message } from "antd";
 import DefaultButton from "../../components/Button/DefaultButton";
 import { FAQFormDataAtom, FAQFormTypeAtom } from "../../recoil/atoms/faq";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { authAPI } from "../../api";
+import { authAPI, refreshAccessToken } from "../../api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -26,6 +26,8 @@ const FAQFormPage = () => {
   const formType = useRecoilValue(FAQFormTypeAtom);
   // 폼 데이터 세팅
   const [formData, setFormData] = useRecoilState(FAQFormDataAtom);
+  const [data, setData] = useState(null);
+  const [refresh, setRefresh] = useState(false);
 
   // 등록된 queryClient를 가져옴
   const queryClient = useQueryClient();
@@ -71,19 +73,11 @@ const FAQFormPage = () => {
 
   // FAQ 생성
   const createData = useMutation({
-    mutationFn: async (data) =>
-      await authAPI.post({
-        method: "POST",
-        url: "/faq",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Bearer `,
-        },
-        data: data,
+    mutationFn: async () =>
+      await authAPI.post("/admin/faq", {
+        title: data.title,
+        contents: data.contents,
       }),
-    // authAPI.post("/faq", {
-    //   data: data,
-    // }),
     onSuccess: (data, variables) => {
       message.success("FAQ 등록 완료");
       // FAQ 목록 리로드
@@ -91,30 +85,37 @@ const FAQFormPage = () => {
       // FAQ 목록으로 이동
       navigate(-1);
     },
-    onError: (e) => {
-      console.log("실패: ", e);
-      message.error("잠시 후에 다시 시도해주세요");
+    onError: async (e) => {
+      console.log("실패: ", e.request.status);
+
+      // 데이터 미입력
+      if (e.request.status == 400)
+        message.error("질문과 대답을 모두 입력해주세요.");
+      // 권한 없음 OR 액세스 토큰 만료
+      else if (e.request.status == 401 || e.request.status == 403) {
+        // 액세스토큰 리프레시
+        if (refresh === false) {
+          const isTokenRefreshed = await refreshAccessToken();
+          setRefresh(true);
+          if (isTokenRefreshed) {
+            createData.mutate(data);
+          } else navigate("/");
+        } else message.error("권한이 없습니다.");
+      }
+      // 서버 오류
+      else if (e.request.status == 500)
+        message.error("잠시 후에 다시 시도해주세요.");
     },
-    // onSettled: () => {
-    //   console.log("결과에 관계 없이 무언가 실행됨");
-    // },
   });
 
   // FAQ 수정
   const updateData = useMutation({
-    mutationFn: async (data) =>
-      await axios({
-        method: "PUT",
-        url: "/faq",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Bearer`,
-        },
-        data: data,
+    mutationFn: async () =>
+      await authAPI.put("/admin/faq", {
+        faqId: data.faqId,
+        title: data.title,
+        contents: data.contents,
       }),
-    // authAPI.put("/faq", {
-    //   data: data,
-    // }),
     onSuccess: (data, variables) => {
       message.success("FAQ 수정 완료");
       // FAQ 목록 리로드
@@ -122,12 +123,32 @@ const FAQFormPage = () => {
       // FAQ 목록으로 이동
       navigate(-1);
     },
-    onError: (e) => {
-      message.error("잠시 후에 다시 시도해주세요");
+    onError: async (e) => {
+      console.log("실패: ", e.request.status);
+
+      // 데이터 미입력
+      if (e.request.status == 400)
+        message.error("질문과 대답을 모두 입력해주세요.");
+      // 데이터 미입력
+      else if (e.request.status == 404) {
+        message.error("존재하지 않는 FAQ입니다. ");
+        queryClient.invalidateQueries("faq");
+        // FAQ 목록으로 이동
+        navigate(-1);
+      }
+      // 권한 없음 OR 액세스 토큰 만료
+      else if (e.request.status == 401 || e.request.status == 403) {
+        // 액세스토큰 리프레시
+        const isTokenRefreshed = await refreshAccessToken();
+        //
+        if (isTokenRefreshed) {
+          updateData.mutate(data);
+        } else navigate("/");
+      }
+      // 서버 오류
+      else if (e.request.status == 500)
+        message.error("잠시 후에 다시 시도해주세요.");
     },
-    // onSettled: () => {
-    //   console.log("결과에 관계 없이 무언가 실행됨");
-    // },
   });
 
   // 유효성 검사 함수
@@ -169,9 +190,10 @@ const FAQFormPage = () => {
     }
 
     console.log("data: ", data);
+    setData(data);
 
     // API 요청
-    formType === "create" ? createData.mutate(data) : updateData.mutate(data);
+    formType === "create" ? createData.mutate() : updateData.mutate();
   };
 
   return (

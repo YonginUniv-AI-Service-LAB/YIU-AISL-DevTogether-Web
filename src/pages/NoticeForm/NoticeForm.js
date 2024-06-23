@@ -13,6 +13,7 @@ import DefaultButton from "../../components/Button/DefaultButton";
 import PageHeaderImage from "../../assets/images/PageHeaderImage/inquiry.svg";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
+  NoticeDeleteFilesAtom,
   NoticeFormDataAtom,
   NoticeFormFilesAtom,
   NoticeFormTypeAtom,
@@ -21,36 +22,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import testImg1 from "../../assets/images/yiu_logo.jpg";
 import testImg2 from "../../assets/images/devtogether_logo.png";
-import { authFileAPI } from "../../api";
+import { authFileAPI, refreshAccessToken } from "../../api";
 
 const { Dragger } = Upload;
-// const getBase64 = (file) =>
-//   new Promise((resolve, reject) => {
-//     const reader = new FileReader();
-//     reader.readAsDataURL(file);
-//     reader.onload = () => resolve(reader.result);
-//     reader.onerror = (error) => reject(error);
-//   });
-
-const props = {
-  name: "file",
-  multiple: true,
-  action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
-  onChange(info) {
-    const { status } = info.file;
-    if (status !== "uploading") {
-      console.log(info.file, info.fileList);
-    }
-    if (status === "done") {
-      message.success(`${info.file.name} file uploaded successfully.`);
-    } else if (status === "error") {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-  onDrop(e) {
-    console.log("Dropped files", e.dataTransfer.files);
-  },
-};
 
 const NoticeFormPage = (props) => {
   // 반응형 화면
@@ -71,26 +45,36 @@ const NoticeFormPage = (props) => {
   const formType = useRecoilValue(NoticeFormTypeAtom);
   // 폼 데이터 세팅
   const [formData, setFormData] = useRecoilState(NoticeFormDataAtom);
-  // // 파일을 저장할 상태 추가
-  // const [files, setFiles] = useState([]);
-  // 파일 리스트 세팅
-  const existingFiles = useRecoilValue(NoticeFormFilesAtom);
-  const [files, setFiles] = useState(existingFiles);
+
+  // 파일 관련 상태 변수
+  const [files, setFiles] = useRecoilState(NoticeFormFilesAtom); // 전체 파일 데이터
+  const [deleteFiles, setDeleteFiles] = useState([]); // 삭제할 기존 파일 fileId 배열
+  const [newFiles, setNewFiles] = useState([]); // 새로 추가할 파일 데이터 배열
+
+  // 서버에 전송할 데이터(파일 제외)
+  const [data, setData] = useState(null);
+  // 리프레시 진행 여부(액세스 토큰 재발급)
+  const [refresh, setRefresh] = useState(false);
 
   // 등록된 queryClient를 가져옴
   const queryClient = useQueryClient();
 
   // 공지사항 생성
   const createData = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async () => {
       // FormData 형식에 데이터를 넣어줘야 함!
       const formData = new FormData();
       formData.append("title", data.title);
       formData.append("contents", data.contents);
       formData.append("noticeCategory", data.noticeCategory);
-      files.forEach((file) => {
-        formData.append("file", file);
-      });
+      if (files && files.length > 0) {
+        files.forEach((file) => {
+          formData.append("file", file);
+        });
+      } else {
+        formData.append("file", new Blob()); // 빈 Blob 객체를 파일로 추가
+      }
+      console.log("formData", formData);
 
       await authFileAPI.post("/admin/notice", formData, {
         transformRequest: [
@@ -108,26 +92,29 @@ const NoticeFormPage = (props) => {
       // 공지사항 목록으로 이동
       navigate(-1);
     },
-    onError: (e) => {
-      console.log("실패: ", e);
-      message.error("잠시 후에 다시 시도해주세요");
-    },
+    onError: async (e) => handleMutationError(e),
   });
 
   // 공지사항 수정
   const updateData = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async () => {
       // FormData 형식에 데이터를 넣어줘야 함!
       const formData = new FormData();
       formData.append("noticeId", data.noticeId);
       formData.append("title", data.title);
       formData.append("contents", data.contents);
       formData.append("noticeCategory", data.noticeCategory);
-      files.forEach((file) => {
-        if (file.originFileObj) {
-          formData.append("file", file.originFileObj);
-        }
-      });
+      // 삭제할 fileId 추가
+      deleteFiles.forEach((fileId) => formData.append("deleteId", fileId));
+
+      // 새로 추가한 파일 추가
+      newFiles.forEach((file) => formData.append("file", file.originFileObj));
+      // formData.append("file", new Blob()); // 빈 Blob 객체를 파일로 추가
+
+      console.log("전송할 데이터", data);
+      console.log("전송할 deleteId", deleteFiles);
+      console.log("전송할 새로운 file", newFiles);
+      console.log("전체 파일 데이터", files);
 
       await authFileAPI.put("/admin/notice", formData, {
         transformRequest: [
@@ -138,18 +125,42 @@ const NoticeFormPage = (props) => {
       });
     },
     onSuccess: (data, variables) => {
-      // 공지사항 수정 성공 메세지
+      // 공지사항 등록 성공 메세지
       message.success("공지사항 수정 완료");
       // 공지사항 목록 리로드
       queryClient.invalidateQueries("공지사항");
       // 공지사항 목록으로 이동
       navigate(-1);
     },
-    onError: (e) => {
-      console.log("실패: ", e);
-      message.error("잠시 후에 다시 시도해주세요");
-    },
+    onError: async (e) => handleMutationError(e),
   });
+
+  // 에러 핸들러
+  const handleMutationError = async (e) => {
+    // 데이터 미입력
+    if (e.request.status === 400) message.error("제목과 내용을 입력해주세요.");
+    // 공지사항 id 없음
+    else if (e.request.status == 400)
+      message.error("존재하지 않는 공지사항입니다.");
+    // OR 액세스 토큰 만료 OR 권한 없음
+    else if (e.request.status === 401 || e.request.status === 403) {
+      if (!refresh) {
+        const isTokenRefreshed = await refreshAccessToken();
+        setRefresh(true);
+        if (isTokenRefreshed) {
+          formType === "create" ? createData.mutate() : updateData.mutate();
+        } else {
+          navigate("/");
+        }
+      } else {
+        message.error("권한이 없습니다.");
+      }
+    }
+    // 서버 오류
+    else if (e.request.status === 500) {
+      message.error("잠시 후에 다시 시도해주세요.");
+    }
+  };
 
   // 데이터
   const [form, setForm] = useState({
@@ -187,6 +198,20 @@ const NoticeFormPage = (props) => {
     },
   });
 
+  // category String -> INT
+  const convertCategory = () => {
+    switch (formData.noticeCategory) {
+      case "공지":
+        return 0;
+      case "이벤트":
+        return 1;
+      case "업데이트":
+        return 2;
+      default:
+        return 0;
+    }
+  };
+
   // 텍스트인풋 업데이트
   const onChange = (e) => {
     setForm((prevState) => ({
@@ -210,23 +235,52 @@ const NoticeFormPage = (props) => {
     }));
   };
 
+  // 파일 업로드 변경 시 처리
   const handleUploadChange = ({ fileList }) => {
-    setFiles(fileList.map((file) => file.originFileObj));
+    setFiles(fileList);
+    // 새로 추가된 파일을 newFiles 배열에 추가
+    setNewFiles(fileList);
   };
 
-  // const handleUploadChange = ({ fileList }) => {
-  //   setFiles(fileList);
-  // };
-
-  // 파일 삭제 핸들러
+  // 파일 삭제 시 처리
   const handleRemoveFile = (file) => {
-    console.log("삭제: ", file);
-    setFiles(files.filter((item) => item.uid !== file.uid));
+    console.log("삭제할 file: ", file);
+    // 기존 파일 목록에서 삭제
+    setFiles(files.filter((item) => item.uid != file.uid));
+    // 삭제한 파일의 fileId를 deleteFiles 배열에 추가
+    if (file.uid) {
+      setDeleteFiles((prev) => [...prev, parseInt(file.uid)]);
+    }
   };
 
   useEffect(() => {
-    setFiles(existingFiles);
-  }, [existingFiles]);
+    setFiles([]);
+    setDeleteFiles([]);
+    setNewFiles([]);
+    if (formType === "update" && files) {
+      setForm((prevState) => ({
+        ...prevState,
+        noticeCategory: {
+          ...prevState.noticeCategory,
+          value: convertCategory(),
+        },
+      }));
+      setFiles(
+        files
+          .filter((file) => file.originName) // originName이 있는 파일만 필터링
+          .map((file, index) => ({
+            uid: `${file.fileId}`,
+            name: file.originName,
+            status: "done",
+            url: file.url,
+            originFileObj: new File([file.fileData], file.originName, {
+              type: file.mimeType,
+            }),
+            originName: file.fildId, // originName을 포함
+          }))
+      );
+    }
+  }, [formData, formType]);
 
   // 유효성 검사 함수
   const validateForm = (form) => {
@@ -257,17 +311,10 @@ const NoticeFormPage = (props) => {
       return acc;
     }, {});
 
-    // // 유효성 검사
-    // const isFormValid = validateForm(form);
-    // if (!isFormValid) {
-    //   message.error("질문과 답변을 모두 입력해주세요");
-    //   return;
-    // }
-
-    console.log("data: ", data);
+    setData(data);
 
     // API 요청
-    formType === "create" ? createData.mutate(data) : updateData.mutate(data);
+    formType === "create" ? createData.mutate() : updateData.mutate();
   };
 
   return (

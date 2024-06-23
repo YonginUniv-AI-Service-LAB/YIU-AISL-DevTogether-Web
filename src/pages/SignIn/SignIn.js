@@ -102,7 +102,7 @@ const SignInPage = () => {
   };
 
   const login = useMutation({
-    mutationFn: async (data) =>
+    mutationFn: async () =>
       await defaultAPI.post("/login", {
         email: email,
         pwd: pwd,
@@ -123,11 +123,11 @@ const SignInPage = () => {
       navigate("/");
     },
     onError: (e) => {
-      console.log("실패: ", e);
-      message.error("로그인에 실패했습니다.");
-      // 400: 데이터 미입력
-      // 401: 회원정보 불일치
-      // 404: 회원없음
+      if (e.request.status == 400) message.error("미입력된 정보가 있습니다.");
+      else if (e.request.status == 401)
+        message.error("이메일 또는 비밀번호가 올바르지 않습니다.");
+      else if (e.request.status == 404)
+        message.error("존재하지 않는 회원입니다.");
     },
   });
 
