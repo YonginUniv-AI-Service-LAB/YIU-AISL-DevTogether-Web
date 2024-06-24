@@ -81,6 +81,7 @@ const Header = (props) => {
   const Logout = () => {
     sessionStorage.removeItem("accessToken");
     sessionStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("user_profile_id");
     sessionStorage.removeItem("email");
     sessionStorage.removeItem("name");
     sessionStorage.removeItem("nickname");
@@ -105,7 +106,7 @@ const Header = (props) => {
       style: DropdownItemStyle,
       onClick: () => {
         // setMembers("professors");
-        navigate("/inquiry/form");
+        navigate("/inquiry");
       },
     },
   ];
@@ -142,7 +143,7 @@ const Header = (props) => {
           icon: <QuestionCircleOutlined />,
         },
         {
-          key: "/inquiry/form",
+          key: "/inquiry",
           label: "문의하기",
           icon: <MailOutlined />,
         },

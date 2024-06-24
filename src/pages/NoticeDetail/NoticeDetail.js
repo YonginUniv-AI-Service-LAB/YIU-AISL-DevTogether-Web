@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useLocation, useNavigate } from "react-router-dom";
 import { colors } from "../../assets/colors";
@@ -19,13 +19,18 @@ import {
   NoticeFormTypeAtom,
 } from "../../recoil/atoms/notice";
 import dayjs from "dayjs";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { authAPI, defaultAPI } from "../../api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { authAPI, defaultAPI, refreshAccessToken } from "../../api";
 import LoadingSpin from "../../components/Spin/LoadingSpin";
 import GetDataErrorView from "../../components/Result/GetDataError";
 import styles from "./NoticeDetail.module.css";
+import axios from "axios";
 
 const NoticeDetailPage = (props) => {
+  // 등록된 queryClient를 가져옴
+  const queryClient = useQueryClient();
+  const [refresh, setRefresh] = useState(false);
+
   const {
     data: notice,
     isLoading,
@@ -36,28 +41,58 @@ const NoticeDetailPage = (props) => {
       const res = await defaultAPI.get(
         `/notice/detail?noticeId=${location.state.data.noticeId}`
       );
-      console.log("공지사항 상세보기: ", res.data);
+      if (res.status == 404) {
+        message.error("존재하지 않는 공지사항입니다.");
+        return error;
+      }
       return res.data;
     },
   });
 
   const deleteData = useMutation({
     mutationFn: async () =>
-      await authAPI.delete("/admin/report", {
-        noticeId: notice.noticeId,
+      await axios({
+        method: "DELETE",
+        url: "/admin/notice",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+        data: {
+          noticeId: notice.noticeId,
+        },
       }),
     onSuccess: () => {
       message.success("공지사항이 삭제되었습니다");
       navigate(-1);
     },
-    onError: (e) => {
-      //     console.log("실패: ", e);
-      //     message.error("잠시 후에 다시 시도해주세요");
-      // 403: 권한없음
-      // 404: id 없음
-      // 404:회원없 음
-      // 400:데이터미입력
-      // 500 : 내부 서부오류 (그 외)
+    onError: async (e) => {
+      console.log("실패: ", e.request.status);
+
+      // 데이터 미입력
+      if (e.request.status == 400)
+        message.error("공지사항을 다시 선택해주세요.");
+      // 데이터 미입력
+      else if (e.request.status == 404) {
+        message.error("존재하지 않는 공지사항입니다. ");
+        queryClient.invalidateQueries("notice");
+        // 공지사항 목록으로 이동
+        navigate(-1);
+      }
+      // 권한 없음 OR 액세스 토큰 만료
+      else if (e.request.status == 401 || e.request.status == 403) {
+        // 액세스토큰 리프레시
+        if (refresh === false) {
+          const isTokenRefreshed = await refreshAccessToken();
+          setRefresh(true);
+          if (isTokenRefreshed) {
+            deleteData.mutate();
+          } else navigate("/");
+        } else message.error("권한이 없습니다.");
+      }
+      // 서버 오류
+      else if (e.request.status == 500)
+        message.error("잠시 후에 다시 시도해주세요.");
     },
   });
 
@@ -81,9 +116,9 @@ const NoticeDetailPage = (props) => {
 
   const updateConfirm = (e) => {
     console.log(e);
-    // message.success("Click on Yes");
     setFormType("update");
     setFormData(notice);
+    console.log("filesList: ", notice.filesList);
     setFormFiles(notice.filesList);
     navigate("/notice/form");
   };
@@ -98,13 +133,50 @@ const NoticeDetailPage = (props) => {
     console.log(e);
   };
 
-  const handleDownload = (fileUrl, fileName) => {
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const downloadFile = async (fileId) => {
+    try {
+      const response = await axios({
+        method: "POST",
+        url: "/download",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        data: {
+          fileId: fileId,
+        },
+      });
+
+      const { fileData, mimeType, originName } = response.data;
+
+      // base64 문자열을 디코딩하여 Blob 객체로 변환합니다.
+      const byteString = atob(fileData);
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+
+      const blob = new Blob([ia], { type: mimeType });
+      const downloadUrl = URL.createObjectURL(blob);
+      return { downloadUrl, originName };
+    } catch (error) {
+      console.error("파일 다운로드 실패:", error);
+      message.error("파일 다운로드에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
+  const handleDownload = async (fileId, fileName) => {
+    const { downloadUrl, originName } = await downloadFile(fileId);
+    if (downloadUrl) {
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = originName || fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(downloadUrl); // 메모리 해제
+    }
   };
 
   if (isLoading) return <LoadingSpin />;
@@ -150,8 +222,19 @@ const NoticeDetailPage = (props) => {
               whiteSpace: "pre-wrap",
             }}
           >
-            {/* 임시 - 컬럼명 오류 */}
-            <span>{dayjs(notice.createdAt).format("YYYY.MM.DD")}</span>
+            <span
+              style={
+                {
+                  // borderRightWidth: 3,
+                  // borderRightStyle: "solid",
+                  // borderRightColor: colors.text_body_color,
+                  // paddingRight: 10,
+                  // marginRight: 10,
+                }
+              }
+            >
+              {dayjs(notice.createdAt).format("YYYY.MM.DD")}
+            </span>
             {"  |  "}
             <span>{notice.noticeCategory}</span>
           </p>
@@ -208,7 +291,7 @@ const NoticeDetailPage = (props) => {
               {notice.filesList.map((file, index) => (
                 <Button
                   key={index}
-                  onClick={() => handleDownload(file.url, file.originName)}
+                  onClick={() => handleDownload(file.fileId, file.originName)}
                   style={{
                     marginBottom: 10,
                     marginRight: 10,

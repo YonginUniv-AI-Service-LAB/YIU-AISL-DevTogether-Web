@@ -65,13 +65,19 @@ const SignInPage = () => {
 
   // 로그인 API 호출
   const login = useMutation({
-    mutationFn: async (data) => await defaultAPI.post("/login", data),
+    mutationFn: async () =>
+      await defaultAPI.post("/login", {
+        email: email,
+        pwd: pwd,
+        role: selectedRole,
+      }),
     onSuccess: (res) => {
       // 로그인 후 필요한 정보 저장
       console.log("res.data: ", res.data);
-      const { email, name, role, nickname, token } = res.data;
+      const { email, user_profile_id, name, role, nickname, token } = res.data;
       sessionStorage.setItem("accessToken", token["accessToken"]);
       sessionStorage.setItem("refreshToken", token["refreshToken"]);
+      sessionStorage.setItem("user_profile_id", user_profile_id);
       sessionStorage.setItem("email", email);
       sessionStorage.setItem("name", name);
       sessionStorage.setItem("nickname", nickname);
@@ -81,27 +87,11 @@ const SignInPage = () => {
       navigate("/");
     },
     onError: (e) => {
-      console.log("실패: ", e);
-      if (e.response) {
-        switch (e.response.status) {
-          case 400:
-            message.error("데이터가 입력되지 않았습니다. 모든 필드를 입력해주세요.");
-            break;
-          case 401:
-            message.error("아이디 또는 비밀번호가 잘못되었습니다. 혹은 역할을 확인하세요.");
-            break;
-          case 404:
-            message.error("존재하지 않는 사용자입니다.");
-            break;
-          case 500:
-            message.error("서버오류")
-            break;
-          default:
-            message.error("로그인에 실패했습니다. 다시 시도해주세요.");
-        }
-      } else {
-        message.error("로그인에 실패했습니다. 다시 시도해주세요.");
-      }
+      if (e.request.status == 400) message.error("미입력된 정보가 있습니다.");
+      else if (e.request.status == 401)
+        message.error("이메일 또는 비밀번호가 올바르지 않습니다.");
+      else if (e.request.status == 404)
+        message.error("존재하지 않는 회원입니다.");
     },
   });
 
