@@ -3,11 +3,8 @@ import { useMediaQuery } from "react-responsive";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { Carousel } from "antd";
 import ProfileMain from "../../components/Group/Profile/ProfileMain";
-import { data_mentee } from "../../assets/data/mentee";
-import { data_mentor } from "../../assets/data/mentor";
-import { data_subject } from "../../assets/data/subject";
 import style from "./Main.module.css";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { defaultAPI } from "../../api";
 import LoadingSpin from "../../components/Spin/LoadingSpin";
 import GetDataErrorView from "../../components/Result/GetDataError";
@@ -35,9 +32,21 @@ const MainPage = () => {
     isLargeDesktop: useMediaQuery({ minWidth: 1801 }),
   };
 
-  const menteeProfiles = data_mentee.slice(0, 5);
-  const mentorProfiles = data_mentor.slice(0, 5);
-  const subjects = data_subject.slice(0, 5); // 인기 있는 5개 과목만 표시
+  // 등록된 queryClient를 가져옴
+  const { data: main, isLoading, error } = useQuery({
+    queryKey: ["main"],
+    queryFn: async () => {
+      const res = await defaultAPI.get("/main");
+      return res.data;
+    },
+  });
+
+  if (isLoading) return <LoadingSpin />;
+  if (error) return <GetDataErrorView />;
+
+  const menteeProfiles = main.mentees.filter(mentee => mentee !== null);
+  const mentorProfiles = main.mentors.filter(mentor => mentor !== null);
+  const subjects = main.subjects.slice(0, 5); // 인기 있는 5개 과목만 표시
 
   const slidesToShow = breakpoints.isMobile
     ? 1
@@ -65,25 +74,6 @@ const MainPage = () => {
       { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } },
     ],
   };
-
-  // 등록된 queryClient를 가져옴
-  const queryClient = useQueryClient();
-
-  // 메인 데이터 조회
-  const {
-    data: main,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["main"],
-    queryFn: async () => {
-      const res = await defaultAPI.get("/main");
-      return res.data;
-    },
-  });
-
-  if (isLoading) return <LoadingSpin />;
-  if (error) return <GetDataErrorView />;
 
   return (
     <div>
@@ -195,7 +185,7 @@ const MainPage = () => {
                   <ProfileMain
                     id={mentee.id}
                     nickname={mentee.nickname}
-                    subject={mentee.subject.join(", ")}
+                    subject={(mentee.subject || []).join(", ")}
                     gender={mentee.gender === 0 ? "남자" : "여자"}
                     age={mentee.age}
                     location={mentee.location1}
@@ -220,7 +210,7 @@ const MainPage = () => {
                   <ProfileMain
                     id={mentor.id}
                     nickname={mentor.nickname}
-                    subject={mentor.subject.join(", ")}
+                    subject={(mentor.subject || []).join(", ")}
                     gender={mentor.gender === 0 ? "남자" : "여자"}
                     age={mentor.age}
                     location={mentor.location1}

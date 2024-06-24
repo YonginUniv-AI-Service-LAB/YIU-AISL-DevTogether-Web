@@ -5,6 +5,8 @@ import { Button, Form, Input, Modal, Select, message } from 'antd';
 import { useRecoilState } from 'recoil';
 import { CiRead, CiUnread } from "react-icons/ci";
 import { passwordStateAtom, emailStateAtom } from '../../recoil/atoms/register';
+import { useMutation } from '@tanstack/react-query';
+import { defaultAPI } from '../../api';
 
 const Email = () => {
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
@@ -27,18 +29,19 @@ const Email = () => {
     const [findidOpen, setFindidOpen] = useState(false);
     const [findpasswordOpen, setFindpasswordOpen] = useState(false);
     const [domainInputDisabled, setDomainInputDisabled] = useState(true);
-    const [selectedbutton, setSelectedbutton] = useState(false);
+    const [selectedButton, setSelectedButton] = useState(false);
     const [isCodeVerified, setIsCodeVerified] = useState(null);
     const [verificationCode, setVerificationCode] = useState('');
     const [remainingTime, setRemainingTime] = useState(180);
-    const [showPassword, setShowPassword] = useState(false); // 비밀번호 보기 토글 상태
-    const [showconfirmPassword, setShowconfirmPassword] = useState(false); // 비밀번호 보기 토글 상태
+    const [verificationNumber, setVerificationNumber] = useState(null); // Added for verification number
+    const [showPassword, setShowPassword] = useState(false);
+    const [showconfirmPassword, setShowconfirmPassword] = useState(false);
     const [password, setPassword] = useState('');
     const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
     const [confirmPassword, setConfirmPassword] = useRecoilState(passwordStateAtom);
     const [passwordMatch, setPasswordMatch] = useState(null);
-    const [foundEmail, setFoundEmail] = useState(''); // Added state for storing the found email
-    const [noMemberFound, setNoMemberFound] = useState(false); // 일치하는 회원이 없을 경우를 처리하기 위한 상태 변수
+    const [foundEmail, setFoundEmail] = useState('');
+    const [noMemberFound, setNoMemberFound] = useState(false);
 
     const handleInputChange = (e) => {
         setEmailId(e.target.value);
@@ -53,17 +56,6 @@ const Email = () => {
     const handleDomainChange = (value) => {
         setSelectedDomain(value);
         setEmail(`${emailId}@${value}`);
-    };
-
-    const handleSendVerificationCode = () => {
-        setSelectedbutton(true);
-        setRemainingTime(180);
-        // Send the verification code logic here
-    };
-
-    const handleVerifyCode = () => {
-        // Verification logic here
-        setIsCodeVerified(true);
     };
 
     const handleNameChange = (e) => {
@@ -157,7 +149,7 @@ const Email = () => {
             setPasswordMatch(false);
         } else {
             setConfirmPassword(value);
-            setPasswordMatch(true); // 비밀번호 확인 여부 판단
+            setPasswordMatch(true); 
         }
     };
 
@@ -169,20 +161,93 @@ const Email = () => {
         setShowconfirmPassword(!showconfirmPassword);
     };
 
+    const 이메일_찾기 = useMutation({
+        mutationFn: async (data) => {
+            console.log("이메일 찾기 API 호출 데이터:", data); 
+            return await defaultAPI.post("/email", {
+                name: data.name,
+                birth: data.birth,
+                question: Number(data.question),
+                answer: data.answer,
+            });
+        },
+        onSuccess: (res) => {
+            setFoundEmail(res.data.email);
+            setNoMemberFound(false);
+        },
+        onError: (e) => {
+            if (e.response.status === 400) {
+                message.error("데이터가 없습니다. 한 개라도 입력하지 않았습니다.");
+            } else if (e.response.status === 401) {
+                message.error("정보가 일치하지 않습니다. 질문과 답변을 확인해주세요.");
+            } else if (e.response.status === 404) {
+                message.error("회원 정보가 존재하지 않습니다. 이름과 생년월일을 확인해주세요.");
+            } else {
+                message.error("오류가 발생했습니다. 다시 시도해주세요.");
+            }
+            setNoMemberFound(true);
+        },
+    });
+
+    const 비밀번호_변경_이메일_인증 = useMutation({
+        mutationFn: async (email) =>
+            await defaultAPI.post("/pwd/email", {
+                email: email,
+            }),
+        onSuccess: (res) => {
+            message.success("인증번호가 전송되었습니다.");
+            setVerificationNumber(res.data); // Store the verification number
+            setSelectedButton(true);
+            setRemainingTime(180);
+        },
+        onError: (e) => {
+            console.log("실패: ", e);
+            message.error("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
+        },
+    });
+
+    const 비밀번호_변경 = useMutation({
+        mutationFn: async (data) =>
+            await defaultAPI.post("/pwd/change", {
+                email: data.email,
+                pwd: data.pwd,
+            }),
+        onSuccess: () => {
+            message.success("비밀번호 변경에 성공하였습니다!");
+            setFindpasswordOpen(false); // Close modal on success
+        },
+        onError: (e) => {
+            console.log("실패: ", e);
+            message.error("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
+        },
+    });
+
+    const verifyEmailCode = () => {
+        if (parseInt(verificationCode) === parseInt(verificationNumber)) {
+            message.success("이메일 인증에 성공했습니다.");
+            setIsCodeVerified(true);
+        } else {
+            message.error("이메일 인증번호가 일치하지 않습니다.");
+            setIsCodeVerified(false);
+        }
+    };
+
     const handleOk = () => {
         if (findidOpen) {
-            // 예시로 회원 정보가 일치하지 않는 경우를 처리합니다. 실제 로직에 맞게 수정 필요
-            if (name !== '예상되는 이름' || selectedYear !== '예상되는 출생년도' || selectedMonth !== '예상되는 월' || selectedDay !== '예상되는 일' || question !== '예상되는 질문' || answer !== '예상되는 답변') {
-                setFoundEmail('');
-                setNoMemberFound(true); // 일치하는 회원이 없을 경우 상태 업데이트
-            } else {
-                setFoundEmail('example@example.com');
-                setNoMemberFound(false); // 일치하는 회원이 있는 경우 상태 업데이트
-            }
+            const birth = `${selectedYear}${selectedMonth}${selectedDay}`;
+            이메일_찾기.mutate({
+                name: name,
+                birth: birth,
+                question: question,
+                answer: answer,
+            });
         }
         if (findpasswordOpen && isCodeVerified && password && confirmPassword && passwordMatch) {
-            message.success('비밀번호가 변경되었습니다.');
-            setFindpasswordOpen(false);
+            const data = {
+                email: email,
+                pwd: password,
+            };
+            비밀번호_변경.mutate(data);
         }
     };
 
@@ -191,7 +256,6 @@ const Email = () => {
         setFindpasswordOpen(false);
     };
 
-    // Reset form fields when modal is closed
     useEffect(() => {
         if (!findidOpen) {
             setName('');
@@ -201,7 +265,7 @@ const Email = () => {
             setQuestion(undefined);
             setAnswer('');
             setFoundEmail('');
-            setNoMemberFound(false); // 모달이 닫힐 때 상태 초기화
+            setNoMemberFound(false);
         }
     }, [findidOpen]);
 
@@ -210,7 +274,7 @@ const Email = () => {
             setEmailId('');
             setSelectedDomain('yiu.ac.kr');
             setDomainInputDisabled(true);
-            setSelectedbutton(false);
+            setSelectedButton(false);
             setIsCodeVerified(null);
             setVerificationCode('');
             setPassword('');
@@ -356,7 +420,6 @@ const Email = () => {
                                     onChange={handleDomainChange}
                                     value={selectedDomain}
                                 >
-                                    {/* <Select.Option value="type">직접 입력</Select.Option> */}
                                     <Select.Option value="yiu.ac.kr">yiu.ac.kr</Select.Option>
                                     <Select.Option value="naver.com">naver.com</Select.Option>
                                     <Select.Option value="google.com">google.com</Select.Option>
@@ -365,13 +428,13 @@ const Email = () => {
                                 </Select>
                             </Input.Group>
                         </div>
-                        {!selectedbutton && (
+                        {!selectedButton && (
                             <Button
                                 type="primary"
                                 htmlType="submit"
                                 className={style.check_button}
                                 style={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-end' }}
-                                onClick={handleSendVerificationCode}
+                                onClick={() => 비밀번호_변경_이메일_인증.mutate(email)}
                             >
                                 인증 번호 전송
                             </Button>
@@ -381,7 +444,7 @@ const Email = () => {
 
                     <Form.Item
                         name="verificationCode"
-                        style={{ width: '100%', display: selectedbutton && !isCodeVerified ? 'block' : 'none' }}
+                        style={{ width: '100%', display: selectedButton && !isCodeVerified ? 'block' : 'none' }}
                     >
                         <div>인증 번호</div>
                         <div className={style.horizon} style={{ display: 'flex', alignItems: 'center' }}>
@@ -396,9 +459,9 @@ const Email = () => {
                                 htmlType="submit"
                                 className={style.check_button}
                                 style={{ marginLeft: '15px' }}
-                                onClick={verificationCode ? handleVerifyCode : handleSendVerificationCode}
+                                onClick={verifyEmailCode}
                             >
-                                {verificationCode ? '인증 번호 확인' : '인증 번호 재전송'}
+                                이메일 인증
                             </Button>
                         </div>
                         <div style={{ height: '10px' }}>
@@ -409,7 +472,7 @@ const Email = () => {
                     {isCodeVerified && (<div> <Form.Item name="password">
                         <div>새 비밀번호</div>
                         <Input type={showPassword ? "text" : "password"} placeholder="비밀번호" style={{ maxHeight: '32px', width: '470px' }}
-                            suffix={ // 비밀번호 보이기/가리기 아이콘
+                            suffix={
                                 <Button
                                     type="text"
                                     icon={showPassword ? <CiRead /> : <CiUnread />}
@@ -425,7 +488,7 @@ const Email = () => {
                             <div>새 비밀번호 확인</div>
                             <div className={style.horizon}>
                                 <Input type={showconfirmPassword ? "text" : "password"} placeholder="비밀번호 확인" style={{ maxHeight: '32px', width: '470px' }}
-                                    suffix={ // 비밀번호 보이기/가리기 아이콘
+                                    suffix={
                                         <Button
                                             type="text"
                                             icon={showconfirmPassword ? <CiRead /> : <CiUnread />}

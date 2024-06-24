@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 import style from "./SignUp.module.css";
-import { Button, Checkbox, Form, Input, message } from "antd";
+import { Button, message } from "antd";
 import LogoTitle_Login from "../../components/Group/LOGO/LogoTitle_Login";
-import { RecoilRoot, atom, useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { pageState } from "../../recoil/atoms/login";
 import {
   resetStateAtom,
@@ -20,9 +20,11 @@ import {
   yearStateAtom,
   monthStateAtom,
   dayStateAtom,
+  dualRoleStateAtom,
+  nicknameCheckedStateAtom,
+  passwordMatchStateAtom,
+  emailVerifiedStateAtom,
 } from "../../recoil/atoms/register";
-import SignUpMain from "./SignUpMain";
-import SignUpSub from "./SignUpSub";
 import RegisterPage from "./Register";
 import { useMutation } from "@tanstack/react-query";
 import { defaultAPI } from "../../api";
@@ -32,12 +34,12 @@ const SignUpPage = () => {
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
   const isMobile = useMediaQuery({ maxWidth: 767 });
-  const isNotMobile = useMediaQuery({ minWidth: 768 });
 
   // 페이지 이동
   const navigate = useNavigate();
 
-  const [page, setPage] = useRecoilState(pageState); // Recoil로 페이지 상태 사용
+  // Recoil 상태
+  const [page, setPage] = useRecoilState(pageState);
   const password = useRecoilValue(passwordStateAtom);
   const email = useRecoilValue(emailStateAtom);
   const name = useRecoilValue(nameStateAtom);
@@ -48,94 +50,86 @@ const SignUpPage = () => {
   const year = useRecoilValue(yearStateAtom);
   const month = useRecoilValue(monthStateAtom);
   const day = useRecoilValue(dayStateAtom);
+  const dualRole = useRecoilValue(dualRoleStateAtom);
   const question = useRecoilValue(questionStateAtom);
   const answer = useRecoilValue(answerStateAtom);
-
-  const [selectedRole, setSelectedRole] = useRecoilState(roleStateAtom); // 선택된 역할 상태 추가
+  const birth = year + month + day;
   const [resetState, setResetState] = useRecoilState(resetStateAtom);
 
-  const [registercheck, setRegistercheck] = useState(null);
+  // 추가된 Recoil 상태
+  const [selectedRole, setSelectedRole] = useRecoilState(roleStateAtom);
+  const [nicknameChecked, setNicknameChecked] = useRecoilState(nicknameCheckedStateAtom);
+  const [passwordMatch, setPasswordMatch] = useRecoilState(passwordMatchStateAtom);
+  const [emailVerified, setEmailVerified] = useRecoilState(emailVerifiedStateAtom);
+  const [setRegistercheck, setSetRegistercheck] = useState(null);
 
+  // 선택된 역할 처리 함수
   const handleRoleSelection = (role) => {
     setSelectedRole(role);
     setResetState(true);
   };
 
-  // 로그인 페이지로 이동하는 함수
+  // 로그인 페이지로 이동 함수
   const goToLoginPage = () => {
     setPage("signin");
-    navigate("/signin"); // '/login' 경로로 이동
+    navigate("/signin");
   };
 
-  // 회원가입 페이지로 이동하는 함수
+  // 회원가입 페이지로 이동 함수
   const goToSignUpPage = () => {
     setPage("signup");
-    navigate("/signup"); // '/signup' 경로로 이동
+    navigate("/signup");
   };
 
+  // 회원가입 처리 함수
   const handleRegister = () => {
     const birth = year + month + day;
-    console.log("필드 확인 birth: ", year, "+++", month, "+++", day);
-    // 필수 입력 필드가 모두 채워졌는지 확인
-    if (
-      email &&
-      password &&
-      name &&
-      nickname &&
-      gender &&
-      age &&
-      birth &&
-      role &&
-      question &&
-      answer
-    ) {
-      // 모든 필드가 채워졌을 때 실행할 함수 호출
-      console.log("모든 필드가 채워졌습니다. 회원가입을 진행합니다...");
-      console.log(
-        password,
-        email,
-        name,
-        nickname,
-        gender,
-        age,
-        birth,
-        role,
-        question,
-        answer
-      );
-      setRegistercheck(true);
-      register.mutate();
-    } else message.error("모든 필드를 채워주세요.");
+    
+    // 필수 입력 필드 확인
+    if (email && password && name && nickname && gender && age && birth && role && question && answer) {
+      // 추가적인 상태 확인
+      if (nicknameChecked && passwordMatch && emailVerified) {
+        console.log("모든 필드가 채워졌습니다. 회원가입을 진행합니다...");
+        setSetRegistercheck(true);
+        register.mutate();
+      } else {
+        message.error("닉네임 확인, 비밀번호 일치, 이메일 인증을 완료하세요.");
+      }
+    } else {
+      message.error("모든 필드를 채워주세요.");
+    }
   };
 
+  // 회원가입 Mutation
   const register = useMutation({
-    mutationFn: async (data) =>
+    mutationFn: async () => {
       await defaultAPI.post("/register", {
-        email: email,
+        email,
         pwd: password,
-        name: name,
-        nickname: nickname,
-        role: role,
-        gender: gender,
-        age: age,
-        birth: year + month + day,
-        question: question,
-        answer: answer,
-      }),
-    onSuccess: () => {
-      message.success("성공"); // 이건 없애도 됨
-      // ❗️ 여기서부터 회원가입 성공 페이지로 넘기고 로직 진행하면 돼!
+        name,
+        nickname,
+        role: dualRole ? 3 : selectedRole,
+        gender,
+        age: Number(age), 
+        birth,
+        question: Number(question),
+        answer,
+      });
     },
-    onError: (e) => {
-      if (e.request.status == 400) message.error("미입력된 정보가 있습니다.");
-      else if (e.request.status == 409)
-        message.error(
-          "이미 존재하는 닉네임입니다. 다른 닉네임을 사용해주세요."
-        );
-      else if (e.request.status == 409)
-        message.error(
-          "이미 존재하는 이메일입니다. 다른 이메일을 사용해주세요."
-        );
+    onSuccess: () => {
+      message.success("회원가입에 성공했습니다.");
+      navigate("/complete");
+    },
+    onError: (error) => {
+      if (error.response && error.response.status === 400) {
+        message.error("미입력된 정보가 있습니다.");
+      } else if (error.response && error.response.status === 409) {
+        message.error("이미 존재하는 닉네임입니다. 다른 닉네임을 사용해주세요.");
+      } else if (error.response && error.response.status === 409) {
+        message.error("이미 존재하는 이메일입니다. 다른 이메일을 사용해주세요.");
+      } else {
+        message.error("회원가입 중 오류가 발생했습니다.");
+      }
     },
   });
 
@@ -143,7 +137,6 @@ const SignUpPage = () => {
     <div
       style={{
         marginTop: isMobile ? 50 : 100,
-        // marginBottom: isMobile ? 50 : 200,
         marginLeft: isMobile ? "5%" : isTablet ? 30 : "20%",
         marginRight: isMobile ? "5%" : isTablet ? 30 : "20%",
         display: isMobile ? null : "flex",

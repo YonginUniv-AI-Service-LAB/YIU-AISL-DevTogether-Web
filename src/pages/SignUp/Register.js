@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useDeferredValue } from "react";
+import React, { useState, useEffect } from "react";
+import { useDeferredValue } from "react";
 import style from "./SignUp.module.css";
-import { Button, Form, Input, Select, message } from "antd";
+import { Button, Form, Input, Select, message, Checkbox } from "antd";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   resetStateAtom,
@@ -18,6 +19,10 @@ import {
   monthStateAtom,
   dayStateAtom,
   roleStateAtom,
+  dualRoleStateAtom,
+  emailVerifiedStateAtom,
+  nicknameCheckedStateAtom,
+  passwordMatchStateAtom
 } from "../../recoil/atoms/register";
 import { CiRead, CiUnread } from "react-icons/ci";
 import { defaultAPI } from "../../api";
@@ -42,17 +47,16 @@ const RegisterPage = ({ resetState }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] =
     useRecoilState(passwordStateAtom);
-  const [passwordMatch, setPasswordMatch] = useState(null);
+  const [passwordMatch, setPasswordMatch] = useRecoilState(passwordMatchStateAtom);
 
   const [email, setEmail] = useRecoilState(emailStateAtom);
-  // const [emailId, setEmailId] = useState("");
   const [selectedDomain, setSelectedDomain] = useState("");
   const [domainInputDisabled, setDomainInputDisabled] = useState(false);
 
   const [verificationNumber, setVerificationNumber] = useState(null);
   const [verificationCode, setVerificationCode] = useState("");
   const [selectedbutton, setSelectedButton] = useState(false);
-  const [isCodeVerified, setIsCodeVerified] = useState(null);
+  const [isCodeVerified, setIsCodeVerified] = useRecoilState(emailVerifiedStateAtom);
   const [remainingTime, setRemainingTime] = useState(180);
   const [timerId, setTimerId] = useState(null);
 
@@ -72,7 +76,8 @@ const RegisterPage = ({ resetState }) => {
   const [question, setQuestion] = useRecoilState(questionStateAtom);
   const [answer, setAnswer] = useRecoilState(answerStateAtom);
 
-  const [isNicknameChecked, setIsNicknameChecked] = useState(null);
+  const [isNicknameChecked, setIsNicknameChecked] = useRecoilState(nicknameCheckedStateAtom);
+  const [dualRole, setDualRole] = useRecoilState(dualRoleStateAtom);
 
   useEffect(() => {
     if (resetState) {
@@ -103,6 +108,7 @@ const RegisterPage = ({ resetState }) => {
       setQuestion(null);
       setAnswer("");
       setIsNicknameChecked(null);
+      setDualRole(false);
 
       setReset(false);
     }
@@ -161,25 +167,7 @@ const RegisterPage = ({ resetState }) => {
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
-    // setEmail(`${e.target.value}@${selectedDomain}`);
   };
-
-  // const handleDomainChange = (value) => {
-  //   if (value === "type") {
-  //     setSelectedDomain("");
-  //     setDomainInputDisabled(false);
-  //   } else {
-  //     setDomainInputDisabled(true);
-  //     setSelectedDomain(value);
-  //     setEmail(`${emailId}@${value}`);
-  //   }
-  // };
-
-  // const handleDomainInputChange = (e) => {
-  //   const value = e.target.value;
-  //   setSelectedDomain(value);
-  //   setEmail(`${emailId}@${value}`);
-  // };
 
   const handleNameChange = (e) => {
     const value = e.target.value;
@@ -269,7 +257,6 @@ const RegisterPage = ({ resetState }) => {
     },
   });
 
-  // ❗️❗️❗️ 이메일 인증번호 확인하는 API 없음 => 이메일 인증시 받은 response 데이터 저장해서 비교!!!
   const verifyEmailCode = () => {
     if (parseInt(verificationCode) === parseInt(verificationNumber)) {
       message.success("이메일 인증에 성공했습니다.");
@@ -280,7 +267,6 @@ const RegisterPage = ({ resetState }) => {
     }
   };
 
-  // ❗️ 멘토는 /mentor/nickname로 검사해야함
   const checkNicknameAvailability = useMutation({
     mutationFn: async (role) =>
       await defaultAPI.post(`/${role}/nickname`, { nickname }),
@@ -606,6 +592,15 @@ const RegisterPage = ({ resetState }) => {
             spellCheck={false}
             onChange={handleAnswerChange}
           />
+        </Form.Item>
+
+        <Form.Item name="dualRole">
+          <Checkbox
+            checked={dualRole}
+            onChange={(e) => setDualRole(e.target.checked)}
+          >
+            학생, 선생님 동시 가입하시겠습니까?
+          </Checkbox>
         </Form.Item>
       </Form>
     </div>
