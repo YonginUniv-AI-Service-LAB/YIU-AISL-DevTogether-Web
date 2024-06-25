@@ -26,13 +26,16 @@ export const MessageSelector = selector({
 // 쪽지 목록
 export const MessageListSelector = selector({
   key: "MessageListSelector",
-  get: async () => {
-    const { data } = await axios.get(
-      "https://jsonplaceholder.typicode.com/users"
-    );
-
-    return data_message;
+  get: ({ get }) => {
+    return get(MessageAtom);
   },
+  // get: async () => {
+  //   const { data } = await axios.get(
+  //     "https://jsonplaceholder.typicode.com/users"
+  //   );
+
+  //   return data_message;
+  // },
 });
 
 export const ReceivedMessagesSelector = selector({
@@ -41,8 +44,18 @@ export const ReceivedMessagesSelector = selector({
     // const { data } = await axios.get("/path/to/your/message/api");
     // const data = data_message; // 예시 데이터 사용
 
+    const messageList = get(MessageListAtom);
+    console.log(
+      "ReceivedMessagesSelector: ",
+      messageList.filter(
+        (message) =>
+          message.toUserId == sessionStorage.getItem("user_profile_id")
+      )
+    );
     // 유저가 받은 쪽지 필터링
-    return data_message.filter((message) => message.to_user_id === "누들잉");
+    return messageList.filter(
+      (message) => message.toUserId == sessionStorage.getItem("user_profile_id")
+    );
   },
 });
 
@@ -51,8 +64,20 @@ export const SentMessagesSelector = selector({
   get: async ({ get }) => {
     // const { data } = await axios.get("/path/to/your/message/api");
     // const data = data_message; // 예시 데이터 사용
+
+    const messageList = get(MessageListAtom);
+    console.log(
+      "SentMessagesSelector: ",
+      messageList.filter(
+        (message) =>
+          message.fromUserId == sessionStorage.getItem("user_profile_id")
+      )
+    );
     // 유저가 보낸 쪽지 필터링
-    return data_message.filter((message) => message.from_user_id === "누들잉");
+    return messageList.filter(
+      (message) =>
+        message.fromUserId == sessionStorage.getItem("user_profile_id")
+    );
   },
 });
 

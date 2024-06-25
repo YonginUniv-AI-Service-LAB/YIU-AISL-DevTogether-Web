@@ -8,6 +8,7 @@ import { data_message } from "../../assets/data/message";
 
 import { MessageAtom } from "../../recoil/atoms/message";
 import { ReceivedMessagesSelector } from "../../recoil/selectors/messageSelector";
+import dayjs from "dayjs";
 
 const ReceiveList = () => {
   // 반응형 화면
@@ -30,10 +31,10 @@ const ReceiveList = () => {
         dataSource={receivedMessages}
         renderItem={(item, index) => (
           <MessageListItem
-            selected={item.id === curMessage.id ? true : false}
+            selected={item.messageId === curMessage.messageId ? true : false}
             title={item.title}
-            person={item.from_user_id}
-            date={item.createdAt}
+            person={item.fromUserNickName}
+            date={dayjs(item.createdAt).format("YYYY.MM.DD")}
             onClick={() => setCurMessage(item)}
           />
         )}

@@ -1,5 +1,4 @@
 import { atom } from "recoil";
-import { data_message } from "../../assets/data/message";
 
 // 공지사항 목록 조회
 export const Notice = atom({
