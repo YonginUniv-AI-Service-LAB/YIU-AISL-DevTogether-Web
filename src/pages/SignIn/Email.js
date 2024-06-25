@@ -224,7 +224,7 @@ const Email = () => {
     });
 
     const verifyEmailCode = () => {
-        if (parseInt(verificationCode) === parseInt(verificationNumber)) {
+        if (parseInt(userVerificationCode) === parseInt(verificationNumber)) {
             message.success("이메일 인증에 성공했습니다.");
             setIsCodeVerified(true);
         } else {
@@ -509,7 +509,7 @@ const Email = () => {
                             <Form.Item name="confirmPassword" dependencies={['password']}>
                                 <div>새 비밀번호 확인</div>
                                 <div className={style.horizon}>
-                                    <InputQ
+                                    <Input
                                         type={showconfirmPassword ? "text" : "password"}
                                         placeholder="비밀번호 확인"
                                         style={{ maxHeight: '32px', width: '470px' }}

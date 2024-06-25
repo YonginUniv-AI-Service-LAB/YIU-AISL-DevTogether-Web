@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useDeferredValue } from "react";
 import style from "./SignUp.module.css";
 import { Button, Form, Input, Select, message, Checkbox } from "antd";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   resetStateAtom,
   idStateAtom,
@@ -22,7 +21,7 @@ import {
   dualRoleStateAtom,
   emailVerifiedStateAtom,
   nicknameCheckedStateAtom,
-  passwordMatchStateAtom
+  passwordMatchStateAtom,
 } from "../../recoil/atoms/register";
 import { CiRead, CiUnread } from "react-icons/ci";
 import { defaultAPI } from "../../api";
@@ -35,8 +34,7 @@ const RegisterPage = ({ resetState }) => {
   const possible = /^[a-zA-Z0-9!@]+$/;
   const [idErrorMessage, setIdErrorMessage] = useState("");
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
-  const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] =
-    useState("");
+  const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = useState("");
 
   const [id, setId] = useRecoilState(idStateAtom);
   const [idduplication, setIdduplication] = useState(null);
@@ -45,8 +43,7 @@ const RegisterPage = ({ resetState }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showconfirmPassword, setShowconfirmPassword] = useState(false);
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] =
-    useRecoilState(passwordStateAtom);
+  const [confirmPassword, setConfirmPassword] = useRecoilState(passwordStateAtom);
   const [passwordMatch, setPasswordMatch] = useRecoilState(passwordMatchStateAtom);
 
   const [email, setEmail] = useRecoilState(emailStateAtom);
@@ -328,9 +325,7 @@ const RegisterPage = ({ resetState }) => {
     });
   };
 
-  const [dayOptions, setDayOptions] = useState(
-    generateDayOptions(selectedMonth)
-  );
+  const [dayOptions, setDayOptions] = useState(generateDayOptions(selectedMonth));
 
   useEffect(() => {
     if (birth.year && birth.month && birth.day) {
@@ -420,191 +415,196 @@ const RegisterPage = ({ resetState }) => {
             </Button>
           </div>
           <div style={{ height: "10px" }}>
-            {isCodeVerified === false && (
-              <div className={style.error}>인증번호가 틀렸습니다</div>
-            )}
-          </div>
-        </Form.Item>
+                {isCodeVerified === false && (
+                  <div className={style.error}>인증번호가 틀렸습니다</div>
+                )}
+              </div>
+            </Form.Item>
 
-        <Form.Item name="password">
-          <div>비밀번호</div>
-          <Input
-            type={showPassword ? "text" : "password"}
-            placeholder="비밀번호"
-            style={{ maxHeight: "32px" }}
-            suffix={
-              <Button
-                type="text"
-                icon={showPassword ? <CiRead /> : <CiUnread />}
-                onClick={togglePasswordVisibility}
-              />
-            }
-            onChange={handlePasswordChange}
-          />
-          <div style={{ height: "0px" }}>
-            {passwordErrorMessage && (
-              <div className={style.error}>{passwordErrorMessage}</div>
-            )}
-          </div>
-        </Form.Item>
-
-        <Form.Item name="confirmPassword" dependencies={["password"]}>
-          <div>비밀번호 확인</div>
-          <Input
-            type={showconfirmPassword ? "text" : "password"}
-            placeholder="비밀번호 확인"
-            style={{ maxHeight: "32px" }}
-            suffix={
-              <Button
-                type="text"
-                icon={showconfirmPassword ? <CiRead /> : <CiUnread />}
-                onClick={toggleconfirmPasswordVisibility}
-              />
-            }
-            onChange={handleConfirmPasswordChange}
-            disabled={password === "" || !password || passwordErrorMessage}
-          />
-          <div style={{ height: "0px" }}>
-            {passwordMatch === true && (
-              <div className={style.complete}>비밀번호 확인 완료</div>
-            )}
-            {passwordMatch === false && (
-              <div className={style.error}>비밀번호가 다릅니다.</div>
-            )}
-          </div>
-        </Form.Item>
-
-        <div className={style.horizon}>
-          <Form.Item name="name" style={{ marginRight: "10px" }}>
-            <div>이름</div>
-            <Input
-              placeholder="이름"
-              style={{ width: 195 }}
-              onChange={handleNameChange}
-            />
-            <div style={{ height: "0px" }}>
-              {nameErrorMessage && (
-                <div style={{ color: "red" }}>{nameErrorMessage}</div>
-              )}
-            </div>
-          </Form.Item>
-
-          <Form.Item name="gender" style={{ marginRight: "10px" }}>
-            <div>성별</div>
-            <Select
-              style={{ width: "195px" }}
-              placeholder="성별"
-              options={[
-                { value: "0", label: "남자" },
-                { value: "1", label: "여자" },
-              ]}
-              onChange={handleGenderChange}
-            />
-          </Form.Item>
-        </div>
-
-        <div
-          className={style.horizon}
-          style={{ display: "flex", alignItems: "center" }}
-        >
-          <Form.Item name="nickname" style={{ width: "100%" }}>
-            <div>닉네임</div>
-            <div className={style.nicknameContainer}>
+            <Form.Item name="password">
+              <div>비밀번호</div>
               <Input
-                placeholder="닉네임"
-                maxLength={12}
-                spellCheck={false}
-                onChange={handleNicknameChange}
-              />
-              <Button
-                type="primary"
-                htmlType="submit"
-                className={style.check_button}
-                style={{ marginLeft: "10px" }}
-                onClick={() =>
-                  checkNicknameAvailability.mutate(
-                    role == 1 ? "mentor" : "mentee"
-                  )
+                type={showPassword ? "text" : "password"}
+                placeholder="비밀번호"
+                style={{ maxHeight: "32px" }}
+                suffix={
+                  <Button
+                    type="text"
+                    icon={showPassword ? <CiRead /> : <CiUnread />}
+                    onClick={togglePasswordVisibility}
+                  />
                 }
+                onChange={handlePasswordChange}
+              />
+              <div style={{ height: "0px" }}>
+                {passwordErrorMessage && (
+                  <div className={style.error}>{passwordErrorMessage}</div>
+                )}
+              </div>
+            </Form.Item>
+
+            <Form.Item name="confirmPassword" dependencies={["password"]}>
+              <div>비밀번호 확인</div>
+              <Input
+                type={showconfirmPassword ? "text" : "password"}
+                placeholder="비밀번호 확인"
+                style={{ maxHeight: "32px" }}
+                suffix={
+                  <Button
+                    type="text"
+                    icon={showconfirmPassword ? <CiRead /> : <CiUnread />}
+                    onClick={toggleconfirmPasswordVisibility}
+                  />
+                }
+                onChange={handleConfirmPasswordChange}
+                disabled={password === "" || !password || passwordErrorMessage}
+              />
+              <div style={{ height: "0px" }}>
+                {passwordMatch === true && (
+                  <div className={style.complete}>비밀번호 확인 완료</div>
+                )}
+                {passwordMatch === false && (
+                  <div className={style.error}>비밀번호가 다릅니다.</div>
+                )}
+              </div>
+            </Form.Item>
+
+            <div className={style.horizon}>
+              <Form.Item name="name" style={{ marginRight: "10px" }}>
+                <div>이름</div>
+                <Input
+                  placeholder="이름"
+                  style={{ width: 195 }}
+                  onChange={handleNameChange}
+                />
+                <div style={{ height: "0px" }}>
+                  {nameErrorMessage && (
+                    <div style={{ color: "red" }}>{nameErrorMessage}</div>
+                  )}
+                </div>
+              </Form.Item>
+
+              <Form.Item name="gender" style={{ marginRight: "10px" }}>
+                <div>성별</div>
+                <Select
+                  style={{ width: "195px" }}
+                  placeholder="성별"
+                  options={[
+                    { value: "0", label: "남자" },
+                    { value: "1", label: "여자" },
+                  ]}
+                  onChange={handleGenderChange}
+                />
+              </Form.Item>
+            </div>
+
+            <div
+              className={style.horizon}
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              <Form.Item name="nickname" style={{ width: "100%" }}>
+                <div>닉네임</div>
+                <div className={style.nicknameContainer}>
+                  <Input
+                    placeholder="닉네임"
+                    maxLength={12}
+                    spellCheck={false}
+                    onChange={handleNicknameChange}
+                  />
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    className={style.check_button}
+                    style={{ marginLeft: "10px" }}
+                    onClick={() =>
+                      checkNicknameAvailability.mutate(
+                        role == 1 ? "mentor" : "mentee"
+                      )
+                    }
+                  >
+                    닉네임 중복 확인
+                  </Button>
+                </div>
+                <div style={{ height: "0px" }}>
+                  {nicknameErrorMessage && (
+                    <div style={{ color: "red" }}>{nicknameErrorMessage}</div>
+                  )}
+                  {isNicknameChecked === true && (
+                    <div className={style.complete}>사용 가능한 닉네임입니다.</div>
+                  )}
+                  {isNicknameChecked === false && (
+                    <div className={style.error}>이미 사용 중인 닉네임입니다.</div>
+                  )}
+                </div>
+              </Form.Item>
+            </div>
+
+            <Form.Item name="birth">
+              <div>생년월일</div>
+              <div className={style.horizon}>
+                <Select
+                  style={{ width: 100, marginRight: "10px" }}
+                  placeholder="출생년도"
+                  options={generateYearOptions()}
+                  onChange={(value) => {
+                    console.log("년도: ", value);
+                    setSelectedYear(value);
+                    setBirth((prevBirth) => ({ ...prevBirth, year: value }));
+                  }}
+                />
+                <Select
+                  style={{ width: 90, marginRight: "10px" }}
+                  placeholder="월"
+                  options={generateMonthOptions()}
+                  onChange={(value) => {
+                    handleMonthChange(value);
+                    setBirth((prevBirth) => ({ ...prevBirth, month: value }));
+                  }}
+                />
+                <Select
+                  style={{ width: 90, marginRight: "10px" }}
+                  placeholder="일"
+                  options={dayOptions}
+                  onChange={(value) => {
+                    console.log("날: ", value);
+                    setSelectedDay(value);
+                    setBirth((prevBirth) => ({ ...prevBirth, day: value }));
+                  }}
+                />
+                <Input value={age} disabled suffix="세" style={{ width: 90 }} />
+              </div>
+            </Form.Item>
+            <Form.Item name="question">
+              <div>아이디 찾기 질문</div>
+              <Select
+                style={{ width: "400px" }}
+                placeholder="질문"
+                options={questionOptions}
+                onChange={handleQuestionChange}
+              />
+            </Form.Item>
+
+            <Form.Item name="answer" style={{ marginRight: "10px" }}>
+              <div>답변</div>
+              <Input
+                placeholder="답변"
+                style={{ width: 400 }}
+                spellCheck={false}
+                onChange={handleAnswerChange}
+              />
+            </Form.Item>
+
+            <Form.Item name="dualRole">
+              <Checkbox
+                checked={dualRole}
+                onChange={(e) => setDualRole(e.target.checked)}
               >
-                닉네임 중복 확인
-              </Button>
-            </div>
-            <div style={{ height: "0px" }}>
-              {nicknameErrorMessage && (
-                <div style={{ color: "red" }}>{nicknameErrorMessage}</div>
-              )}
-              {isNicknameChecked === true && (
-                <div className={style.complete}>사용 가능한 닉네임입니다.</div>
-              )}
-              {isNicknameChecked === false && (
-                <div className={style.error}>이미 사용 중인 닉네임입니다.</div>
-              )}
-            </div>
-          </Form.Item>
+                학생, 선생님 동시 가입하시겠습니까?
+              </Checkbox>
+            </Form.Item>
+          </Form>
         </div>
+      );
+    };
 
-        <Form.Item name="birth">
-          <div>생년월일</div>
-          <div className={style.horizon}>
-            <Select
-              style={{ width: 100, marginRight: "10px" }}
-              placeholder="출생년도"
-              options={generateYearOptions()}
-              onChange={(value) => {
-                console.log("년도: ", value);
-                setSelectedYear(value);
-              }}
-            />
-            <Select
-              style={{ width: 90, marginRight: "10px" }}
-              placeholder="월"
-              options={generateMonthOptions()}
-              onChange={handleMonthChange}
-            />
-            <Select
-              style={{ width: 90, marginRight: "10px" }}
-              placeholder="일"
-              options={dayOptions}
-              onChange={(value) => {
-                console.log("날: ", value);
-                setSelectedDay(value);
-              }}
-            />
-            <Input value={age} disabled suffix="세" style={{ width: 90 }} />
-          </div>
-        </Form.Item>
-        <Form.Item name="question">
-          <div>아이디 찾기 질문</div>
-          <Select
-            style={{ width: "400px" }}
-            placeholder="질문"
-            options={questionOptions}
-            onChange={handleQuestionChange}
-          />
-        </Form.Item>
-
-        <Form.Item name="answer" style={{ marginRight: "10px" }}>
-          <div>답변</div>
-          <Input
-            placeholder="답변"
-            style={{ width: 400 }}
-            spellCheck={false}
-            onChange={handleAnswerChange}
-          />
-        </Form.Item>
-
-        <Form.Item name="dualRole">
-          <Checkbox
-            checked={dualRole}
-            onChange={(e) => setDualRole(e.target.checked)}
-          >
-            학생, 선생님 동시 가입하시겠습니까?
-          </Checkbox>
-        </Form.Item>
-      </Form>
-    </div>
-  );
-};
-
-export default RegisterPage;
+    export default RegisterPage;
