@@ -3,7 +3,7 @@ import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 import style from "./SignUp.module.css";
 import { Button, message } from "antd";
-import LogoTitle_Login from "../../components/Group/LOGO/LogoTitle_Login";
+import LogoTitleLogin from "../../components/Group/LOGO/LogoTitle_Login"; // PascalCase로 변경
 import { useRecoilState, useRecoilValue } from "recoil";
 import { pageState } from "../../recoil/atoms/login";
 import {
@@ -31,7 +31,6 @@ import { defaultAPI } from "../../api";
 
 const SignUpPage = () => {
   // 반응형 화면
-  const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
@@ -40,28 +39,25 @@ const SignUpPage = () => {
 
   // Recoil 상태
   const [page, setPage] = useRecoilState(pageState);
+  const [selectedRole, setSelectedRole] = useRecoilState(roleStateAtom);
+  const [resetState, setResetState] = useRecoilState(resetStateAtom);
   const password = useRecoilValue(passwordStateAtom);
   const email = useRecoilValue(emailStateAtom);
   const name = useRecoilValue(nameStateAtom);
   const nickname = useRecoilValue(nicknameStateAtom);
   const gender = useRecoilValue(genderStateAtom);
   const age = useRecoilValue(ageStateAtom);
-  const role = useRecoilValue(roleStateAtom);
   const year = useRecoilValue(yearStateAtom);
   const month = useRecoilValue(monthStateAtom);
   const day = useRecoilValue(dayStateAtom);
   const dualRole = useRecoilValue(dualRoleStateAtom);
   const question = useRecoilValue(questionStateAtom);
   const answer = useRecoilValue(answerStateAtom);
-  const birth = year + month + day;
-  const [resetState, setResetState] = useRecoilState(resetStateAtom);
-
-  // 추가된 Recoil 상태
-  const [selectedRole, setSelectedRole] = useRecoilState(roleStateAtom);
-  const [nicknameChecked, setNicknameChecked] = useRecoilState(nicknameCheckedStateAtom);
-  const [passwordMatch, setPasswordMatch] = useRecoilState(passwordMatchStateAtom);
-  const [emailVerified, setEmailVerified] = useRecoilState(emailVerifiedStateAtom);
-  const [setRegistercheck, setSetRegistercheck] = useState(null);
+  const nicknameChecked = useRecoilValue(nicknameCheckedStateAtom);
+  const passwordMatch = useRecoilValue(passwordMatchStateAtom);
+  const emailVerified = useRecoilValue(emailVerifiedStateAtom);
+  const birth = `${year}${month}${day}`;
+  const [registerCheck, setRegisterCheck] = useState(null);
 
   // 선택된 역할 처리 함수
   const handleRoleSelection = (role) => {
@@ -82,16 +78,26 @@ const SignUpPage = () => {
   };
 
   // 회원가입 처리 함수
-  const handleRegister = () => {
-    const birth = year + month + day;
-    
+  const handleRegister = async () => {
     // 필수 입력 필드 확인
-    if (email && password && name && nickname && gender && age && birth && role && question && answer) {
+    if (email && password && name && nickname && gender && age && birth && selectedRole && question && answer) {
       // 추가적인 상태 확인
       if (nicknameChecked && passwordMatch && emailVerified) {
         console.log("모든 필드가 채워졌습니다. 회원가입을 진행합니다...");
-        setSetRegistercheck(true);
-        register.mutate();
+        setRegisterCheck(true);
+        await registerMutation.mutateAsync({
+          email,
+          password,
+          name,
+          nickname,
+          selectedRole,
+          gender,
+          age,
+          birth,
+          question,
+          answer,
+          dualRole,
+        });
       } else {
         message.error("닉네임 확인, 비밀번호 일치, 이메일 인증을 완료하세요.");
       }
@@ -101,24 +107,52 @@ const SignUpPage = () => {
   };
 
   // 회원가입 Mutation
-  const register = useMutation({
-    mutationFn: async () => {
+  const registerMutation = useMutation({
+    mutationFn: async (data) => {
       await defaultAPI.post("/register", {
-        email,
-        pwd: password,
-        name,
-        nickname,
-        role: dualRole ? 3 : selectedRole,
-        gender,
-        age: Number(age), 
-        birth,
-        question: Number(question),
-        answer,
+        email: data.email,
+        pwd: data.password,
+        name: data.name,
+        nickname: data.nickname,
+        role: data.dualRole ? 3 : data.selectedRole,
+        gender: data.gender,
+        age: Number(data.age),
+        birth: data.birth,
+        question: Number(data.question),
+        answer: data.answer,
       });
     },
-    onSuccess: () => {
+    onSuccess: async (_, variables) => {
       message.success("회원가입에 성공했습니다.");
-      navigate("/complete");
+      // 회원가입 후 자동 로그인
+      try {
+        let loginRole = variables.selectedRole;
+        if (variables.selectedRole === 3) {
+          loginRole = 1; // 회원가입 시 role이 3이면 로그인 시에는 1로 변경
+        }
+
+        const loginRes = await defaultAPI.post("/login", {
+          email: variables.email,
+          pwd: variables.password,
+          role: loginRole,
+        });
+
+        // 로그인 성공 시 필요한 정보 저장 및 처리
+        const { email, user_profile_id, name, role, nickname, token } = loginRes.data;
+        sessionStorage.setItem("accessToken", token["accessToken"]);
+        sessionStorage.setItem("refreshToken", token["refreshToken"]);
+        sessionStorage.setItem("user_profile_id", user_profile_id);
+        sessionStorage.setItem("email", email);
+        sessionStorage.setItem("name", name);
+        sessionStorage.setItem("nickname", nickname);
+        sessionStorage.setItem("role", role);
+
+        // 메인 화면으로 이동
+        navigate("/complete");
+      } catch (error) {
+        console.error("로그인 중 오류가 발생했습니다.", error);
+        message.error("로그인 중 오류가 발생했습니다.");
+      }
     },
     onError: (error) => {
       if (error.response && error.response.status === 400) {
@@ -146,22 +180,18 @@ const SignUpPage = () => {
       {!isMobile && (
         <div className={style.background}>
           <div className={style.logo}>
-            <LogoTitle_Login />
+            <LogoTitleLogin />
           </div>
           <div className={style.body}>
             <div
-              className={`${style.side} ${
-                page === "signin" ? style.side_select : ""
-              }`}
+              className={`${style.side} ${page === "signin" ? style.side_select : ""}`}
               onClick={goToLoginPage}
             >
               로그인
             </div>
             <div style={{ marginTop: "15px", marginBottom: "15px" }}></div>
             <div
-              className={`${style.side} ${
-                page === "signup" ? style.side_select : ""
-              }`}
+              className={`${style.side} ${page === "signup" ? style.side_select : ""}`}
               style={{ marginBottom: "50px" }}
               onClick={goToSignUpPage}
             >
@@ -219,8 +249,6 @@ const SignUpPage = () => {
             </div>
           </div>
           <div>
-            {/* <SignUpMain resetState={resetState}/>
-            <SignUpSub resetState={resetState}/> */}
             <RegisterPage />
             <Button
               type="primary"

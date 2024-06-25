@@ -6,7 +6,7 @@ import {matchingScrapState, scrappedProfilesState} from "../../recoil/atoms/scra
 import { RecoilRoot, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 const ScarpButton = ({nickname}) => {
-  const [isBookmarked, setIsBookmarked] = useRecoilState(matchingScrapState(nickname));
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const setScrappedProfiles = useSetRecoilState(scrappedProfilesState);
     
   const handleClick = () => {

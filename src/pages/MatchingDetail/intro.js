@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import style from "./MatchingDetail.module.css";
 import { useMediaQuery } from "react-responsive";
 import { Tabs, Modal, Input, Form, Button, Select, message, Dropdown, Menu } from 'antd';
@@ -6,7 +6,6 @@ import { FaRegBookmark, FaBookmark } from "react-icons/fa";
 import { TfiWrite } from "react-icons/tfi";
 import { FaRegPaperPlane } from "react-icons/fa";
 import Studyintro from "./studyintro";
-import Selfintro from "./selfintro";
 import Reviewintro from "./reviewintro";
 import axios from 'axios'; // axios를 이용해 서버와 통신
 import { useNavigate } from "react-router-dom"; // 페이지 이동
@@ -36,9 +35,9 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
   };
 
   const methodOptions = [];
-  if (profile.method === 0) methodOptions.push("대면");
-  if (profile.method === 1) methodOptions.push("비대면");
-  if (profile.method === 2) methodOptions.push("블렌딩");
+  if (profile.method === "대면") methodOptions.push("대면");
+  if (profile.method === "비대면") methodOptions.push("비대면");
+  if (profile.method === "블렌딩") methodOptions.push("블렌딩");
 
   return (
     <Modal
@@ -64,7 +63,7 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
             placeholder="과목을 선택하세요"
             mode="multiple"
           >
-            {profile.subject.map(sub => (
+            {[profile.subject1, profile.subject2, profile.subject3, profile.subject4, profile.subject5].filter(Boolean).map(sub => (
               <Select.Option key={sub} value={sub}>
                 {sub}
               </Select.Option>
@@ -80,9 +79,11 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
             placeholder="지역을 선택하세요"
             mode="multiple"
           >
-            <Select.Option value={profile.location1}>
-              {profile.location1}
-            </Select.Option>
+            {[profile.location1, profile.location2, profile.location3].filter(Boolean).map(loc => (
+              <Select.Option key={loc} value={loc}>
+                {loc}
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
         <Form.Item
@@ -92,7 +93,6 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
         >
           <Select
             placeholder="과외 방식을 선택하세요"
-            mode="multiple"
           >
             {methodOptions.map(method => (
               <Select.Option key={method} value={method}>
@@ -142,7 +142,7 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
   );
 };
 
-const Intro = ({ profile }) => {
+const Intro = () => {
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
   const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -154,6 +154,16 @@ const Intro = ({ profile }) => {
   const [tab, setTab] = useState('1');
   const [isScrapped, setIsScrapped] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // 세션 스토리지에서 프로필 데이터 가져오기
+  const [profile, setProfile] = useState(() => {
+    const storedProfile = sessionStorage.getItem('selectedProfile');
+    return storedProfile ? JSON.parse(storedProfile) : {};
+  });
+
+  useEffect(() => {
+    console.log("Intro Profile Data:", profile);
+  }, [profile]);
 
   const handleTab = (value) => {
     setTab(value);
@@ -211,7 +221,6 @@ const Intro = ({ profile }) => {
   return (
     <div style={{ marginLeft: !isMobile ? '30px' : '', marginTop: '20px' }}>
       <div className={style.head}>
-
         <div style={{ fontSize: '25px', fontWeight: '600' }}>프로필 상세보기</div>
         <div style={{ display: 'flex' }}>
           <div style={{ marginRight: '10px' }}>
@@ -266,9 +275,8 @@ const Intro = ({ profile }) => {
         style={{ flex: 1, marginTop: '25px' }}
       />
 
-      {tab === '1' && <Studyintro profile={profile} />}
+      {tab === '1' && <Studyintro />}
       {tab === '2' && <Reviewintro profile={profile} />}
-      {/* {tab === '3' && <Reviewintro profile={profile} />} */}
 
       <ApplyModal
         visible={isModalVisible}
