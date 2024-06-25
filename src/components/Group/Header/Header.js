@@ -257,7 +257,10 @@ const Header = (props) => {
                 </Button>
               </Dropdown>
             </ConfigProvider>
-            <HeaderNavBtn type={"text"} text="쪽지" href="/message" />
+            {sessionStorage.getItem("name") &&
+            sessionStorage.getItem("role") != 0 ? (
+              <HeaderNavBtn type={"text"} text="쪽지" href="/message" />
+            ) : null}
           </>
         )}
       </div>

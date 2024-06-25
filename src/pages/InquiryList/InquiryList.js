@@ -181,8 +181,8 @@ const InquriyListPage = () => {
           <Column title="제목" dataIndex="title" key="title" />
           <Column
             title="문의 날짜"
-            dataIndex="createAt"
-            key="createAt"
+            dataIndex="createdAt"
+            key="createdAt"
             width={100}
             render={(text, row, index) => {
               return <>{dayjs(text).format("YYYY.MM.DD")}</>;

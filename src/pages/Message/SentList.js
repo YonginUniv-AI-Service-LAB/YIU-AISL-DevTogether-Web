@@ -7,6 +7,7 @@ import MessageListItem from "../../components/Group/MessageListItem/MessageListI
 import { data_message } from "../../assets/data/message";
 import { MessageAtom } from "../../recoil/atoms/message";
 import { SentMessagesSelector } from "../../recoil/selectors/messageSelector";
+import dayjs from "dayjs";
 
 const SendList = () => {
   // 반응형 화면
@@ -24,16 +25,15 @@ const SendList = () => {
 
   return (
     <div>
-      
       <List
         itemLayout="horizontal"
         dataSource={sentMessages}
         renderItem={(item, index) => (
           <MessageListItem
-            selected={item.id === curMessage.id ? true : false}
+            selected={item.messageId === curMessage.messageId ? true : false} // 와 오류가 생기누?
             title={item.title}
-            person={item.to_user_id}
-            date={item.createdAt}
+            person={item.toUserNickName} // 오타
+            date={dayjs(item.createdAt).format("YYYY.MM.DD HH:mm")}
             onClick={() => setCurMessage(item)}
           />
         )}

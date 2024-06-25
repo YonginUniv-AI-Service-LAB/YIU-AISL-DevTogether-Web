@@ -16,19 +16,19 @@ export const MessageStatusAtom = atom({
 // 현재 쪽지 수신자
 export const MessageReceiverAtom = atom({
   key: "MessageReceiverAtom",
-  default: '',
+  default: {},
 });
 
 // 현재 선택된 쪽지 내용
 export const MessageAtom = atom({
   key: "MessageAtom",
-  default: {},
+  default: null,
 });
 
 // 쪽지 목록
 export const MessageListAtom = atom({
   key: "MessageListAtom",
-  default: data_message,
+  default: [],
 });
 
 // export const ReceivedMessageListAtom = atom({
