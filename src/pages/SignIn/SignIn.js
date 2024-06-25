@@ -3,13 +3,11 @@ import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 import style from "./SignIn.module.css";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input, Modal, Select, message } from "antd";
-import PWDCheckBox from "../../components/CheckBox/PWDCheckBox";
+import { Button, Form, Input, message } from "antd";
 import { CiRead, CiUnread } from "react-icons/ci";
 import LogoTitle_Login from "../../components/Group/LOGO/LogoTitle_Login";
-import { RecoilRoot, atom, useRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import { loginRoleStateAtom, pageState } from "../../recoil/atoms/login";
-import { emailStateAtom } from "../../recoil/atoms/register";
 import LOGO from "../../assets/images/devtogether_logo.png";
 import Email from "./Email";
 import { useMutation } from "@tanstack/react-query";
@@ -20,7 +18,6 @@ const SignInPage = () => {
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
   const isMobile = useMediaQuery({ maxWidth: 767 });
-  const isNotMobile = useMediaQuery({ minWidth: 768 });
 
   // 페이지 이동
   const navigate = useNavigate();
@@ -28,44 +25,13 @@ const SignInPage = () => {
   const [showPassword, setShowPassword] = useState(false); // 비밀번호 보기 토글 상태
   const [selectedRole, setSelectedRole] = useRecoilState(loginRoleStateAtom); // 선택된 역할 상태 추가
   const [page, setPage] = useRecoilState(pageState); // Recoil로 페이지 상태 사용
-  const [findidopen, setFindidOpen] = useState(false);
-  const [findpasswordopen, setFindpasswordOpen] = useState(false);
-
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
-  const [emailId, setEmailId] = useState("");
-  const [selectedDomain, setSelectedDomain] = useState("");
-  const [domainInputDisabled, setDomainInputDisabled] = useState(false);
 
-  // const handleInputChange = (e) => {
-  //   setEmailId(e.target.value);
-  //   setEmail(`${e.target.value}@${selectedDomain}`);
-  // };
-
-  // const handleDomainChange = (value) => {
-  //   if (value === "type") {
-  //     setSelectedDomain("");
-  //     setDomainInputDisabled(false);
-  //   } else {
-  //     setDomainInputDisabled(true);
-  //     setSelectedDomain(value);
-  //     setEmail(`${emailId}@${value}`);
-  //   }
-  // };
-
-  // const handleDomainInputChange = (e) => {
-  //   const value = e.target.value;
-  //   setSelectedDomain(value);
-  //   setEmail(`${emailId}@${value}`);
-  // };
-
+  // 비밀번호 보기 토글
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
-  // const handleRoleSelection = (role) => {
-  //   setSelectedRole(role);
-  // };
 
   // 로그인 페이지로 이동하는 함수
   const goToLoginPage = () => {
@@ -82,25 +48,22 @@ const SignInPage = () => {
   // 로그인 버튼 클릭 핸들러
   const handleLogin = (values) => {
     // 여기서 실제 로그인 로직 수행
+    const data = { email, pwd, role: selectedRole };
+    console.log("로그인 데이터: ", data); // 로그인 데이터 콘솔에 출력
+    login.mutate(data);
   };
 
-  const findId = () => {
-    setFindidOpen(true);
+  // 이메일 입력 핸들러
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
   };
 
-  const findPassword = () => {
-    setFindpasswordOpen(true);
+  // 비밀번호 입력 핸들러
+  const handlePwdChange = (e) => {
+    setPwd(e.target.value);
   };
 
-  const handleOk = (e) => {
-    console.log(e);
-    setFindidOpen(false);
-  };
-  const handleCancel = (e) => {
-    console.log(e);
-    setFindidOpen(false);
-  };
-
+  // 로그인 API 호출
   const login = useMutation({
     mutationFn: async () =>
       await defaultAPI.post("/login", {
@@ -132,19 +95,10 @@ const SignInPage = () => {
     },
   });
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePwdChange = (e) => {
-    setPwd(e.target.value);
-  };
-
   return (
     <div
       style={{
         marginTop: isMobile ? 50 : 100,
-        // marginBottom: isMobile ? 50 : 200,
         marginLeft: isMobile ? "5%" : isTablet ? 30 : "20%",
         marginRight: isMobile ? "5%" : isTablet ? 30 : "20%",
         display: isMobile ? null : "flex",
@@ -183,7 +137,6 @@ const SignInPage = () => {
         style={{ marginLeft: isMobile ? 0 : isTablet ? 100 : 100 }}
       >
         <div>
-          {/* <img src={LOGO} alt="logo" style={{ width: '200px', height: '200px', display:'flex', justifyContent:'center', marginLeft:'100px', marginBottom:'-30px' }}/> */}
           <div className={style.head}>로그인</div>
           <div className={style.flex}>
             <div className={style.flex}>
@@ -202,7 +155,7 @@ const SignInPage = () => {
                   className={
                     selectedRole === 2 ? style.selectedline : style.line
                   }
-                ></div>{" "}
+                ></div>
                 {/* 선택된 역할에만 라인 표시 */}
               </div>
             </div>
@@ -222,7 +175,7 @@ const SignInPage = () => {
                   className={
                     selectedRole === 1 ? style.selectedline : style.line
                   }
-                ></div>{" "}
+                ></div>
                 {/* 선택된 역할에만 라인 표시 */}
               </div>
             </div>
@@ -234,10 +187,10 @@ const SignInPage = () => {
               initialValues={{
                 remember: true,
               }}
-              SignInPage={SignInPage}
+              onFinish={handleLogin}
             >
               <Form.Item
-                name="ID"
+                name="email"
                 rules={[
                   {
                     required: true,
@@ -270,7 +223,6 @@ const SignInPage = () => {
                   value={pwd}
                   onChange={handlePwdChange}
                   suffix={
-                    // 비밀번호 보이기/가리기 아이콘
                     <Button
                       type="text"
                       icon={showPassword ? <CiRead /> : <CiUnread />}
@@ -285,7 +237,6 @@ const SignInPage = () => {
                   type="primary"
                   htmlType="submit"
                   className={style.form_button}
-                  onClick={() => login.mutate()}
                 >
                   로그인
                 </Button>

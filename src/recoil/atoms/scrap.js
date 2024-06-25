@@ -1,17 +1,17 @@
 import { atom, selector } from "recoil";
 
 // 포스트마다 고유한 스크랩 상태를 관리하기 위해 동적으로 key를 생성합니다.
-const posterScrapState = (postId) =>
-  atom({
-    key: `posterScrapState`,
-    default: false, // 각 포스트의 스크랩 상태는 기본적으로 false로 설정합니다.
-  });
 
-const matchingScrapState = (nickname) =>
-  atom({
-    key: `matchingScrapState`,
-    default: false, // 각 매칭프로필의 스크랩 상태는 기본적으로 false로 설정합니다.
-  });
+const posterScrapState = atom({
+  key: 'posterScrapState',
+  default: false // 각 포스트의 스크랩 상태는 기본적으로 false로 설정합니다.
+});
+
+const matchingScrapState = atom({
+  key: 'matchingScrapState',
+  default: false // 각 매칭프로필의 스크랩 상태는 기본적으로 false로 설정합니다.
+});
+
 
 // 스크랩한 프로필 목록을 관리하는 Recoil 아톰
 const scrappedProfilesState = atom({

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import style from "./Profile.module.css";
 import MoreButton from "../../Button/MoreButton";
 import ScrapButton from "../../Button/ScrapButton";
@@ -6,21 +6,50 @@ import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 
 const Profile = (props) => {
-  // 반응형 화면
   const isMobile = useMediaQuery({ maxWidth: 767 });
-
   const navigate = useNavigate();
 
   const handleMoreButtonClick = () => {
-    console.log('Profile props:', props.role);
-    const detailPagePath = props.role === 2 ? `/matching/mentor/${props.id}` : `/matching/mentee/${props.id}`;
-    navigate(detailPagePath); // 프로필 상세 페이지로 이동
+    const profileData = {
+      id: props.id,
+      nickname: props.nickname,
+      gender: props.gender,
+      age: props.age,
+      subject1: props.subject1,
+      subject2: props.subject2,
+      subject3: props.subject3,
+      subject4: props.subject4,
+      subject5: props.subject5,
+      location1: props.location1,
+      location2: props.location2,
+      location3: props.location3,
+      method: props.method,
+      fee: props.fee,
+      img: props.imagepath,
+      introduction: props.introduction,
+      portfolio: props.portfolio,
+      contents: props.contents,
+      pr: props.pr,
+      schedule: props.schedule,
+    };
+
+    console.log("Profile Data to Store:", profileData);
+
+    // 프로필 데이터를 세션 스토리지에 저장
+    sessionStorage.setItem('selectedProfile', JSON.stringify(profileData));
+
+    const detailPagePath = props.role === '멘토' ? `/matching/mentor/${props.id}` : `/matching/mentee/${props.id}`;
+  console.log("Navigating to:", detailPagePath);
+  navigate(detailPagePath); // 프로필 상세 페이지로 이동
   };
 
-  const [subjectText, setSubjectText] = useState(props.subject);
-  const [locationText, setLocationText] = useState(props.location);
+  const [subjectText, setSubjectText] = useState("");
+  const [locationText, setLocationText] = useState("");
 
   useEffect(() => {
+    const subjects = [props.subject1, props.subject2, props.subject3, props.subject4, props.subject5].filter(Boolean).join(', ');
+    const locations = [props.location1, props.location2, props.location3].filter(Boolean).join(', ');
+
     const truncateText = (text, maxWidth, font) => {
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
@@ -49,9 +78,9 @@ const Profile = (props) => {
     const maxWidth = isMobile ? 150 : 180; // 원하는 최대 너비를 설정
     const font = isMobile ? "12px Arial" : "15px Arial";
 
-    setSubjectText(truncateText(props.subject, maxWidth, font));
-    setLocationText(truncateText(props.location, maxWidth, font));
-  }, [props.subject, props.location, isMobile]);
+    setSubjectText(truncateText(subjects, maxWidth, font));
+    setLocationText(truncateText(locations, maxWidth, font));
+  }, [props.subject1, props.subject2, props.subject3, props.subject4, props.subject5, props.location1, props.location2, props.location3, isMobile]);
 
   return (
     <div className={style.background} style={{ width: isMobile ? '176px' : '200px' }}>

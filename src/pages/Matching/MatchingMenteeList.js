@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import style from './Matching.module.css';
@@ -11,12 +11,50 @@ import FilterTag from '../../components/Group/Filtertag/Filtertag';
 import EntireModal from '../../components/Modal/FilterModal/EntireModal';
 import NavigateSelect from '../../components/Select/NavigateSelect';
 import MobFilterTag from '../../components/Group/Filtertag/MobFiltertag';
-import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { selectedgenderStateAtom, selectedsubjectStateAtom, selectedlocationStateAtom, selectedminageStateAtom, selectedmaxageStateAtom, 
     selectedminfeeStateAtom, selectedmaxfeeStateAtom, selectedmethodStateAtom } from '../../recoil/atoms/matchingAtom';
-import { data_mentee } from '../../assets/data/mentee';
 import PageHeader from '../../components/Group/PageHeader/PageHeader';
-import matchingimg from '../../assets/images/PageHeaderImage/matching.svg'
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import LoadingSpin from '../../components/Spin/LoadingSpin';
+import GetDataErrorView from '../../components/Result/GetDataError';
+
+const fetchMenteeData = async () => {
+    const accessToken = sessionStorage.getItem('accessToken');
+    const response = await axios.get('/mentee', {
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        }
+    });
+
+    console.log('API Response Data:', response.data);
+
+    return response.data.map(profile => ({
+        id: profile.userProfileId,
+        name: profile.introduction,
+        nickname: profile.nickname,
+        subject1: profile.subject1,
+        subject2: profile.subject2,
+        subject3: profile.subject3,
+        subject4: profile.subject4,
+        subject5: profile.subject5,
+        gender: profile.gender === '남' ? "남자" : "여자",
+        age: profile.age,
+        role: profile.role,
+        location1: profile.location1,
+        location2: profile.location2,
+        location3: profile.location3,
+        fee: profile.fee,
+        method: profile.method === '비대면' ? "비대면" : profile.method === '대면' ? "대면" : "블렌딩",
+        img: profile.img,
+        introduction: profile.introduction,
+        portfolio: profile.portfolio,
+        contents: profile.contents,
+        schedule: profile.schedule,
+        pr: profile.pr
+    }));
+};
 
 const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
@@ -28,7 +66,7 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
 
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
-    const [profiles, setProfiles] = useState(data_mentee); // 초기 상태를 모든 프로필로 설정
+    const [filteredProfiles, setFilteredProfiles] = useState([]);
     const [searchText, setSearchText] = useState("");
 
     const [selectedSubjects, setSelectedSubjects] = useRecoilState(selectedsubjectStateAtom);
@@ -42,25 +80,13 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
     const [isSearchApplied, setIsSearchApplied] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isFilterApplied, setIsFilterApplied] = useState(false);
-    const [noProfilesFound, setNoProfilesFound] = useState(false); // 필터링된 프로필이 없는지 여부를 추적하는 상태 변수 추가
+    const [isFilterTagExpanded, setIsFilterTagExpanded] = useState(false);
+    const [noProfilesFound, setNoProfilesFound] = useState(false);
 
-    useEffect(() => {
-        // 페이지 이동 시 상태 초기화
-        setProfiles(data_mentee);
-        setSearchText("");
-        setSelectedSubjects([]);
-        setSelectedLocations([]);
-        setSelectedGenders([]);
-        setSelectedMinAges("");
-        setSelectedMaxAges("");
-        setSelectedMethods([]);
-        setSelectedMinFees("");
-        setSelectedMaxFees("");
-        setIsSearchApplied(false);
-        setIsModalOpen(false);
-        setIsFilterApplied(false);
-        setNoProfilesFound(false);
-    }, []);
+    const { data: profiles, isLoading, error } = useQuery({
+        queryKey: ['mentee'],
+        queryFn: fetchMenteeData
+    });
 
     const toggleFilterTag = () => {
         setIsFilterApplied(!isFilterApplied);
@@ -79,28 +105,31 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
         setIsModalOpen(false);
     };
 
-    const applyFilters = () => {
-        
-        const filteredProfiles = data_mentee.filter(profile => {
-            const subjectFilter = selectedSubjects.length === 0 || selectedSubjects.every(subject => profile.subject.includes(subject));
-            const locationFilter = selectedLocations.length === 0 || selectedLocations.includes(profile.location1);
-            const genderFilter = selectedGenders.length === 0 || selectedGenders.includes(profile.gender === 0 ? "남자" : "여자");
+    const applyFilters = useCallback(() => {
+        if (!profiles) return;
+
+        const filteredProfiles = profiles.filter(profile => {
+            const subjectFilter = selectedSubjects.length === 0 || selectedSubjects.every(subject => 
+                [profile.subject1, profile.subject2, profile.subject3, profile.subject4, profile.subject5].includes(subject)
+            );
+            const locationFilter = selectedLocations.length === 0 || selectedLocations.includes(profile.location1) || selectedLocations.includes(profile.location2) || selectedLocations.includes(profile.location3);
+            const genderFilter = selectedGenders.length === 0 || selectedGenders.includes(profile.gender);
             const ageFilter = 
             (selectedMinAges === undefined || selectedMinAges === "" || parseInt(profile.age) >= parseInt(selectedMinAges)) && 
             (selectedMaxAges === undefined || selectedMaxAges === "" || parseInt(profile.age) <= parseInt(selectedMaxAges));
-            const methodFilter = selectedMethods.length === 0 || selectedMethods.includes(profile.method.toString());
+            const methodFilter = selectedMethods.length === 0 || selectedMethods.includes(profile.method);
             const feeFilter = 
             (selectedMinFees === undefined || selectedMinFees === "" || parseInt(profile.fee) >= parseInt(selectedMinFees.replace(/,/g, ''))) && 
             (selectedMaxFees === undefined || selectedMaxFees === "" || parseInt(profile.fee) <= parseInt(selectedMaxFees.replace(/,/g, '')));
-            const searchFilter = !isSearchApplied || profile.name.includes(searchText);
+            const searchFilter = !isSearchApplied || profile.nickname.includes(searchText);
             
             return subjectFilter && locationFilter && genderFilter && ageFilter && methodFilter && feeFilter && searchFilter;
         });
 
-        setProfiles(filteredProfiles);
+        setFilteredProfiles(filteredProfiles);
         setIsFilterApplied(true);
-        setNoProfilesFound(filteredProfiles.length === 0); // 필터링된 프로필이 없는지 여부를 업데이트
-    };
+        setNoProfilesFound(filteredProfiles.length === 0);
+    }, [profiles, selectedSubjects, selectedLocations, selectedGenders, selectedMinAges, selectedMaxAges, selectedMethods, selectedMinFees, selectedMaxFees, isSearchApplied, searchText]);
 
     const handleSearch = (searchValue) => {
         setSearchText(searchValue);
@@ -123,22 +152,29 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
     const profilesPerPage = 8;
     const indexOfLastProfile = currentPage * profilesPerPage;
     const indexOfFirstProfile = indexOfLastProfile - profilesPerPage;
-    const currentProfiles = profiles.slice(indexOfFirstProfile, indexOfFirstProfile + profilesPerPage);
+    const currentProfiles = filteredProfiles.slice(indexOfFirstProfile, indexOfFirstProfile + profilesPerPage);
 
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
+    useEffect(() => {
+        if (profiles) {
+            setTotalPages(Math.ceil(filteredProfiles.length / profilesPerPage));
+        }
+    }, [filteredProfiles, profilesPerPage]);
+
+    useEffect(() => {
+        if (profiles) {
+            applyFilters();
+        }
+    }, [applyFilters, profiles]);
+
+    if (isLoading) {
+        return <LoadingSpin />;
     }
 
-    useEffect(() => {
-        setTotalPages(Math.ceil(profiles.length / profilesPerPage));
-    }, [profiles, profilesPerPage]);
-
-    useEffect(() => {
-        applyFilters();
-    }, [searchText, selectedSubjects, selectedLocations, selectedGenders, selectedMinAges, selectedMaxAges, selectedMethods, selectedMinFees, selectedMaxFees]);
+    if (error) {
+        return <GetDataErrorView />;
+    }
 
     return (
         <div>
@@ -148,7 +184,7 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
                     sentence1="보다 쉬운 코딩 과외 매칭을 위해"
                     sentence2="DevTogether에서 더 나은 매칭 선택"
                     title="학생 찾기"
-                    imageSrc='/matching2.png' // 이미지 경로를 전달합니다.
+                    imageSrc='/matching2.png'
                 />
             </div>}
             {isMobile && <div className={style.background2}>
@@ -159,12 +195,6 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
                     title="학생 찾기"
                 />
             </div>}
-            {/* {isMobile && 
-            <PageHeader
-            title='선생님 찾기'
-            subtitle="DevTogether에서 더 나은 매칭 선택"
-            />} */}
-            
             <div style={{
                 marginLeft: isMobile ? '5%' : isTablet ? 30 : '15%',
                 marginRight: isMobile ? '5%' : isTablet ? 30 : '15%',
@@ -195,17 +225,6 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
                                 </div>
                             </div>
                             }
-                             {/* {!isMobile &&
-                            <div>
-                                <div className={style.background_head}>
-                                    <div className={style.head} style={{fontSize: isDesktopOrLaptop ? '25px' : '25px' }}>선생님 목록</div>
-                                </div>
-                                <div className={style.body} style={{ marginTop: '20px', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <FilterButton name="필터 적용" onClick={showModal} />
-                                    <Searchbar defaultSearchText="닉네임으로 검색" onSearch={handleSearch} />
-                                </div>
-                            </div>
-                            } */}
                             {isMobile &&
                             <div>
                                 <div className={style.background_head}>
@@ -237,63 +256,50 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
                                             selectedMinAges={selectedMinAges} selectedMaxAges={selectedMaxAges} selectedMethods={selectedMethods} selectedMinFees={selectedMinFees} selectedMaxFees={selectedMaxFees} />
                                         </div>
                                     )}
-                                
                             </div>
                             }
-                             {/* {isMobile &&
-                            <div>
-                                <div className={style.background_head}>
-                                    <div className={style.head} style={{fontSize: isDesktopOrLaptop ? '25px' : '25px', marginBottom: '10px' }}>학생 목록</div>
-                                    <NavigateSelect
-                                        placeholder="목록"
-                                        options={[
-                                            { value: '학생 찾기', label: '학생' },
-                                            { value: '선생님 찾기', label: '선생님' },
-                                        ]}
-                                        onChange={(newValue) => handleCategoryClick(newValue)}
-                                    />
-                                </div>
-                                <div className={style.body} style={{ marginTop: '30px', marginBottom:'20px', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <FilterButton name="필터 적용" onClick={showModal} />
-                                    <Searchbar defaultSearchText="닉네임으로 검색" onSearch={handleSearch} />
-                                </div>
-                                <div className={style.tagbg}>
-                                    <MobFilterTag selectedSubjects={selectedSubjects} selectedLocations={selectedLocations} selectedGenders={selectedGenders} 
-                                    selectedMinAges={selectedMinAges} selectedMaxAges={selectedMaxAges} selectedMethods={selectedMethods} selectedMinFees={selectedMinFees} selectedMaxFees={selectedMaxFees} />
-                                </div>
-                            </div>
-                            } */}
                             <div className={style.outer}>
                                 <div className={style.inner}>
-                                    {noProfilesFound ? ( // 필터링된 프로필이 없는 경우 메시지 표시
+                                    {noProfilesFound ? ( 
                                         <div className={style.noProfilesMessage}>
                                             해당하는 프로필이 존재하지 않습니다.
                                         </div>
                                     ) : (
                                         currentProfiles.map(profile => (
                                             <Profile
-                                                key={profile.nickname}
-                                                name={profile.name}
-                                                id={profile.id}
-                                                nickname={profile.nickname}
-                                                subject={profile.subject.join(", ")}
-                                                gender={profile.gender === 0 ? "남자" : "여자"}
-                                                age={profile.age}
-                                                role={profile.role}
-                                                location={profile.location1}
-                                                fee={profile.fee}
-                                                method={profile.method === 0 ? "대면" : profile.method === 1 ? "비대면" : "블렌딩"}
-                                                imagepath={profile.img}
-                                                imagetext="프로필 이미지"
+                                            key={profile.id}
+                                            id={profile.id}
+                                            name={profile.name}
+                                            nickname={profile.nickname}
+                                            subject1={profile.subject1}
+                                            subject2={profile.subject2}
+                                            subject3={profile.subject3}
+                                            subject4={profile.subject4}
+                                            subject5={profile.subject5}
+                                            gender={profile.gender}
+                                            age={profile.age}
+                                            role={profile.role}
+                                            location1={profile.location1}
+                                            location2={profile.location2}
+                                            location3={profile.location3}
+                                            fee={profile.fee}
+                                            method={profile.method}
+                                            imagetext="프로필 이미지"
+                                            imagepath={profile.img} // 이미지 경로 추가
+                                            introduction={profile.introduction} // 소개 추가
+                                            portfolio={profile.portfolio} // 포트폴리오 추가
+                                            contents={profile.contents} // 과외 소개 추가
+                                            schedule={profile.schedule} // 과외 일정 추가
+                                            pr={profile.pr} // 어필 추가
                                             />
                                         ))
                                     )}
                                 </div>
                             </div>
                             <div className={style.pagination}>
-                                {pageNumbers.map(number => (
-                                    <div className={`${style.page} ${currentPage === number ? style.active : ''}`} key={number} onClick={() => paginate(number)}>
-                                        {number}
+                                {[...Array(totalPages).keys()].map(number => (
+                                    <div className={`${style.page} ${currentPage === number + 1 ? style.active : ''}`} key={number + 1} onClick={() => paginate(number + 1)}>
+                                        {number + 1}
                                     </div>
                                 ))}
                             </div>

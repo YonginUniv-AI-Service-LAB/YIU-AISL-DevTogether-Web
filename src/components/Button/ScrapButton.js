@@ -13,8 +13,10 @@ import {
   useSetRecoilState,
 } from "recoil";
 
-const ScarpButton = ({ nickname }) => {
-  const [isBookmarked, setIsBookmarked] = useRecoilState();
+
+const ScarpButton = ({nickname}) => {
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
   const setScrappedProfiles = useSetRecoilState(scrappedProfilesState);
 
   const handleClick = () => {

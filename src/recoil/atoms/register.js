@@ -62,6 +62,15 @@ export const ageStateAtom = atom({
   default: "",
 });
 
+export const birthStateAtom = atom({
+    key: 'birthState',
+    default: {
+      year: '',
+      month: '',
+      day: '',
+    },
+  });
+
 export const locationStateAtom = atom({
   key: "locationState",
   default: [],
@@ -95,4 +104,24 @@ export const answerStateAtom = atom({
 export const questionStateAtom = atom({
   key: "questionState",
   default: "",
+});
+
+export const dualRoleStateAtom = atom({
+  key: "dualRoleState",
+  default: false,
+});
+
+export const emailVerifiedStateAtom = atom({
+  key: 'emailVerifiedState',
+  default: null,
+});
+
+export const nicknameCheckedStateAtom = atom({
+  key: 'nicknameCheckedState',
+  default: null,
+});
+
+export const passwordMatchStateAtom = atom({
+  key: 'passwordMatchState',
+  default: null,
 });

@@ -51,7 +51,7 @@ const ManagerModal = ({ modalTitle, modalContent, isModalOpen, handleOk, handleC
               <Rate onChange={setAttitudeRating} value={attitudeRating} />
             </div>
             <div style={rateContainerStyle}>
-              <span style={labelStyle}>{role === 1 ? '준비성' : '집중력'}</span>
+              <span style={labelStyle}>{role === 1 ? '준비성' : '과제 수행'}</span>
               <Rate onChange={setFocusRating} value={focusRating} />
             </div>
             <div style={rateContainerStyle}>
