@@ -151,7 +151,14 @@ const FAQListPage = (props) => {
   return (
     <div>
       <PageHeader title="자주묻는질문" subtitle="" image={PageHeaderImage} />
-      <div style={{ padding: isMobile ? "10%" : "15%" }}>
+      <div
+        style={{
+          marginTop: isMobile ? 50 : 100,
+          marginBottom: isMobile ? 0 : 100,
+          marginLeft: isMobile ? 10 : isTablet ? 80 : "15%",
+          marginRight: isMobile ? 10 : isTablet ? 80 : "15%",
+        }}
+      >
         {sessionStorage.getItem("role") == 0 ? (
           <div style={{ textAlign: "end", marginBottom: 30 }}>
             <HoverEventButton

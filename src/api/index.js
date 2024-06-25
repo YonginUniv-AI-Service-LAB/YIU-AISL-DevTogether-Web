@@ -30,6 +30,8 @@ export const authFileAPI = axios.create({
 });
 
 export const refreshAccessToken = async () => {
+  // const accessToken = sessionStorage.getItem("accessToken");
+  // const refreshToken = sessionStorage.getItem("refreshToken");
   const req = await axios({
     method: "POST",
     url: "/token/refresh",
@@ -45,6 +47,7 @@ export const refreshAccessToken = async () => {
       const { accessToken, refreshToken } = response.data;
       sessionStorage.setItem("accessToken", accessToken);
       sessionStorage.setItem("refreshToken", refreshToken);
+      console.log("리프레시 액세스 토큰 성공");
       return true; // 토큰 갱신 성공
     })
     .catch((err) => {
@@ -57,6 +60,7 @@ export const refreshAccessToken = async () => {
       sessionStorage.removeItem("nickname");
       sessionStorage.removeItem("role");
       message.error("로그인 세션이 만료되어 로그아웃 됩니다.");
+
       return false;
     });
 };

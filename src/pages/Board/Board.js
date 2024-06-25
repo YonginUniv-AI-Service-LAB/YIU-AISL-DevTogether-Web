@@ -1,73 +1,77 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
-import PageHeader from '../../components/Group/PageHeader/PageHeader';
-import boardimg from '../../assets/images/PageHeaderImage/board.svg';
+import PageHeader from "../../components/Group/PageHeader/PageHeader";
+import boardimg from "../../assets/images/PageHeaderImage/board.svg";
 import Body from "../../components/Group/Body/Body";
 import style from "../Board/Board.module.css";
 import Sidebar from "../../components/Group/Sidebar/Sidebar";
-import NavigateSelect from '../../components/Select/NavigateSelect';
+import NavigateSelect from "../../components/Select/NavigateSelect";
 import Searchbar from "../../components/Group/Searchbar/Searchbar";
-import SortButton from '../../components/Button/SortButton';
-import SortSelect from '../../components/Select/SortSelect';
-import { data_board } from '../../assets/data/board'; // data_board import
-import Post from '../../components/Group/Post/Post';
-import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
-import { scrollPositionState } from '../../recoil/atoms/board';
+import SortButton from "../../components/Button/SortButton";
+import SortSelect from "../../components/Select/SortSelect";
+import { data_board } from "../../assets/data/board"; // data_board import
+import Post from "../../components/Group/Post/Post";
+import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
+import { scrollPositionState } from "../../recoil/atoms/board";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { defaultAPI } from "../../api";
+import LoadingSpin from "../../components/Spin/LoadingSpin";
+import GetDataErrorView from "../../components/Result/GetDataError";
+import dayjs from "dayjs";
+import { CurrentBoardIdAtom } from "../../recoil/atoms/post";
 
 const BoardPage = ({ handleSidebarButtonClick }) => {
-  // 반응형 화면
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const isNotMobile = useMediaQuery({ minWidth: 768 });
 
-  // 페이지 이동
   const navigate = useNavigate();
-  // const [scrollPosition,setScrollPosition] = useRecoilState(scrollPositionState);
 
-  
-  // Recoil에서 스크랩 상태 가져오기
   const [searchText, setSearchText] = useState("");
   const [sortedPosts, setSortedPosts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태 추가
-  const [postPerPage] = useState(20); // 페이지당 게시물 수 상태 추가
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postPerPage] = useState(20);
 
-  // 최신순 정렬 함수
+  const queryClient = useQueryClient();
+  const [curBoardId, setBoardId] = useRecoilState(CurrentBoardIdAtom);
+
+  const {
+    data: board,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["board"],
+    queryFn: async () => {
+      const res = await defaultAPI.get("/board");
+      return res.data;
+    },
+  });
+
   const sortLatest = (data) => {
     return data.slice().sort((a, b) => {
-      return new Date(b.createdAt) - new Date(a.createdAt); // createdAt으로 변경
+      return new Date(b.createdAt) - new Date(a.createdAt);
     });
   };
 
-  // 인기순 정렬 함수
   const sortPopular = (data) => {
     return data.slice().sort((a, b) => {
-      return b.likes - a.likes;
+      return b.likeCount - a.likeCount;
     });
   };
 
-  // 조회순 정렬 함수
-  // const sortViews = (data) => {
-  //   return data.slice().sort((a, b) => {
-  //     return b.views - a.views;
-  //   });
-  // };
-
-  // 정렬 버튼 클릭 핸들러
   const handleSort = (sortType) => {
+    if (!board) return;
     let sortedData = [];
 
     switch (sortType) {
-      case '0':
-        sortedData = sortLatest(data_board);
+      case "0":
+        sortedData = sortLatest(board);
         break;
-      case '1':
-        sortedData = sortPopular(data_board);
+      case "1":
+        sortedData = sortPopular(board);
         break;
-      // case '2':
-      //   sortedData = sortViews(data_board);
-      //   break;
       default:
         break;
     }
@@ -75,19 +79,31 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
     setSortedPosts(sortedData);
   };
 
-  // 초기 데이터 로드 및 정렬
   useEffect(() => {
-    // 최신순으로 정렬하여 초기화
-    const sortedData = sortLatest(data_board);
-    setSortedPosts(sortedData);
-  }, []);
+    if (board) {
+      const sortedData = sortLatest(board);
+      setSortedPosts(sortedData);
+    }
+  }, [board]);
 
-  // 페이지 변경 함수
+  useEffect(() => {
+    if (searchText.trim() === "") {
+      if (board) {
+        setSortedPosts(sortLatest(board));
+      }
+    } else {
+      if (board) {
+        const filteredData = filterPosts(board, searchText);
+        const sortedData = sortLatest(filteredData);
+        setSortedPosts(sortedData);
+      }
+    }
+  }, [searchText, board]);
+
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  // 검색 결과 필터링 함수
   const filterPosts = (posts, searchText) => {
     return posts.filter(
       (post) =>
@@ -95,25 +111,10 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
     );
   };
 
-  // 검색어 입력 핸들러
   const handleSearch = (searchValue) => {
     setSearchText(searchValue);
   };
 
-  // 검색 결과 업데이트
-  useEffect(() => {
-    if (searchText.trim() === '') {
-      // 검색어가 없을 때는 전체 게시물을 최신순으로 보여줍니다.
-      setSortedPosts(sortLatest(data_board));
-    } else {
-      // 검색어가 있는 경우에는 해당 검색어를 포함하는 게시물만 필터링한 후 최신순으로 정렬하여 보여줍니다.
-      const filteredData = filterPosts(data_board, searchText);
-      const sortedData = sortLatest(filteredData);
-      setSortedPosts(sortedData);
-    }
-  }, [searchText]); // searchText 상태가 변경될 때마다 실행됩니다.
-
-  // 클릭된 카테고리에 따라 페이지 이동을 처리합니다.
   const handleCategoryClick = (category) => {
     switch (category) {
       case "전체":
@@ -139,145 +140,222 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
     }
   };
 
-  // Post 클릭 시 상세 페이지로 이동하는 함수
   const handlePostClick = (postId) => {
+    console.log("이동합니다: ", postId);
+    setBoardId(postId);
     navigate(`/board/detail/${postId}`);
   };
 
-  // 현재 페이지의 게시물을 가져오는 함수
   const indexOfLastPost = currentPage * postPerPage;
   const indexOfFirstPost = indexOfLastPost - postPerPage;
   const currentPosts = sortedPosts.slice(indexOfFirstPost, indexOfLastPost);
 
-  // 글 작성 페이지로 이동하는 함수
   const handleWritePost = () => {
     navigate("/board/form");
   };
 
-  const maxCombinedLength = isMobile ? 20 : isTablet ? 50 : 80; // 화면 크기에 따른 최대 글자 수 설정
+  const maxCombinedLength = isMobile ? 20 : isTablet ? 50 : 80;
 
+  if (isLoading) return <LoadingSpin />;
+  if (error) return <GetDataErrorView />;
 
   return (
     <div>
-      {!isMobile && <div className={style.background2}>
-                <div style={{paddingBottom:'200px'}}></div>
-                <Body
-                    sentence1="나와 같은 꿈을 가진 사람들과의 대화"
-                    sentence2="일상적인 얘기부터 필요한 정보까지"
-                    title="커뮤니티"
-                    imageSrc={boardimg} // 이미지 경로를 전달합니다.
-                />
-            </div>}
-            {isMobile && <div className={style.background2}>
-                <div style={{paddingBottom:'100px'}}></div>
-                <Body
-                    sentence1="나와 같은 꿈을 가진 사람들과의 대화"
-                    sentence2="일상적인 얘기부터 필요한 정보까지"
-                    title="커뮤니티"
-                />
-            </div>}
-      <div style={{
-      // marginTop: isMobile ? 50 : 100,
-      // marginBottom: isMobile ? 50 : 200,
-      marginLeft: isMobile ? '5%' : isTablet ? 30 : '12%',
-      marginRight: isMobile ? '5%' : isTablet ? 20 : '12%',
-    }}>
-      <div>
-        <div className={style.line}></div>
-        <div className={style.color} >
-          <div style={{display:'flex'}}>
-           {!isMobile && (
-            <div>
-              <div className={style.fix_left}>
-                <Sidebar onCategoryClick={handleCategoryClick} titles={["전체", "자유", "뉴스", "질문 / 공부", "취업 / 기술", "플리마켓"]} />
-                <div></div>
-              </div>
-            </div> )}
-            <div style={{flex: '1', marginTop:'40px', marginLeft:'40px', marginRight:'40px'}}>
-              <div>
+      {!isMobile && (
+        <div className={style.background2}>
+          <div style={{ paddingBottom: "200px" }}></div>
+          <Body
+            sentence1="나와 같은 꿈을 가진 사람들과의 대화"
+            sentence2="일상적인 얘기부터 필요한 정보까지"
+            title="커뮤니티"
+            imageSrc={boardimg}
+          />
+        </div>
+      )}
+      {isMobile && (
+        <div className={style.background2}>
+          <div style={{ paddingBottom: "100px" }}></div>
+          <Body
+            sentence1="나와 같은 꿈을 가진 사람들과의 대화"
+            sentence2="일상적인 얘기부터 필요한 정보까지"
+            title="커뮤니티"
+          />
+        </div>
+      )}
+      <div
+        style={{
+          marginLeft: isMobile ? "5%" : isTablet ? 30 : "12%",
+          marginRight: isMobile ? "5%" : isTablet ? 20 : "12%",
+        }}
+      >
+        <div>
+          <div className={style.line}></div>
+          <div className={style.color}>
+            <div style={{ display: "flex" }}>
+              {!isMobile && (
                 <div>
-                  {isMobile && 
+                  <div className={style.fix_left}>
+                    <Sidebar
+                      onCategoryClick={handleCategoryClick}
+                      titles={[
+                        "전체",
+                        "자유",
+                        "뉴스",
+                        "질문 / 공부",
+                        "취업 / 기술",
+                        "플리마켓",
+                      ]}
+                    />
+                    <div></div>
+                  </div>
+                </div>
+              )}
+              <div
+                style={{
+                  flex: "1",
+                  marginTop: "40px",
+                  marginLeft: "40px",
+                  marginRight: "40px",
+                }}
+              >
+                <div>
                   <div>
-                    <div className={style.head} style={{fontSize: isDesktopOrLaptop ? '25px' : '20px', marginBottom:'10px' }}>전체 글 목록</div>
-                    <Searchbar defaultSearchText="제목 및 내용으로 검색" onSearch={handleSearch}/>
-                  </div>}
-                  {!isMobile && <div className={style.background_head}>
-                    <div className={style.head} style={{fontSize: isDesktopOrLaptop ? '25px' : '20px' }}>전체 글 목록</div>
-                    <Searchbar defaultSearchText="제목 및 내용으로 검색" onSearch={handleSearch}/>
-                  </div>}
-                  <div className={style.neck}>
-                    {!isMobile && (
-                    <div className={style.sort}> 
-                      <SortButton text="최신순" onClick={() => handleSort('0')} />
-                      <SortButton text="인기순" onClick={() => handleSort('1')} />
-                    </div>
-                    )}
                     {isMobile && (
-                      <div style={{display:'flex', alignItems:'center'}}>
-                        <NavigateSelect
-                         placeholder="게시판"
-                         options={[
-                           { value: '전체', label: '전체' },
-                           { value: '자유', label: '자유' },
-                           { value: '뉴스', label: '뉴스' },
-                           { value: '질문 / 공부', label: '질문' },
-                           { value: '취업 / 기술', label: '취업' },
-                           { value: '플리마켓', label: '플리마켓' }
-                          ]}
-                         onChange={(newValue) => handleCategoryClick(newValue)}
-                        />
-                        <SortSelect
-                        placeholder="정렬순"
-                        options={[
-                            { value: '0', label: '최신순' },
-                            { value: '1', label: '인기순' },
-                          ]}
-                        onChange={(newValue) => handleSort(newValue)}
+                      <div>
+                        <div
+                          className={style.head}
+                          style={{
+                            fontSize: isDesktopOrLaptop ? "25px" : "20px",
+                            marginBottom: "10px",
+                          }}
+                        >
+                          전체 글 목록
+                        </div>
+                        <Searchbar
+                          defaultSearchText="제목 및 내용으로 검색"
+                          onSearch={handleSearch}
                         />
                       </div>
                     )}
-                    
-                    <div className={style.write} onClick={handleWritePost}>글 작성하기</div>
+                    {!isMobile && (
+                      <div className={style.background_head}>
+                        <div
+                          className={style.head}
+                          style={{
+                            fontSize: isDesktopOrLaptop ? "25px" : "20px",
+                          }}
+                        >
+                          전체 글 목록
+                        </div>
+                        <Searchbar
+                          defaultSearchText="제목 및 내용으로 검색"
+                          onSearch={handleSearch}
+                        />
+                      </div>
+                    )}
+                    <div className={style.neck}>
+                      {!isMobile && (
+                        <div className={style.sort}>
+                          <SortButton
+                            text="최신순"
+                            onClick={() => handleSort("0")}
+                          />
+                          <SortButton
+                            text="인기순"
+                            onClick={() => handleSort("1")}
+                          />
+                        </div>
+                      )}
+                      {isMobile && (
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <NavigateSelect
+                            placeholder="게시판"
+                            options={[
+                              { value: "전체", label: "전체" },
+                              { value: "자유", label: "자유" },
+                              { value: "뉴스", label: "뉴스" },
+                              { value: "질문 / 공부", label: "질문" },
+                              { value: "취업 / 기술", label: "취업" },
+                              { value: "플리마켓", label: "플리마켓" },
+                            ]}
+                            onChange={(newValue) =>
+                              handleCategoryClick(newValue)
+                            }
+                          />
+                          <SortSelect
+                            placeholder="정렬순"
+                            options={[
+                              { value: "0", label: "최신순" },
+                              { value: "1", label: "인기순" },
+                            ]}
+                            onChange={(newValue) => handleSort(newValue)}
+                          />
+                        </div>
+                      )}
+
+                      {sessionStorage.getItem("role") == 1 ||
+                      sessionStorage.getItem("role") == 2 ? (
+                        <div className={style.write} onClick={handleWritePost}>
+                          글 작성하기
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
+                  {currentPosts.map((post, index) => (
+                    <Post
+                      key={post.boardId}
+                      id={post.boardId}
+                      num={index + 1}
+                      category={post.category}
+                      title={post.title}
+                      contents={
+                        post.contents.length >
+                        maxCombinedLength - post.title.length
+                          ? post.contents.substring(
+                              0,
+                              maxCombinedLength - post.title.length
+                            ) + "..."
+                          : post.contents
+                      }
+                      createdAt={dayjs(post.createdAt).format("YYYY.MM.DD")}
+                      likes={post.likeCount}
+                      comment={post.countComment}
+                      img={post.img}
+                      nickname={post.userProfileId["nickname"]}
+                      userImage={post.userImage}
+                      introduction={post.introduction}
+                      scraped={post.scraped}
+                      onClick={() => {
+                        console.log("post: ", post);
+                        // setBoardId(post.boardId);
+                        // navigate(`/board/detail/${post.boardId}`);
+                      }}
+                      showBookmark={true}
+                      showMenu={false}
+                    />
+                  ))}
                 </div>
-                {/* 정렬된 데이터를 표시 */}
-                {currentPosts.map((post, index) => (
-                  <Post
-                    key={post.id}
-                    id={post.id}
-                    num={index + 1}
-                    category={post.category}
-                    title={post.title}
-                    contents={ post.contents.length > maxCombinedLength - post.title.length
-                      ? post.contents.substring(0, maxCombinedLength - post.title.length) + '...'
-                      : post.contents}
-                    createdAt={post.createdAt}
-                    likes={post.likes}
-                    comment={post.comment}
-                    img={post.img}
-                    nickname={post.nickname}
-                    userImage={post.userImage}
-                    introduction={post.introduction}
-                    scraped={post.scraped} // 스크랩 상태를 props로 전달
-                    onClick={() => handlePostClick(post.id)} // 클릭 시 상세 페이지로 이동하는 함수 전달
-                    showBookmark={true}
-                    showMenu={false}
-                  />
-                ))}
-              </div>
-              {/* 페이지네이션 */}
-              <div className={style.foot}>
-                {[...Array(Math.ceil(sortedPosts.length / postPerPage)).keys()].map((number) => (
-                  <div className={`${style.page} ${currentPage === number + 1 ? style.active : ''}`} key={number} onClick={() => paginate(number + 1)}>
-                    {number + 1}
-                  </div>
-                ))}
+                <div className={style.foot}>
+                  {[
+                    ...Array(
+                      Math.ceil(sortedPosts.length / postPerPage)
+                    ).keys(),
+                  ].map((number) => (
+                    <div
+                      className={`${style.page} ${
+                        currentPage === number + 1 ? style.active : ""
+                      }`}
+                      key={number}
+                      onClick={() => paginate(number + 1)}
+                    >
+                      {number + 1}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-
       </div>
     </div>
   );
