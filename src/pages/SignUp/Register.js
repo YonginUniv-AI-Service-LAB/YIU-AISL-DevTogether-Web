@@ -52,7 +52,6 @@ const RegisterPage = ({ resetState }) => {
   const [email, setEmail] = useRecoilState(emailStateAtom);
   const [selectedDomain, setSelectedDomain] = useState("");
   const [domainInputDisabled, setDomainInputDisabled] = useState(false);
-
   const [verificationNumber, setVerificationNumber] = useState(null);
   const [verificationCode, setVerificationCode] = useState("");
   const [selectedbutton, setSelectedButton] = useState(false);
@@ -75,6 +74,7 @@ const RegisterPage = ({ resetState }) => {
   const [role, setRole] = useRecoilState(roleStateAtom);
   const [question, setQuestion] = useRecoilState(questionStateAtom);
   const [answer, setAnswer] = useRecoilState(answerStateAtom);
+  const [birth, setBirth] = useRecoilState(birthStateAtom);
 
   const [isNicknameChecked, setIsNicknameChecked] = useRecoilState(nicknameCheckedStateAtom);
   const [dualRole, setDualRole] = useRecoilState(dualRoleStateAtom);
@@ -107,6 +107,7 @@ const RegisterPage = ({ resetState }) => {
       setAge(null);
       setQuestion(null);
       setAnswer("");
+      setBirth({ year: "", month: "", day: "" });
       setIsNicknameChecked(null);
       setDualRole(false);
 
@@ -332,13 +333,20 @@ const RegisterPage = ({ resetState }) => {
   );
 
   useEffect(() => {
-    if (selectedYear && selectedMonth && selectedDay) {
+    if (birth.year && birth.month && birth.day) {
       const today = new Date();
-      const birthYear = parseInt(selectedYear);
-      let age = today.getFullYear() - birthYear + 1;
+      let age = today.getFullYear() - birth.year + 1;
       setAge(age);
     }
-  }, [selectedYear, selectedMonth, selectedDay]);
+  }, [birth]);
+
+  const questionOptions = [
+    { value: "0", label: "인생에서 제일 행복했던 순간은 언제인가요?" },
+    { value: "1", label: "태어난 곳은 어디인가요?" },
+    { value: "2", label: "제일 좋아하는 음식은 무엇인가요?" },
+    { value: "3", label: "출신 초등학교는 어디인가요?" },
+    { value: "4", label: "좋아하는 캐릭터는 무엇인가요?" },
+  ];
 
   return (
     <div style={{ marginTop: "40px", width: "400px" }}>
@@ -370,7 +378,7 @@ const RegisterPage = ({ resetState }) => {
                 htmlType="submit"
                 className={style.check_button}
                 style={{ marginLeft: "10px" }}
-                onClick={() => sendEmailVerificationCode.mutate(email)}
+                onClick={() => sendEmailVerificationCode.mutate()}
               >
                 인증 번호 재전송
               </Button>
@@ -536,7 +544,7 @@ const RegisterPage = ({ resetState }) => {
           </Form.Item>
         </div>
 
-        <Form.Item name="age">
+        <Form.Item name="birth">
           <div>생년월일</div>
           <div className={style.horizon}>
             <Select
@@ -571,16 +579,7 @@ const RegisterPage = ({ resetState }) => {
           <Select
             style={{ width: "400px" }}
             placeholder="질문"
-            options={[
-              {
-                value: "0",
-                label: "인생에서 제일 행복했던 순간은 언제인가요?",
-              },
-              { value: "1", label: "태어난 곳은 어디인가요?" },
-              { value: "2", label: "제일 좋아하는 음식은 무엇인가요?" },
-              { value: "3", label: "출신 초등학교는 어디인가요?" },
-              { value: "4", label: "좋아하는 캐릭터는 무엇인가요?" },
-            ]}
+            options={questionOptions}
             onChange={handleQuestionChange}
           />
         </Form.Item>

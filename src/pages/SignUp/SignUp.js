@@ -14,6 +14,7 @@ import {
   nicknameStateAtom,
   genderStateAtom,
   ageStateAtom,
+  birthStateAtom,
   roleStateAtom,
   questionStateAtom,
   answerStateAtom,

@@ -31,7 +31,8 @@ const Email = () => {
     const [domainInputDisabled, setDomainInputDisabled] = useState(true);
     const [selectedButton, setSelectedButton] = useState(false);
     const [isCodeVerified, setIsCodeVerified] = useState(null);
-    const [verificationCode, setVerificationCode] = useState('');
+    const [serverVerificationCode, setServerVerificationCode] = useState(''); // 서버에서 받은 인증번호
+    const [userVerificationCode, setUserVerificationCode] = useState(''); // 사용자가 입력한 인증번호
     const [remainingTime, setRemainingTime] = useState(180);
     const [verificationNumber, setVerificationNumber] = useState(null); // Added for verification number
     const [showPassword, setShowPassword] = useState(false);
@@ -276,7 +277,8 @@ const Email = () => {
             setDomainInputDisabled(true);
             setSelectedButton(false);
             setIsCodeVerified(null);
-            setVerificationCode('');
+            setUserVerificationCode(''); // 수정: userVerificationCode 초기화
+            setServerVerificationCode(''); // 수정: serverVerificationCode 초기화
             setPassword('');
             setPasswordErrorMessage('');
             setConfirmPassword('');
@@ -441,6 +443,7 @@ const Email = () => {
                         )}
                         {isCodeVerified && <div style={{ color: 'blue', marginTop: '5px' }}>인증 완료</div>}
                     </Form.Item>
+            
 
                     <Form.Item
                         name="verificationCode"
@@ -450,9 +453,9 @@ const Email = () => {
                         <div className={style.horizon} style={{ display: 'flex', alignItems: 'center' }}>
                             <Input
                                 placeholder="인증번호"
-                                value={verificationCode}
+                                value={userVerificationCode}
                                 style={{ maxWidth: '100px', maxHeight: '30px' }}
-                                onChange={(e) => setVerificationCode(e.target.value)}
+                                onChange={(e) => setUserVerificationCode(e.target.value)}
                             />
                             <Button
                                 type="primary"
@@ -469,7 +472,8 @@ const Email = () => {
                         </div>
                     </Form.Item>
 
-                    {isCodeVerified && (<div> <Form.Item name="password">
+                    {isCodeVerified && (
+                        <div> <Form.Item name="password">
                         <div>새 비밀번호</div>
                         <Input type={showPassword ? "text" : "password"} placeholder="비밀번호" style={{ maxHeight: '32px', width: '470px' }}
                             suffix={
@@ -491,15 +495,41 @@ const Email = () => {
                                     suffix={
                                         <Button
                                             type="text"
-                                            icon={showconfirmPassword ? <CiRead /> : <CiUnread />}
-                                            onClick={toggleconfirmPasswordVisibility}
-                                        />} onChange={handleConfirmPasswordChange} disabled={password === '' || !password || passwordErrorMessage} />
-                            </div>
-                            <div style={{ height: '0px' }}>
-                                {passwordMatch === true && <div className={style.complete}>비밀번호 확인 완료</div>}
-                                {passwordMatch === false && <div className={style.error}>비밀번호가 다릅니다.</div>}
-                            </div>
-                        </Form.Item> </div>)}
+                                            icon={showPassword ? <CiRead /> : <CiUnread />}
+                                            onClick={togglePasswordVisibility}
+                                        />}
+                                    onChange={handlePasswordChange}
+                                />
+                                <div style={{ height: '0px' }}>
+                                    {passwordErrorMessage && <div className={style.error}>{passwordErrorMessage}</div>}
+                                </div>
+                             </div>   
+                            </Form.Item>
+
+                            <Form.Item name="confirmPassword" dependencies={['password']}>
+                                <div>새 비밀번호 확인</div>
+                                <div className={style.horizon}>
+                                    <InputQ
+                                        type={showconfirmPassword ? "text" : "password"}
+                                        placeholder="비밀번호 확인"
+                                        style={{ maxHeight: '32px', width: '470px' }}
+                                        suffix={
+                                            <Button
+                                                type="text"
+                                                icon={showconfirmPassword ? <CiRead /> : <CiUnread />}
+                                                onClick={toggleconfirmPasswordVisibility}
+                                            />}
+                                        onChange={handleConfirmPasswordChange}
+                                        disabled={password === '' || !password || passwordErrorMessage}
+                                    />
+                                </div>
+                                <div style={{ height: '0px' }}>
+                                    {passwordMatch === true && <div className={style.complete}>비밀번호 확인 완료</div>}
+                                    {passwordMatch === false && <div className={style.error}>비밀번호가 다릅니다.</div>}
+                                </div>
+                            </Form.Item>
+                        </div>
+                    )}
                 </div>
             </Modal>
         </div>
