@@ -488,7 +488,7 @@ const Email = () => {
                         </div>
                     </Form.Item>
 
-                        <Form.Item name="confirmPassword" dependencies={['password']}>
+                        {/* <Form.Item name="confirmPassword" dependencies={['password']}>
                             <div>새 비밀번호 확인</div>
                             <div className={style.horizon}>
                                 <Input type={showconfirmPassword ? "text" : "password"} placeholder="비밀번호 확인" style={{ maxHeight: '32px', width: '470px' }}
@@ -504,7 +504,7 @@ const Email = () => {
                                     {passwordErrorMessage && <div className={style.error}>{passwordErrorMessage}</div>}
                                 </div>
                              </div>   
-                            </Form.Item>
+                            </Form.Item> */}
 
                             <Form.Item name="confirmPassword" dependencies={['password']}>
                                 <div>새 비밀번호 확인</div>
