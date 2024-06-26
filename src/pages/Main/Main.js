@@ -3,7 +3,7 @@ import { useMediaQuery } from "react-responsive";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { Carousel } from "antd";
 import ProfileMain from "../../components/Group/Profile/ProfileMain";
-import style from "./Main.module.css";
+import styles from "./Main.module.css";
 import { useQuery } from "@tanstack/react-query";
 import { defaultAPI } from "../../api";
 import LoadingSpin from "../../components/Spin/LoadingSpin";
@@ -12,8 +12,8 @@ import GetDataErrorView from "../../components/Result/GetDataError";
 // Custom arrow component
 const CustomArrow = ({ direction, onClick }) => (
   <div
-    className={`${style.customArrow} ${
-      direction === "left" ? style.customArrowLeft : style.customArrowRight
+    className={`${styles.customArrow} ${
+      direction === "left" ? styles.customArrowLeft : styles.customArrowRight
     }`}
     onClick={onClick}
   >
@@ -79,7 +79,7 @@ const MainPage = () => {
     <div>
       {/* 광고성 영역 */}
       {!isMobile && (
-        <div className={style.banner}>
+        <div className={styles.banner}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div
               style={{
@@ -114,7 +114,7 @@ const MainPage = () => {
       )}
 
       {isMobile && (
-        <div className={style.banner}>
+        <div className={styles.banner}>
           <div
             style={{
               display: "flex",
@@ -174,14 +174,14 @@ const MainPage = () => {
         }}
       >
         {/* 멘티 프로필 섹션 */}
-        <div className={style.profileSection}>
+        <div className={styles.profileSection}>
           <div style={{ fontSize: "25px", fontWeight: "bold" }}>
             학생 프로필 미리보기
           </div>
           <Carousel arrows infinite={false} {...sliderSettings}>
             {menteeProfiles.map((mentee) => (
-              <div key={mentee.id} className={style.sliderItem}>
-                <div className={style.sliderItemInner}>
+              <div key={mentee.id} className={styles.sliderItem}>
+                <div className={styles.sliderItemInner}>
                   <ProfileMain
                     id={mentee.id}
                     nickname={mentee.nickname}
@@ -205,8 +205,8 @@ const MainPage = () => {
           </div>
           <Carousel arrows infinite={false} {...sliderSettings}>
             {mentorProfiles.map((mentor) => (
-              <div key={mentor.id} className={style.sliderItem}>
-                <div className={style.sliderItemInner}>
+              <div key={mentor.id} className={styles.sliderItem}>
+                <div className={styles.sliderItemInner}>
                   <ProfileMain
                     id={mentor.id}
                     nickname={mentor.nickname}
@@ -236,9 +236,9 @@ const MainPage = () => {
           </div>
           <Carousel arrows infinite={false} {...sliderSettings}>
             {subjects.map((subject, index) => (
-              <div key={index} className={style.sliderItem}>
-                <div className={style.sliderItemInner}>
-                  <div className={style.subjectName}>{subject}</div>
+              <div key={index} className={styles.sliderItem}>
+                <div className={styles.sliderItemInner}>
+                  <div className={styles.subjectName}>{subject}</div>
                 </div>
               </div>
             ))}

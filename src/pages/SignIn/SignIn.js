@@ -8,7 +8,6 @@ import { CiRead, CiUnread } from "react-icons/ci";
 import LogoTitle_Login from "../../components/Group/LOGO/LogoTitle_Login";
 import { useRecoilState } from "recoil";
 import { loginRoleStateAtom, pageState } from "../../recoil/atoms/login";
-import LOGO from "../../assets/images/devtogether_logo.png";
 import Email from "./Email";
 import { useMutation } from "@tanstack/react-query";
 import { defaultAPI } from "../../api";
@@ -87,10 +86,10 @@ const SignInPage = () => {
       navigate("/");
     },
     onError: (e) => {
-      if (e.request.status == 400) message.error("미입력된 정보가 있습니다.");
-      else if (e.request.status == 401)
+      if (e.request.status === 400) message.error("미입력된 정보가 있습니다.");
+      else if (e.request.status === 401)
         message.error("이메일 또는 비밀번호가 올바르지 않습니다.");
-      else if (e.request.status == 404)
+      else if (e.request.status === 404)
         message.error("존재하지 않는 회원입니다.");
     },
   });
@@ -138,49 +137,54 @@ const SignInPage = () => {
       >
         <div>
           <div className={style.head}>로그인</div>
-          <div className={style.flex}>
-            <div className={style.flex}>
-              <div>
-                <div
-                  className={
-                    selectedRole === 2
-                      ? `${style.role} ${style.selected}`
-                      : style.role
-                  }
-                  onClick={() => setSelectedRole(2)}
-                >
-                  학생
-                </div>
-                <div
-                  className={
-                    selectedRole === 2 ? style.selectedline : style.line
-                  }
-                ></div>
-                {/* 선택된 역할에만 라인 표시 */}
+          <div className={style.roleContainer}>
+            <div className={style.role} onClick={() => setSelectedRole(2)}>
+              <div
+                className={
+                  selectedRole === 2 ? `${style.selected}` : ""
+                }
+              >
+                학생
               </div>
+              <div
+                className={
+                  selectedRole === 2 ? style.selectedline : style.line
+                }
+              ></div>
+              {/* 선택된 역할에만 라인 표시 */}
             </div>
-            <div className={style.flex}>
-              <div>
-                <div
-                  className={
-                    selectedRole === 1
-                      ? `${style.role} ${style.selected}`
-                      : style.role
-                  }
-                  onClick={() => setSelectedRole(1)}
-                >
-                  선생님
-                </div>
-                <div
-                  className={
-                    selectedRole === 1 ? style.selectedline : style.line
-                  }
-                ></div>
-                {/* 선택된 역할에만 라인 표시 */}
+            <div className={style.role} onClick={() => setSelectedRole(1)}>
+              <div
+                className={
+                  selectedRole === 1 ? `${style.selected}` : ""
+                }
+              >
+                선생님
               </div>
+              <div
+                className={
+                  selectedRole === 1 ? style.selectedline : style.line
+                }
+              ></div>
+              {/* 선택된 역할에만 라인 표시 */}
+            </div>
+            <div className={style.role} onClick={() => setSelectedRole(0)}>
+              <div
+                className={
+                  selectedRole === 0 ? `${style.selected}` : ""
+                }
+              >
+                관리자
+              </div>
+              <div
+                className={
+                  selectedRole === 0 ? style.selectedline : style.line
+                }
+              ></div>
+              {/* 선택된 역할에만 라인 표시 */}
             </div>
           </div>
-          <div className={style.form}>
+          <div className={style.formContainer}>
             <Form
               name="normal_login"
               className="login-form"
