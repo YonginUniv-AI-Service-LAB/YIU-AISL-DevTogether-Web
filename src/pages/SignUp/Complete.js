@@ -43,15 +43,16 @@ const CompletePage = () => {
   const [fileList, setFileList] = useState([]);
   const [modalPage, setModalPage] = useState(1);
   const [role, setRole] = useState(null);
+  const [nickname, setNickname] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
 
   useEffect(() => {
     const userRole = sessionStorage.getItem('role');
     const token = sessionStorage.getItem('accessToken');
-    console.log('userRole from sessionStorage:', userRole); // 로그 확인
-    console.log('accessToken from sessionStorage:', token); // 로그 확인
+    const userNickname = sessionStorage.getItem('nickname');
     setRole(userRole);
     setAccessToken(token);
+    setNickname(userNickname);
   }, []);
 
   const showModal = () => {
@@ -177,6 +178,7 @@ const CompletePage = () => {
       formData.append("pr", data.pr || '');
       formData.append("portfolio", data.link || '');
       formData.append("contents", data.contents || '');
+      formData.append("nickname", data.nickname || '');
 
       if (data.files.length > 0) {
         data.files.forEach((file) => {
