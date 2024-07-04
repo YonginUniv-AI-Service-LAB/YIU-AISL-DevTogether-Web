@@ -33,7 +33,11 @@ const MainPage = () => {
   };
 
   // 등록된 queryClient를 가져옴
-  const { data: main, isLoading, error } = useQuery({
+  const {
+    data: main,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["main"],
     queryFn: async () => {
       const res = await defaultAPI.get("/main");
@@ -44,8 +48,8 @@ const MainPage = () => {
   if (isLoading) return <LoadingSpin />;
   if (error) return <GetDataErrorView />;
 
-  const menteeProfiles = main.mentees.filter(mentee => mentee !== null);
-  const mentorProfiles = main.mentors.filter(mentor => mentor !== null);
+  const menteeProfiles = main.mentees.filter((mentee) => mentee !== null);
+  const mentorProfiles = main.mentors.filter((mentor) => mentor !== null);
   const subjects = main.subjects.slice(0, 5); // 인기 있는 5개 과목만 표시
 
   const slidesToShow = breakpoints.isMobile
@@ -77,7 +81,7 @@ const MainPage = () => {
 
   return (
     <div>
-      {/* 광고성 영역 */}
+      {/* 광고성 영역
       {!isMobile && (
         <div className={style.banner}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -111,9 +115,9 @@ const MainPage = () => {
             />
           </div>
         </div>
-      )}
+      )} */}
 
-      {isMobile && (
+      {/* {isMobile && (
         <div className={style.banner}>
           <div
             style={{
@@ -153,9 +157,9 @@ const MainPage = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
-      <div
+      {/* <div
         style={{
           marginLeft: breakpoints.isMobile
             ? "5%"
@@ -172,9 +176,9 @@ const MainPage = () => {
             ? "10%"
             : "15%",
         }}
-      >
-        {/* 멘티 프로필 섹션 */}
-        <div className={style.profileSection}>
+      > */}
+      {/* 멘티 프로필 섹션 */}
+      {/* <div className={style.profileSection}>
           <div style={{ fontSize: "25px", fontWeight: "bold" }}>
             학생 프로필 미리보기
           </div>
@@ -196,10 +200,10 @@ const MainPage = () => {
               </div>
             ))}
           </Carousel>
-        </div>
+        </div> */}
 
-        {/* 멘토 프로필 섹션 */}
-        <div style={{ marginTop: "20px" }}>
+      {/* 멘토 프로필 섹션 */}
+      {/* <div style={{ marginTop: "20px" }}>
           <div style={{ fontSize: "25px", fontWeight: "bold" }}>
             선생님 프로필 미리보기
           </div>
@@ -221,10 +225,10 @@ const MainPage = () => {
               </div>
             ))}
           </Carousel>
-        </div>
+        </div> */}
 
-        {/* 인기 있는 과목 섹션 */}
-        <div style={{ marginTop: "20px" }}>
+      {/* 인기 있는 과목 섹션 */}
+      {/* <div style={{ marginTop: "20px" }}>
           <div
             style={{
               marginBottom: "25px",
@@ -244,7 +248,7 @@ const MainPage = () => {
             ))}
           </Carousel>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

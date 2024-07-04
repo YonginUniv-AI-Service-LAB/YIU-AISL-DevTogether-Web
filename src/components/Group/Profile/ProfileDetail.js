@@ -20,6 +20,7 @@ import { FaEye } from "react-icons/fa";
 import { IoMdMore } from "react-icons/io";
 import { Dropdown, Menu, Button, message } from "antd";
 import MenuDropdown from "../../Dropdown/MenuDropdown";
+import AltImage from "../../../assets/images/devtogether_logo.png";
 
 const ProfileDetail = (post) => {
   const scraped = useRecoilValue(posterScrapState());
@@ -101,7 +102,7 @@ const ProfileDetail = (post) => {
         <div>{post.contents}</div>
         <img
           className={style.contnentsimage}
-          src={post.img}
+          src={AltImage}
           alt="게시물 이미지"
           style={{ marginTop: "25px" }}
         />

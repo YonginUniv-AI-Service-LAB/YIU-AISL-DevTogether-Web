@@ -13,8 +13,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authFileAPI, refreshAccessToken } from "../../api";
 import TextArea from "antd/es/input/TextArea";
 import FormLabelText from "../../components/Text/FormLabel";
-import { BoardFormFilesAtom } from "../../recoil/atoms/board";
-import { useRecoilState } from "recoil";
+import {
+  BoardFormDataAtom,
+  BoardFormFilesAtom,
+  BoardFormTypeAtom,
+} from "../../recoil/atoms/board";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { InboxOutlined } from "@ant-design/icons";
 
 const BoardForm = ({ handleSidebarButtonClick }) => {
@@ -23,15 +27,24 @@ const BoardForm = ({ handleSidebarButtonClick }) => {
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
+  const formType = useRecoilValue(BoardFormTypeAtom);
+  const formData = useRecoilValue(BoardFormDataAtom);
+
   // 페이지 이동
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
 
   const [value, setValue] = useState("");
-  const [title, setTitle] = useState("");
-  const [contents, setContents] = useState("");
-  const [category, setCategory] = useState("");
+  const [title, setTitle] = useState(
+    formType == "create" ? "" : formData.title
+  );
+  const [contents, setContents] = useState(
+    formType == "create" ? "" : formData.contents
+  );
+  const [category, setCategory] = useState(
+    formType == "create" ? "" : formData.category
+  );
   const [img, setImg] = useState("");
   const [showPlaceholder, setShowPlaceholder] = useState(true);
 
@@ -108,13 +121,14 @@ const BoardForm = ({ handleSidebarButtonClick }) => {
     onSuccess: (data, variables) => {
       message.success("게시글이 수정되었습니다.");
       queryClient.invalidateQueries("board");
-      navigate(-1);
+      navigate(-2);
     },
     onError: (e) => handleMutationError(e),
   });
 
   // 에러 핸들러
   const handleMutationError = async (e) => {
+    console.log("error: ", e.request);
     // 데이터 미입력
     if (e.request.status === 400) message.error("모든 값을 입력해주세요.");
     // 공지사항 id 없음
@@ -140,23 +154,23 @@ const BoardForm = ({ handleSidebarButtonClick }) => {
     }
   };
 
-  useEffect(() => {
-    // 전달된 게시글 데이터가 있는 경우, 해당 데이터로 상태를 설정
-    if (location.state) {
-      setTitle(location.state.title || "");
-      setValue(location.state.contents || "");
-      setCategory(location.state.category || "");
-      setImg(location.state.img || "");
-    } else {
-      const tempPost = JSON.parse(localStorage.getItem("tempPost"));
-      if (tempPost) {
-        setTitle(tempPost.title);
-        setValue(tempPost.contents);
-        setCategory(tempPost.category);
-        setImg(tempPost.img);
-      }
-    }
-  }, [location.state]);
+  // useEffect(() => {
+  //   // 전달된 게시글 데이터가 있는 경우, 해당 데이터로 상태를 설정
+  //   if (location.state) {
+  //     setTitle(location.state.title || "");
+  //     setValue(location.state.contents || "");
+  //     setCategory(location.state.category || "");
+  //     setImg(location.state.img || "");
+  //   } else {
+  //     const tempPost = JSON.parse(localStorage.getItem("tempPost"));
+  //     if (tempPost) {
+  //       setTitle(tempPost.title);
+  //       setValue(tempPost.contents);
+  //       setCategory(tempPost.category);
+  //       setImg(tempPost.img);
+  //     }
+  //   }
+  // }, [location.state]);
 
   const handleChange = (content, delta, source, editor) => {
     setValue(content);
@@ -255,6 +269,46 @@ const BoardForm = ({ handleSidebarButtonClick }) => {
     }
   };
 
+  // category String -> INT
+  const convertCategory = () => {
+    switch (formData.category) {
+      case "자유":
+        return 0;
+      case "뉴스":
+        return 1;
+      case "질문공부":
+        return 2;
+      case "취업기술":
+        return 3;
+      case "플리마켓":
+        return 4;
+      default:
+        return 0;
+    }
+  };
+
+  useEffect(() => {
+    if (formType === "update") {
+      setCategory(convertCategory());
+
+      if (formFiles && formFiles.length > 0) {
+        setFiles(
+          formFiles
+            .filter((file) => file.originName) // originName이 있는 파일만 필터링
+            .map((file, index) => ({
+              uid: `${file.fileId}`,
+              name: file.originName,
+              status: "done",
+              url: file.url,
+              originFileObj: new File([file.fileData], file.originName, {
+                type: file.mimeType,
+              }),
+            }))
+        );
+      }
+    }
+  }, []);
+
   return (
     <div>
       {!isMobile && (
@@ -303,7 +357,10 @@ const BoardForm = ({ handleSidebarButtonClick }) => {
                           <div className={style.save} onClick={handleTempSave}>
                             임시 저장
                           </div>
-                          <div className={style.save} onClick={handleComplete}>
+                          <div
+                            className={style.save}
+                            onClick={() => create_post.mutate()}
+                          >
                             완료
                           </div>
                         </div>
@@ -328,7 +385,7 @@ const BoardForm = ({ handleSidebarButtonClick }) => {
                           <div
                             className={style.mobilesave}
                             style={{ fontSize: "10px" }}
-                            onClick={handleComplete}
+                            onClick={() => create_post.mutate()}
                           >
                             완료
                           </div>
@@ -344,15 +401,11 @@ const BoardForm = ({ handleSidebarButtonClick }) => {
                           value={category}
                           onChange={handleCategoryChange}
                         >
-                          <Select.Option value="free">자유</Select.Option>
-                          <Select.Option value="news">뉴스</Select.Option>
-                          <Select.Option value="question">
-                            질문 / 공부
-                          </Select.Option>
-                          <Select.Option value="employment">
-                            취업 / 기술
-                          </Select.Option>
-                          <Select.Option value="market">플리마켓</Select.Option>
+                          <Select.Option value={0}>자유</Select.Option>
+                          <Select.Option value={1}>뉴스</Select.Option>
+                          <Select.Option value={2}>질문 / 공부</Select.Option>
+                          <Select.Option value={3}>취업 / 기술</Select.Option>
+                          <Select.Option value={4}>플리마켓</Select.Option>
                         </Select>
                       </Form.Item>
                       <Form.Item label="제목">

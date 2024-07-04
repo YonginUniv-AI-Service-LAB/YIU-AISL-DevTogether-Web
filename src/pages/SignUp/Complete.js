@@ -335,7 +335,10 @@ const CompletePage = () => {
           </div>
         </div>
       )}
-      <div className={style.register} style={{ marginLeft: isMobile ? 0 : isTablet ? 50 : 50 }}>
+      <div
+        className={style.register}
+        style={{ marginLeft: isMobile ? 0 : isTablet ? 50 : 50 }}
+      >
         <div style={{ maxWidth: "800px" }}>
           <div className={style.content} style={{ marginLeft: "20px" }}>
             <Card
@@ -367,7 +370,8 @@ const CompletePage = () => {
                 정보가 입력되지 않은 회원은 매칭 공고가 등록되지 않습니다.
               </div>
               <div>
-                <span style={{ color: "red" }}>*</span> 추후에는 마이페이지에서 정보 입력{" "}
+                <span style={{ color: "red" }}>*</span> 추후에는 마이페이지에서
+                정보 입력{" "}
               </div>
             </Card>
             <div
@@ -377,21 +381,52 @@ const CompletePage = () => {
                 marginTop: "50px",
               }}
             >
-              <FilterButton name={"정보 추가"} onClick={showModal} style={{ margin: "10px" }} />
-              <FilterButton name={"다음에"} onClick={goToLoginPage} style={{ margin: "10px" }} />
+              <FilterButton
+                name={"정보 추가"}
+                onClick={showModal}
+                style={{ margin: "10px" }}
+              />
+              <FilterButton
+                name={"다음에"}
+                onClick={goToLoginPage}
+                style={{ margin: "10px" }}
+              />
             </div>
           </div>
 
-          <Modal title="추가 정보 입력" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} footer={null}>
-            <Form name="additional_info" layout="vertical" onFinish={handleFinish} onFinishFailed={handleFinishFailed}>
+          <Modal
+            title="추가 정보 입력"
+            visible={isModalVisible}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            footer={null}
+          >
+            <Form
+              name="additional_info"
+              layout="vertical"
+              onFinish={handleFinish}
+              onFinishFailed={handleFinishFailed}
+            >
               {modalPage === 1 && (
                 <div style={{ marginTop: "30px" }}>
-                  <Form.Item label="과목" name="subject" rules={[{ required: true, message: "과목을 선택하세요!" }]}>
+                  <Form.Item
+                    label="과목"
+                    name="subject"
+                    rules={[{ required: true, message: "과목을 선택하세요!" }]}
+                  >
                     <RegisterSelect
                       mode="multiple"
                       placeholder="과목 (최대 5개)"
-                      filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
-                      filterSort={(optionA, optionB) => (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      filterSort={(optionA, optionB) =>
+                        (optionA?.label ?? "")
+                          .toLowerCase()
+                          .localeCompare((optionB?.label ?? "").toLowerCase())
+                      }
                       options={data_subject.map((subject) => ({
                         value: subject,
                         label: subject,
@@ -400,11 +435,23 @@ const CompletePage = () => {
                       maxTags={5}
                     />
                   </Form.Item>
-                  <Form.Item label="지역" name="region" rules={[{ required: true, message: "지역을 입력하세요!" }]}>
+                  <Form.Item
+                    label="지역"
+                    name="region"
+                    rules={[{ required: true, message: "지역을 입력하세요!" }]}
+                  >
                     <RegisterSelect
                       placeholder="지역 (최대 3개)"
-                      filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
-                      filterSort={(optionA, optionB) => (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      filterSort={(optionA, optionB) =>
+                        (optionA?.label ?? "")
+                          .toLowerCase()
+                          .localeCompare((optionB?.label ?? "").toLowerCase())
+                      }
                       options={data_location.map((location) => ({
                         value: location,
                         label: location,
@@ -413,7 +460,13 @@ const CompletePage = () => {
                       maxTags={3}
                     />
                   </Form.Item>
-                  <Form.Item label="과외 방식" name="method" rules={[{ required: true, message: "과외 방식을 선택하세요!" }]}>
+                  <Form.Item
+                    label="과외 방식"
+                    name="method"
+                    rules={[
+                      { required: true, message: "과외 방식을 선택하세요!" },
+                    ]}
+                  >
                     <RegisterSelect
                       placeholder="과외 방식"
                       options={[
@@ -424,16 +477,29 @@ const CompletePage = () => {
                       onChange={handleMethodChange}
                     />
                   </Form.Item>
-                  <Form.Item label="최소 과외비" name="fee" rules={[{ required: true, message: "과외비를 입력하세요!" }]}>
-                    <Input type="text" placeholder="과외 금액" suffix="원" value={fee} onChange={handleFeeChange} />
+                  <Form.Item
+                    label="최소 과외비"
+                    name="fee"
+                    rules={[
+                      { required: true, message: "과외비를 입력하세요!" },
+                    ]}
+                  >
+                    <Input
+                      type="text"
+                      placeholder="과외 금액"
+                      suffix="원"
+                      value={fee}
+                      onChange={handleFeeChange}
+                    />
                   </Form.Item>
                   <Form.Item label="프로필 이미지" name="profileImage">
                     <Upload
-                      action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                      // action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
                       listType="picture-circle"
                       fileList={fileList}
                       onPreview={handlePreview}
                       onChange={handleChange}
+                      beforeUpload={() => false}
                     >
                       {fileList.length >= 1 ? null : uploadButton}
                     </Upload>
@@ -443,14 +509,21 @@ const CompletePage = () => {
                         preview={{
                           visible: previewOpen,
                           onVisibleChange: (visible) => setPreviewOpen(visible),
-                          afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                          afterOpenChange: (visible) =>
+                            !visible && setPreviewImage(""),
                         }}
                         src={previewImage}
                       />
                     )}
                   </Form.Item>
                   <Form.Item label="한줄 소개" name="oneLineIntro">
-                    <Input maxLength={12} showCount placeholder="한 줄 소개" value={oneLineIntro} onChange={handleOneLineIntroChange} />
+                    <Input
+                      maxLength={12}
+                      showCount
+                      placeholder="한 줄 소개"
+                      value={oneLineIntro}
+                      onChange={handleOneLineIntroChange}
+                    />
                   </Form.Item>
                   <div style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Button onClick={nextModalPage}>다음</Button>
@@ -460,18 +533,42 @@ const CompletePage = () => {
               {modalPage === 2 && (
                 <div style={{ marginTop: "30px" }}>
                   <Form.Item label="포트폴리오" name="portfolio">
-                    <Input value={portfolio} placeholder="포트폴리오 링크" onChange={handlePortfolioChange} />
+                    <Input
+                      value={portfolio}
+                      placeholder="포트폴리오 링크"
+                      onChange={handlePortfolioChange}
+                    />
                   </Form.Item>
                   <Form.Item label="과외 소개" name="intro">
-                    <Input.TextArea rows={4} placeholder={placeholdercontents} showCount maxLength={100} style={{ height: 120, resize: "none" }} />
+                    <Input.TextArea
+                      rows={4}
+                      placeholder={placeholdercontents}
+                      showCount
+                      maxLength={100}
+                      style={{ height: 120, resize: "none" }}
+                    />
                   </Form.Item>
                   <Form.Item label="과외 일정" name="schedule">
-                    <Input.TextArea rows={4} placeholder={placeholderschedule} showCount maxLength={100} style={{ height: 120, resize: "none" }} />
+                    <Input.TextArea
+                      rows={4}
+                      placeholder={placeholderschedule}
+                      showCount
+                      maxLength={100}
+                      style={{ height: 120, resize: "none" }}
+                    />
                   </Form.Item>
                   <Form.Item label="어필" name="appeal">
-                    <Input.TextArea rows={4} placeholder="본인이 어필할 내용" showCount maxLength={100} style={{ height: 120, resize: "none" }} />
+                    <Input.TextArea
+                      rows={4}
+                      placeholder="본인이 어필할 내용"
+                      showCount
+                      maxLength={100}
+                      style={{ height: 120, resize: "none" }}
+                    />
                   </Form.Item>
-                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
                     <Button onClick={prevModalPage}>이전</Button>
                     <Button type="primary" htmlType="submit">
                       제출

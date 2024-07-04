@@ -29,7 +29,7 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
   const { TextArea } = Input;
   const { id } = useParams();
   // const post = data_board.find((item) => item.id === parseInt(id));
-  const postRef = useRef(null);
+  // const postRef = useRef(null);
 
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태 추가
   const [commentsPerPage] = useState(10); // 페이지당 댓글 수 상태 추가
@@ -206,9 +206,11 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
                           ? { flex: 1, marginRight: "20px" }
                           : { marginBottom: "30px" }
                       }
-                      ref={postRef}
+                      // ref={postRef}
                     >
                       <PostDetail
+                        post={post}
+                        userProfileId={post.userProfileId["id"]}
                         id={post.boardId}
                         title={post.title}
                         contents={post.contents}
@@ -293,16 +295,18 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
                         </div>
                       </div>
                       <div style={{ paddingRight: "10px" }}>
-                        {currentComments.map((comment) => (
+                        {post.comments.map((comment) => (
                           <Comment
-                            key={comment.id}
-                            id={comment.id}
+                            key={comment.commentId}
+                            id={comment.commentId}
                             contents={comment.contents}
-                            createdAt={comment.createdAt}
-                            likes={comment.likes}
-                            nickname={comment.nickname}
-                            userImage={comment.userImage}
-                            introduction={comment.introduction}
+                            createdAt={dayjs(comment.createdAt).format(
+                              "YYYY.MM.DD"
+                            )}
+                            likes={comment.likeCount}
+                            nickname={comment.userProfileId.nickname}
+                            userImage={comment.userProfileId.files}
+                            introduction={comment.userProfileId.introduction}
                             onEdit={handleEditComment} // 수정 버튼 클릭 시 호출될 함수 전달
                             onDelete={handleDeleteComment} // 삭제 버튼 클릭 시 호출될 함수 전달
                             edited={comment.edited} // 수정 여부를 전달합니다.
