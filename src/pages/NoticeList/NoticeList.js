@@ -177,7 +177,7 @@ const NoticeListPage = () => {
             dataIndex="createdAt"
             key="createdAt"
             // defaultFilteredValue={(data) => dayjs(data).format("YYYY-MM-DD")}
-            width={80}
+            width={100}
             render={(text, row, index) => {
               return <>{dayjs(text).format("YYYY.MM.DD")}</>;
             }}
@@ -186,7 +186,7 @@ const NoticeListPage = () => {
             title="카테고리"
             dataIndex="noticeCategory"
             key="noticeCategory"
-            width={90}
+            width={100}
           />
           <Column title="제목" dataIndex="title" key="title" />
         </Table>
