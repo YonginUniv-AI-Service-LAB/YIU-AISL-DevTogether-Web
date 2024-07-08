@@ -34,7 +34,7 @@ const Post = (props) => {
 
   const navigate = useNavigate();
 
-  const [scraped, setScraped] = useRecoilState(posterScrapState());
+  // const [scraped, setScraped] = useRecoilState(posterScrapState());
   // const likes = useRecoilValue(postLikesState());
   // const [views, setViews] = useRecoilState(postViewsState(props.id));
   // const view = useRecoilValue(postViewState(props.id));
@@ -123,7 +123,7 @@ const Post = (props) => {
             </div>
             {props.showBookmark && (
               <div className={style.bookmarked}>
-                {scraped && <FaBookmark />}
+                {/* {scraped && <FaBookmark />} */}
               </div>
             )}
             {props.showMenu && (
@@ -146,7 +146,8 @@ const Post = (props) => {
               <span style={{ fontWeight: "500" }}>{props.contents}</span>
             </div>
             <div className={`${style.square}`}>
-              <img src={props.img} alt="게시물 이미지" />
+              {/* <img src={props.files == null ? AltImage : props.userImage} alt="게시물 이미지" /> */}
+              <img src={AltImage} alt="게시글 이미지" />
             </div>
           </div>
           <div style={{ marginTop: "20px" }}>

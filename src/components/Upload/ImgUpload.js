@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Image, Upload } from 'antd';
+import React, { useState, useEffect } from "react";
+import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Image, Upload } from "antd";
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -12,7 +12,7 @@ const getBase64 = (file) =>
 
 const ImgUpload = ({ currentImage, onImageChange, isEditing }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState(currentImage || '');
+  const [previewImage, setPreviewImage] = useState(currentImage || "");
   const [removedImage, setRemovedImage] = useState(null); // 삭제된 이미지를 기억합니다.
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const ImgUpload = ({ currentImage, onImageChange, isEditing }) => {
     <button
       style={{
         border: 0,
-        background: 'none',
+        background: "none",
       }}
       type="button"
     >
@@ -67,22 +67,24 @@ const ImgUpload = ({ currentImage, onImageChange, isEditing }) => {
       <Upload
         action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
         listType="picture-card"
-        fileList={currentImage ? [{ uid: '-1', url: currentImage }] : []}
+        fileList={currentImage ? [{ uid: "-1", url: currentImage }] : []}
         onPreview={handlePreview}
         onChange={handleChange}
         onRemove={isEditing ? handleRemove : false} // 수정 중일 때만 삭제 기능 활성화
+        // beforeUpload={() => false}
+        // maxCount={1}
       >
         {currentImage ? null : uploadButton}
       </Upload>
       {previewImage && (
         <Image
           wrapperStyle={{
-            display: 'none',
+            display: "none",
           }}
           preview={{
             visible: previewOpen,
             onVisibleChange: (visible) => setPreviewOpen(visible),
-            afterOpenChange: (visible) => !visible && setPreviewImage(''),
+            afterOpenChange: (visible) => !visible && setPreviewImage(""),
           }}
           src={previewImage}
         />
@@ -90,7 +92,7 @@ const ImgUpload = ({ currentImage, onImageChange, isEditing }) => {
       {!isEditing && removedImage && (
         // 수정이 취소될 때 삭제된 이미지가 있으면 보여줍니다.
         <Image
-          style={{ display: 'none' }} // 보이지 않도록 스타일을 적용합니다.
+          style={{ display: "none" }} // 보이지 않도록 스타일을 적용합니다.
           src={removedImage}
         />
       )}

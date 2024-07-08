@@ -215,7 +215,7 @@ const FAQListPage = (props) => {
                         <Button type="text" icon={<EditOutlined />} />
                       </Popconfirm>
                       <Popconfirm
-                        title="공지사항 삭제"
+                        title="FAQ 삭제"
                         description="FAQ를 삭제하시겠습니까?"
                         onConfirm={() => {
                           setData(data.faqId);
