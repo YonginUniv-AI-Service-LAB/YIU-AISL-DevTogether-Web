@@ -57,7 +57,7 @@ const SignUpPage = () => {
   const nicknameChecked = useRecoilValue(nicknameCheckedStateAtom);
   const passwordMatch = useRecoilValue(passwordMatchStateAtom);
   const emailVerified = useRecoilValue(emailVerifiedStateAtom);
-  const birth = `${year}${month}${day}`;
+  const birth = `${year}${month}${day}`; // 수정된 부분
   const [registerCheck, setRegisterCheck] = useState(null);
 
   // 선택된 역할 처리 함수
@@ -129,15 +129,15 @@ const SignUpPage = () => {
       try {
         let loginRole = variables.selectedRole;
         if (variables.selectedRole === 3) {
-          loginRole = 1; // 회원가입 시 role이 3이면 로그인 시에는 1로 변경
+          loginRole = 2; // 회원가입 시 role이 3이면 로그인 시에는 2로 변경
         }
-
+  
         const loginRes = await defaultAPI.post("/login", {
           email: variables.email,
           pwd: variables.password,
           role: loginRole,
         });
-
+  
         // 로그인 성공 시 필요한 정보 저장 및 처리
         const { email, user_profile_id, name, role, nickname, token } = loginRes.data;
         sessionStorage.setItem("accessToken", token["accessToken"]);
@@ -146,8 +146,8 @@ const SignUpPage = () => {
         sessionStorage.setItem("email", email);
         sessionStorage.setItem("name", name);
         sessionStorage.setItem("nickname", nickname);
-        sessionStorage.setItem("role", role);
-
+        sessionStorage.setItem("role", loginRole); // 여기서 loginRole을 설정
+  
         // 메인 화면으로 이동
         navigate("/complete");
       } catch (error) {

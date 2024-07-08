@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import style from "./UserDetail.module.css";
 import { useMediaQuery } from "react-responsive";
 import { Tabs, Input, Upload, Image, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import Studyinfo from "./Studyinfo";
-import Selfinfo from "./Selfinfo";
 import Reviewinfo from "./Reviewinfo";
-import { data_mentee } from '../../../assets/data/mentee';
 import FilterButton from "../../../components/Button/FilterButton";
-import { editStateAtom } from "../../../recoil/atoms/mypage";
-import { useRecoilState } from "recoil";
+import { editStateAtom, nameState, imgState, introductionState, subject1State, subject2State, subject3State, subject4State, subject5State, location1State, location2State, location3State, methodState, feeState, careerState, portfolioState, contentState, scheduleState, prState } from "../../../recoil/atoms/mypage";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import axios from "axios";
+import AltImage from "../../../assets/images/devtogether_logo.png";
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -23,51 +23,175 @@ const Detail = () => {
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
   const isMobile = useMediaQuery({ maxWidth: 767 });
-  const isNotMobile = useMediaQuery({ minWidth: 768 });
 
   const [isEditing, setIsEditing] = useRecoilState(editStateAtom);
   const [tab, setTab] = useState('1');
-  const [formData, setFormData] = useState(data_mentee[2]);
-  const [introduction, setIntroduction] = useState(formData.introduction);
-  const [initialData, setInitialData] = useState(data_mentee[2]);
+
+  const name = useRecoilValue(nameState);
+  const img = useRecoilValue(imgState);
+  const introduction = useRecoilValue(introductionState);
+  const subject1 = useRecoilValue(subject1State);
+  const subject2 = useRecoilValue(subject2State);
+  const subject3 = useRecoilValue(subject3State);
+  const subject4 = useRecoilValue(subject4State);
+  const subject5 = useRecoilValue(subject5State);
+  const location1 = useRecoilValue(location1State);
+  const location2 = useRecoilValue(location2State);
+  const location3 = useRecoilValue(location3State);
+  const method = useRecoilValue(methodState);
+  const fee = useRecoilValue(feeState);
+  const career = useRecoilValue(careerState);
+  const portfolio = useRecoilValue(portfolioState);
+  const content = useRecoilValue(contentState);
+  const schedule = useRecoilValue(scheduleState);
+  const pr = useRecoilValue(prState);
+
+  const setName = useSetRecoilState(nameState);
+  const setImg = useSetRecoilState(imgState);
+  const setIntroduction = useSetRecoilState(introductionState);
+  const setSubject1 = useSetRecoilState(subject1State);
+  const setSubject2 = useSetRecoilState(subject2State);
+  const setSubject3 = useSetRecoilState(subject3State);
+  const setSubject4 = useSetRecoilState(subject4State);
+  const setSubject5 = useSetRecoilState(subject5State);
+  const setLocation1 = useSetRecoilState(location1State);
+  const setLocation2 = useSetRecoilState(location2State);
+  const setLocation3 = useSetRecoilState(location3State);
+  const setMethod = useSetRecoilState(methodState);
+  const setFee = useSetRecoilState(feeState);
+  const setCareer = useSetRecoilState(careerState);
+  const setPortfolio = useSetRecoilState(portfolioState);
+  const setContent = useSetRecoilState(contentState);
+  const setSchedule = useSetRecoilState(scheduleState);
+  const setPr = useSetRecoilState(prState);
+
+  const [formData, setFormData] = useState(null);
+  const [initialData, setInitialData] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
-  const [fileList, setFileList] = useState([
-    {
-      uid: '-1',
-      name: 'image.png',
-      status: 'done',
-      url: formData.img,
-    },
-  ]);
+  const [fileList, setFileList] = useState([]);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await axios.get('/user', {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          },
+        });
+        const userData = response.data;
+        const role = userData.role;
+
+        let profileResponse;
+        if (role === '멘토') {
+          profileResponse = await axios.get('/user/mentor', {
+            headers: {
+              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+            },
+          });
+        } else if (role === '멘티') {
+          profileResponse = await axios.get('/user/mentee', {
+            headers: {
+              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+            },
+          });
+        } else {
+          throw new Error('Invalid role');
+        }
+
+        const profileData = profileResponse.data[0];
+        const mergedData = { ...userData, ...profileData };
+
+        setFormData(mergedData);
+        setInitialData(mergedData);
+        setName(mergedData.name);
+        setImg(mergedData.img);
+        setIntroduction(mergedData.introduction);
+        setSubject1(mergedData.subject1 || '');
+        setSubject2(mergedData.subject2 || '');
+        setSubject3(mergedData.subject3 || '');
+        setSubject4(mergedData.subject4 || '');
+        setSubject5(mergedData.subject5 || '');
+        setLocation1(mergedData.location1 || '');
+        setLocation2(mergedData.location2 || '');
+        setLocation3(mergedData.location3 || '');
+        setMethod(mergedData.method || []);
+        setFee(mergedData.fee || '');
+        setCareer(mergedData.career || []);
+        setPortfolio(mergedData.portfolio || '');
+        setContent(mergedData.content || '');
+        setSchedule(mergedData.schedule || '');
+        setPr(mergedData.pr || '');
+        setFileList([{
+          uid: '-1',
+          name: 'image.png',
+          status: 'done',
+          url: mergedData.img,
+        }]);
+      } catch (error) {
+        console.error('사용자 정보를 가져오는 데 실패했습니다.', error);
+        message.error('사용자 정보를 가져오는 데 실패했습니다.');
+      }
+    };
+
+    fetchUserProfile();
+  }, [setName, setImg, setIntroduction, setSubject1, setSubject2, setSubject3, setSubject4, setSubject5, setLocation1, setLocation2, setLocation3, setMethod, setFee, setCareer, setPortfolio, setContent, setSchedule, setPr]);
 
   const handleTab = (value) => {
     setTab(value);
   };
 
-  const handleIntroductionChange = (e) => {
-    setIntroduction(e.target.value);
+  const handleSaveClick = async () => {
+    const updatedFormData = {
+      ...formData,
+      name,
+      img,
+      introduction,
+      subject1,
+      subject2,
+      subject3,
+      subject4,
+      subject5,
+      location1,
+      location2,
+      location3,
+      method,
+      fee,
+      career,
+      portfolio,
+      content,
+      schedule,
+      pr,
+    };
+
+    console.log('내 정보 수정 시 보내는 데이터:', updatedFormData);
+
+    try {
+      await axios.put('/user', updatedFormData, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+        },
+      });
+
+      const role = formData.role;
+      const profileUrl = role === '멘토' ? '/user/mentor' : '/user/mentee';
+      await axios.put(profileUrl, updatedFormData, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+        },
+      });
+
+      message.success("프로필이 성공적으로 수정되었습니다.");
+      setIsEditing(false);
+    } catch (error) {
+      console.error('프로필 수정에 실패했습니다.', error);
+      message.error('프로필 수정에 실패했습니다.');
+    }
   };
 
-  const handleSaveClick = () => {
-    // 현재 상태를 저장하여 초기 상태로 설정합니다.
-    setFormData(prevState => ({
-      ...prevState,
-      introduction: introduction,
-      img: fileList.length > 0 ? fileList[0].url : formData.img,
-    }));
-    setInitialData(prevState => ({
-      ...prevState,
-      introduction: introduction,
-      img: fileList.length > 0 ? fileList[0].url : formData.img,
-    })); // 초기 상태로 설정합니다.
-    setIsEditing(false);
-  };
-  
   const handleEditCancelClick = () => {
-    // 초기 상태로 되돌립니다.
-    setIntroduction(initialData.introduction); // 초기 상태로 되돌립니다.
-    setFormData(initialData); // 초기 상태로 되돌립니다.
+    setIntroduction(initialData.introduction);
+    setFormData(initialData);
     setIsEditing(false);
   };
 
@@ -87,6 +211,10 @@ const Detail = () => {
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
+
+  if (!formData) {
+    return <div>Loading...</div>;
+  }
 
   const user = formData;
 
@@ -122,7 +250,7 @@ const Detail = () => {
           </Upload>
         ) : (
           <div className={!isMobile ? style.mincircle : style.mobcircle}>
-            <img src={user.img} alt="유저이미지" />
+            <img src={user.img || AltImage} alt="유저이미지" />
           </div>
         )}
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', marginLeft: '20px' }}>
@@ -131,7 +259,7 @@ const Detail = () => {
             <Input
               className={!isMobile ? style.introduction : style.mobintroduction}
               value={introduction}
-              onChange={handleIntroductionChange}
+              onChange={(e) => setIntroduction(e.target.value)}
               placeholder="한 줄 소개"
               rows={4}
             />
@@ -155,14 +283,9 @@ const Detail = () => {
             label: '리뷰',
             key: '2',
           },
-          // {
-          //   label: '리뷰',
-          //   key: '3',
-          // },
         ]}
       />
       {tab === '1' && <Studyinfo isEditing={isEditing} />}
-      {/* {tab === '1' && <Selfinfo isEditing={isEditing} />} */}
       {tab === '2' && <Reviewinfo isEditing={isEditing} />}
       {previewImage && (
         <Image

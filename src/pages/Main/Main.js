@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { defaultAPI } from "../../api";
 import LoadingSpin from "../../components/Spin/LoadingSpin";
 import GetDataErrorView from "../../components/Result/GetDataError";
+import AltImage from "../../assets/images/devtogether_logo.png";
 
 // Custom arrow component
 const CustomArrow = ({ direction, onClick }) => (
@@ -42,11 +43,11 @@ const MainPage = () => {
   });
 
   if (isLoading) return <LoadingSpin />;
-  if (error) return <GetDataErrorView />;
+  if (error || !main) return <GetDataErrorView />;
 
-  const menteeProfiles = main.mentees.filter(mentee => mentee !== null);
-  const mentorProfiles = main.mentors.filter(mentor => mentor !== null);
-  const subjects = main.subjects.slice(0, 5); // 인기 있는 5개 과목만 표시
+  const menteeProfiles = (main.mentees || []).filter(mentee => mentee !== null);
+  const mentorProfiles = (main.mentors || []).filter(mentor => mentor !== null);
+  const subjects = (main.subjects || []).slice(0, 5); // 인기 있는 5개 과목만 표시
 
   const slidesToShow = breakpoints.isMobile
     ? 1
@@ -73,6 +74,14 @@ const MainPage = () => {
       { breakpoint: 768, settings: { slidesToShow: 2, slidesToScroll: 1 } },
       { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } },
     ],
+  };
+
+  const mergeSubjects = (profile) => {
+    return [profile.subject1, profile.subject2, profile.subject3, profile.subject4, profile.subject5].filter(Boolean).join(", ");
+  };
+
+  const mergeLocations = (profile) => {
+    return [profile.location1, profile.location2, profile.location3].filter(Boolean).join(", ");
   };
 
   return (
@@ -185,11 +194,11 @@ const MainPage = () => {
                   <ProfileMain
                     id={mentee.id}
                     nickname={mentee.nickname}
-                    subject={(mentee.subject || []).join(", ")}
-                    gender={mentee.gender === 0 ? "남자" : "여자"}
+                    subject={mergeSubjects(mentee)}
+                    gender={mentee.gender == '남' ? "남자" : "여자"}
                     age={mentee.age}
-                    location={mentee.location1}
-                    imagepath={mentee.img}
+                    location={mergeLocations(mentee)}
+                    imagepath={mentee.img || AltImage}
                     role={mentee.role}
                   />
                 </div>
@@ -210,11 +219,11 @@ const MainPage = () => {
                   <ProfileMain
                     id={mentor.id}
                     nickname={mentor.nickname}
-                    subject={(mentor.subject || []).join(", ")}
-                    gender={mentor.gender === 0 ? "남자" : "여자"}
+                    subject={mergeSubjects(mentor)}
+                    gender={mentor.gender === '남' ? "남자" : "여자"}
                     age={mentor.age}
-                    location={mentor.location1}
-                    imagepath={mentor.img}
+                    location={mergeLocations(mentor)}
+                    imagepath={mentor.img || AltImage}
                     role={mentor.role}
                   />
                 </div>

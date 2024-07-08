@@ -39,8 +39,8 @@ const Profile = (props) => {
     sessionStorage.setItem('selectedProfile', JSON.stringify(profileData));
 
     const detailPagePath = props.role === '멘토' ? `/matching/mentor/${props.id}` : `/matching/mentee/${props.id}`;
-  console.log("Navigating to:", detailPagePath);
-  navigate(detailPagePath); // 프로필 상세 페이지로 이동
+    console.log("Navigating to:", detailPagePath);
+    navigate(detailPagePath); // 프로필 상세 페이지로 이동
   };
 
   const [subjectText, setSubjectText] = useState("");

@@ -19,6 +19,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import LoadingSpin from '../../components/Spin/LoadingSpin';
 import GetDataErrorView from '../../components/Result/GetDataError';
+import AltImage from "../../assets/images/devtogether_logo.png";
 
 const fetchMenteeData = async () => {
     const accessToken = sessionStorage.getItem('accessToken');
@@ -285,13 +286,14 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
                                             fee={profile.fee}
                                             method={profile.method}
                                             imagetext="프로필 이미지"
-                                            imagepath={profile.img} // 이미지 경로 추가
-                                            introduction={profile.introduction} // 소개 추가
-                                            portfolio={profile.portfolio} // 포트폴리오 추가
-                                            contents={profile.contents} // 과외 소개 추가
-                                            schedule={profile.schedule} // 과외 일정 추가
-                                            pr={profile.pr} // 어필 추가
-                                            />
+                                            imagepath={profile.img || AltImage} // profile.img가 없으면 기본 이미지를 사용
+                                            introduction={profile.introduction}
+                                            portfolio={profile.portfolio}
+                                            contents={profile.contents}
+                                            schedule={profile.schedule}
+                                            pr={profile.pr}
+                                        />
+
                                         ))
                                     )}
                                 </div>

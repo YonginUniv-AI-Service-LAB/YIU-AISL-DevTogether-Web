@@ -50,6 +50,7 @@ const CompletePage = () => {
     const userRole = sessionStorage.getItem('role');
     const token = sessionStorage.getItem('accessToken');
     const userNickname = sessionStorage.getItem('nickname');
+    console.log("sessionStorage에서 가져온 닉네임:", userNickname); // 닉네임 값 로그 추가
     setRole(userRole);
     setAccessToken(token);
     setNickname(userNickname);
@@ -75,8 +76,8 @@ const CompletePage = () => {
     setModalPage(modalPage - 1);
   };
 
-  const goToLoginPage = () => {
-    navigate("/signin");
+  const goToMainPage = () => {
+    navigate("/main");
   };
 
   const handleSubjectChange = (value) => {
@@ -131,90 +132,99 @@ const CompletePage = () => {
     message.error("모든 필수 항목을 입력해 주세요.");
   };
 
-  const updateUserProfile = useMutation({
-    mutationFn: async (data) => {
-      await defaultAPI.put("/user", {
-        email: data.email,
-        name: data.name,
-        nickname: data.nickname,
-        role: data.role,
-        gender: data.gender,
-        age: data.age,
-        location1: data.location1,
-        location2: data.location2,
-        location3: data.location3,
-        question: data.question,
-        answer: data.answer,
-      }, {
+ // UpdateProfile mutation
+ const updateUserProfile = useMutation({
+  mutationFn: async (data) => {
+    try {
+      await defaultAPI.put("/user", data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
         },
       });
-    },
-    onSuccess: async () => {
-      if (role === '2') {
-        내_멘티_프로필_수정.mutate();
-      } else if (role === '1') {
-        내_멘토_프로필_수정.mutate();
-      }
-      message.success("회원님의 프로필이 수정되었습니다!");
-      queryClient.invalidateQueries("myProfile");
-      setIsModalVisible(false);
-      goToLoginPage();
-    },
-    onError: (e) => {
-      console.log("프로필 수정 실패: ", e);
-      message.error("프로필 수정 중 오류가 발생했습니다.");
-    },
-  });
-
-  const 내_멘티_프로필_수정 = useMutation({
-    mutationFn: async (data) => {
-      const formData = new FormData();
-      formData.append("introduction", data.introduction || '');
-      formData.append("method", data.method || '');
-      formData.append("schedule", data.schedule || '');
-      formData.append("fee", data.fee || '');
-      formData.append("pr", data.pr || '');
-      formData.append("portfolio", data.link || '');
-      formData.append("contents", data.contents || '');
-      formData.append("nickname", data.nickname || '');
-
-      if (data.files.length > 0) {
-        data.files.forEach((file) => {
-          formData.append("img", file);
-        });
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        console.error('API 요청 오류: ', error.response.data);
+        throw new Error('잘못된 요청입니다. 입력 데이터를 확인해 주세요.');
       } else {
-        formData.append("img", new Blob());  // 빈 파일 추가
+        throw error;
       }
+    }
+  },
+  onSuccess: async () => {
+    if (role === '2') {
+      내_멘티_프로필_수정.mutate();
+    } else if (role === '1') {
+      내_멘토_프로필_수정.mutate();
+    }
+    message.success("회원님의 프로필이 수정되었습니다!");
+    queryClient.invalidateQueries("myProfile");
+    setIsModalVisible(false);
+    goToMainPage();
+  },
+  onError: (e) => {
+    console.log("프로필 수정 실패: ", e);
+    message.error(e.message || "프로필 수정 중 오류가 발생했습니다.");
+  },
+});
 
-      formData.append("subject1", data.subject1 || '');
-      formData.append("subject2", data.subject2 || '');
-      formData.append("subject3", data.subject3 || '');
-      formData.append("subject4", data.subject4 || '');
-      formData.append("subject5", data.subject5 || '');
+const 내_멘티_프로필_수정 = useMutation({
+  mutationFn: async (data) => {
+    const formData = new FormData();
+    formData.append("introduction", data.introduction || '');
+    formData.append("method", data.method || '');
+    formData.append("schedule", data.schedule || '');
+    formData.append("fee", data.fee || '');
+    formData.append("pr", data.pr || '');
+    formData.append("portfolio", data.portfolio || '');
+    formData.append("contents", data.contents || '');
+    formData.append("nickname", data.nickname || '');
 
-      console.log("전송할 FormData: ");
-      formData.forEach((value, key) => {
-        console.log(key, value);
+    if (data.files.length > 0) {
+      data.files.forEach((file) => {
+        formData.append("img", file);
       });
+    } else {
+      formData.append("img", new Blob()); // 빈 파일 추가
+    }
 
-      await authFileAPI.put("/user/mentee", formData, {
+    formData.append("subject1", data.subject1 || '');
+    formData.append("subject2", data.subject2 || '');
+    formData.append("subject3", data.subject3 || '');
+    formData.append("subject4", data.subject4 || '');
+    formData.append("subject5", data.subject5 || '');
+
+    console.log("전송할 FormData: ");
+    formData.forEach((value, key) => {
+      console.log(key, value);
+    });
+
+    try {
+      const response = await authFileAPI.put("/user/mentee", formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-    },
-    onSuccess: (data, variables) => {
-      message.success("회원님의 멘티 프로필이 수정되었습니다!");
-      queryClient.invalidateQueries("myMenteeProfile");
-      console.log("멘티 프로필 수정 성공: ", data);
-    },
-    onError: (e) => {
-      console.log("멘티 프로필 수정 실패: ", e);
-      message.error("잠시 후에 다시 시도해주세요");
-    },
-  });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        console.error('API 요청 오류: ', error.response.data); // 응답 로그 추가
+        throw new Error('잘못된 요청입니다. 입력 데이터를 확인해 주세요.');
+      } else {
+        throw error;
+      }
+    }
+  },
+  onSuccess: (data, variables) => {
+    message.success("회원님의 멘티 프로필이 수정되었습니다!");
+    queryClient.invalidateQueries("myMenteeProfile");
+    console.log("멘티 프로필 수정 성공: ", data);
+  },
+  onError: (e) => {
+    console.log("멘티 프로필 수정 실패: ", e);
+    // message.error("잠시 후에 다시 시도해주세요");
+  },
+});
 
   const 내_멘토_프로필_수정 = useMutation({
     mutationFn: async (data) => {
@@ -224,8 +234,9 @@ const CompletePage = () => {
       formData.append("schedule", data.schedule || '');
       formData.append("fee", data.fee || '');
       formData.append("pr", data.pr || '');
-      formData.append("portfolio", data.link || '');
+      formData.append("portfolio", data.portfolio || '');
       formData.append("contents", data.contents || '');
+      formData.append("nickname", data.nickname || '');
 
       if (data.files.length > 0) {
         data.files.forEach((file) => {
@@ -259,30 +270,26 @@ const CompletePage = () => {
     },
     onError: (e) => {
       console.log("멘토 프로필 수정 실패: ", e);
-      message.error("잠시 후에 다시 시도해주세요");
+      // message.error("잠시 후에 다시 시도해주세요");
     },
   });
 
-  const handleFinish = (values) => {
+  const handleFinish = async (values) => {
+    const role = sessionStorage.getItem('role');
+  
     if (!selectedSubject.length || !selectedLocation.length || !selectedMethod.length || !fee) {
       message.error("모든 필수 항목을 입력해 주세요.");
       return;
     }
-
+  
     const commonData = {
-      email: "user@example.com",  // 이 부분은 실제 사용자 이메일로 대체되어야 합니다
-      name: "User Name",  // 이 부분은 실제 사용자 이름으로 대체되어야 합니다
-      nickname: "Nickname",  // 이 부분은 실제 사용자 닉네임으로 대체되어야 합니다
-      role: parseInt(role),
-      gender: 1,  // 이 부분은 실제 사용자 성별로 대체되어야 합니다
-      age: 25,  // 이 부분은 실제 사용자 나이로 대체되어야 합니다
+      email: sessionStorage.getItem('email'),
       location1: selectedLocation[0] || '',
       location2: selectedLocation[1] || '',
       location3: selectedLocation[2] || '',
-      question: 1,  // 이 부분은 실제 질문 ID로 대체되어야 합니다
-      answer: "Answer",  // 이 부분은 실제 답변으로 대체되어야 합니다
+      nickname: nickname, // 여기에 nickname 추가
     };
-
+  
     const profileData = {
       subject1: selectedSubject[0] || '',
       subject2: selectedSubject[1] || '',
@@ -294,26 +301,36 @@ const CompletePage = () => {
       introduction: oneLineIntro || '',
       schedule: values.schedule || '',
       pr: values.appeal || '',
-      link: portfolio || '',
+      portfolio: portfolio || '',
       contents: values.intro || '',
       files: fileList.map(file => file.originFileObj),
+      nickname: nickname,
     };
-
-    console.log("전송할 데이터: ", { ...commonData, ...profileData });
-    console.log("role 값: ", role);  // role 값 확인을 위한 콘솔 로그 추가
-
-    updateUserProfile.mutate(commonData);
-    if (role === '2') {
-      내_멘티_프로필_수정.mutate(profileData);
-    } else if (role === '1') {
-      내_멘토_프로필_수정.mutate(profileData);
+  
+    const dataToSend = { ...commonData, ...profileData };
+  
+    console.log("전송할 데이터: ", dataToSend); // 데이터 로그 추가
+    console.log("role 값: ", role); // role 값 확인을 위한 콘솔 로그 추가
+    console.log("nickname 값: ", nickname); // 닉네임 값 로그 추가
+  
+    try {
+      await updateUserProfile.mutateAsync(dataToSend);
+  
+      if (role === '2') {
+        await 내_멘티_프로필_수정.mutateAsync(profileData);
+      } else if (role === '1') {
+        await 내_멘토_프로필_수정.mutateAsync(profileData);
+      }
+  
+      setIsModalVisible(false);
+      goToMainPage();
+    } catch (error) {
+      console.error("프로필 수정 실패: ", error); // 오류 로그 추가
+      message.error("프로필 수정 중 오류가 발생했습니다.");
     }
-
-    message.success("제출이 완료되었습니다.");
-    setIsModalVisible(false);
-    goToLoginPage();
   };
-
+  
+  
   const placeholdercontents = "구인공고에 들어갈 내용 \n \n예) 파이썬을 배우고 있는 대학생입니다, 파이썬을 처음부터 친절하게 가르쳐주실 과외선생님 구합니다!  \n\n예) 웹페이지 제작 프론트엔드 전공자입니다. 웹페이지 제작에 쓸만한 기술이나 언어에 관심있는 과외 학생 구합니다";
   const placeholderschedule = "과외가 가능한 일정 \n \n예) 주중 및 주말 협의\n\n예) 월요일 15:00~18:00, 문의시 조율하여 결정";
 
@@ -380,7 +397,7 @@ const CompletePage = () => {
               }}
             >
               <FilterButton name={"정보 추가"} onClick={showModal} style={{ margin: "10px" }} />
-              <FilterButton name={"다음에"} onClick={goToLoginPage} style={{ margin: "10px" }} />
+              <FilterButton name={"다음에"} onClick={goToMainPage} style={{ margin: "10px" }} />
             </div>
           </div>
 
@@ -426,7 +443,7 @@ const CompletePage = () => {
                       onChange={handleMethodChange}
                     />
                   </Form.Item>
-                  <Form.Item label="최소 과외비" name="fee" rules={[{ required: true, message: "과외비를 입력하세요!" }]}>
+                  <Form.Item label={role === '1' ? "최소 과외비" :  "최대 과외비"} name="fee" rules={[{ required: true, message: "과외비를 입력하세요!" }]}>
                     <Input type="text" placeholder="과외 금액" suffix="원" value={fee} onChange={handleFeeChange} />
                   </Form.Item>
                   <Form.Item label="프로필 이미지" name="profileImage">

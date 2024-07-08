@@ -113,12 +113,12 @@ const Header = (props) => {
 
   const DrawerMenuItems = [
     {
-      key: "/matching/:mentee",
+      key: "/matching/menteelist",
       icon: <ReadOutlined />,
       label: "학생 찾기",
     },
     {
-      key: "/matching/:mento",
+      key: "/matching/mentorlist",
       icon: <SignatureOutlined />,
       label: "선생님 찾기",
     },
@@ -229,11 +229,11 @@ const Header = (props) => {
       </div>
 
       <div>
-        <HeaderNavBtn type={"text"} text="학생 찾기" href="/matching/:mentee" />
+        <HeaderNavBtn type={"text"} text="학생 찾기" href="/matching/menteelist" />
         <HeaderNavBtn
           type={"text"}
           text="선생님 찾기"
-          href="/matching/:mento"
+          href="/matching/mentorlist"
         />
         <HeaderNavBtn type={"text"} text="커뮤니티" href="/board" />
         <HeaderNavBtn type={"text"} text="공지사항" href="/notice" />
