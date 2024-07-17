@@ -10,6 +10,16 @@ export const nameState = atom({
     default: "",
   });
   
+  export const genderState = atom({
+    key: "genderState",
+    default: "",
+  });
+
+  export const ageState = atom({
+    key: "ageState",
+    default: "",
+  });
+
   export const imgState = atom({
     key: "imgState",
     default: "",

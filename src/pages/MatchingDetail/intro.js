@@ -7,10 +7,10 @@ import { TfiWrite } from "react-icons/tfi";
 import { FaRegPaperPlane } from "react-icons/fa";
 import Studyintro from "./studyintro";
 import Reviewintro from "./reviewintro";
-import axios from 'axios'; // axios를 이용해 서버와 통신
-import { useNavigate } from "react-router-dom"; // 페이지 이동
+import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
-import { MessageReceiverAtom } from "../../recoil/atoms/message"; // Recoil 상태 관리
+import { MessageReceiverAtom } from "../../recoil/atoms/message";
 import { IoMdMore } from "react-icons/io";
 
 const { TextArea } = Input;
@@ -20,10 +20,27 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
 
   const handleApply = () => {
     form.validateFields().then(values => {
-      onApply({
+      const subjects = values.subject || [];
+      const locations = values.location || [];
+
+      const formattedValues = {
         ...values,
-        fee: values.fee.replace(/,/g, ''), // 쉼표 제거 후 숫자로 변환하여 저장
-      });
+        tutoringFee: values.tutoringFee.replace(/,/g, ''), // 쉼표 제거 후 숫자로 변환하여 저장
+        subject1: subjects[0] || '',
+        subject2: subjects[1] || '',
+        subject3: subjects[2] || '',
+        subject4: subjects[3] || '',
+        subject5: subjects[4] || '',
+        location1: locations[0] || '',
+        location2: locations[1] || '',
+        location3: locations[2] || ''
+      };
+
+      // subject와 location 배열 제거
+      delete formattedValues.subject;
+      delete formattedValues.location;
+
+      onApply(formattedValues);
       form.resetFields();
     });
   };
@@ -31,7 +48,7 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
   const handleFeeChange = (e) => {
     const value = e.target.value;
     const formattedValue = value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    form.setFieldsValue({ fee: formattedValue });
+    form.setFieldsValue({ tutoringFee: formattedValue });
   };
 
   const methodOptions = [];
@@ -102,7 +119,7 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
           </Select>
         </Form.Item>
         <Form.Item
-          name="requirements"
+          name="schedule"
           label="과외일정"
         >
           <TextArea 
@@ -116,14 +133,14 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
               }} />
         </Form.Item>
         <Form.Item
-          name="fee"
+          name="tutoringFee"
           label="과외비"
           rules={[{ required: true, message: '과외비를 입력해주세요.' }]}
         >
           <Input placeholder="과외비를 입력하세요" onChange={handleFeeChange} suffix="원"/>
         </Form.Item>
         <Form.Item
-          name="additionalRequirements"
+          name="contents"
           label="추가 요구 사항"
         >
           <TextArea 
@@ -161,41 +178,97 @@ const Intro = () => {
     return storedProfile ? JSON.parse(storedProfile) : {};
   });
 
+  // 세션 스토리지에서 현재 사용자 데이터 가져오기
+  const currentUserId = sessionStorage.getItem('user_profile_id');
+  const currentUserRole = sessionStorage.getItem('role');
+  const accessToken = sessionStorage.getItem('accessToken');
+  
   useEffect(() => {
     console.log("Intro Profile Data:", profile);
-  }, [profile]);
-
+    console.log("Profile Role:", profile.role); // 프로필 역할 출력
+    console.log("Current User Role:", currentUserRole); // 현재 사용자 역할 출력
+    setIsScrapped(profile.scrap === 1); // 스크랩 여부 초기화
+  }, [profile, currentUserRole]);
+  
   const handleTab = (value) => {
     setTab(value);
   };
-
+  
   const handleScrapClick = () => {
-    setIsScrapped(!isScrapped);
+    const scrapId = profile.id;
+    const apiEndpoint = currentUserRole === '2' ? '/scrap/mentor' : '/scrap/mentee';
+    const data = new URLSearchParams({
+      scrapId: scrapId,
+      requesterId: currentUserId, // 현재 사용자 ID
+    });
+
+    console.log('스크랩 API 요청 데이터:', data.toString()); // 스크랩 API 요청 데이터 출력
+
+    axios.post(apiEndpoint, data, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+    .then(response => {
+      setIsScrapped(!isScrapped);
+      message.success('스크랩이 성공적으로 처리되었습니다.');
+    })
+    .catch(error => {
+      console.error('스크랩 실패:', error.response ? error.response.data : error.message);
+      message.error('스크랩 중 오류가 발생했습니다.');
+    });
   };
 
   const handleApplyClick = () => {
     setIsModalVisible(true);
   };
-
+  
   const handleModalCancel = () => {
     setIsModalVisible(false);
   };
-
+  
   const handleModalApply = (values) => {
     console.log('과외 신청 데이터:', values);
-    
-    // 서버에 데이터 전송
-    axios.post('/api/tutoring-requests', {
+  
+    // 현재 사용자의 역할을 기반으로 mentor 또는 mentee 설정
+    const requestData = {
       ...values,
+      mentor: currentUserRole === '2' ? profile.id : null,
+      mentee: currentUserRole === '1' ? profile.id : null,
       profileId: profile.id, // 신청 대상 프로필의 ID
-      requesterId: currentUserId // 신청자의 ID
+      requesterId: currentUserId, // 신청자의 ID
+      user_profile_id: profile.id // 상대방의 user_profile_id 추가
+    };
+
+    console.log('API 요청 데이터:', requestData); // 콘솔에 데이터 출력
+
+    // 데이터를 URL 인코딩된 형식으로 변환
+    const params = new URLSearchParams();
+    for (const key in requestData) {
+      if (requestData[key] !== null && requestData[key] !== undefined) {
+        params.append(key, requestData[key]);
+      }
+    }
+
+    // 적절한 API 엔드포인트 선택
+    const apiEndpoint = currentUserRole === '2' 
+      ? '/matching/application/mentor'  // 멘티가 멘토에게 신청
+      : '/matching/application/mentee'; // 멘토가 멘티에게 신청
+
+    // 서버에 데이터 전송
+    axios.post(apiEndpoint, params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Bearer ${accessToken}`
+      }
     })
     .then(response => {
       console.log('과외 신청 성공:', response.data);
       message.success('과외 신청이 성공적으로 전송되었습니다.');
     })
     .catch(error => {
-      console.error('과외 신청 실패:', error);
+      console.error('과외 신청 실패:', error.response ? error.response.data : error.message);
       message.error('과외 신청 중 오류가 발생했습니다.');
     });
 
@@ -207,13 +280,10 @@ const Intro = () => {
     navigate('/message');
   };
 
-  const currentUserRole = 2; // 예시로 현재 사용자가 멘티일 경우 1로 설정합니다.
-  const currentUserId = 123; // 예시로 현재 사용자의 ID를 설정합니다.
-
   const menu = (
     <Menu>
       <Menu.Item key="1" style={{ borderBottom: "none" }}>
-          신고
+        신고
       </Menu.Item>
     </Menu>
   );
@@ -228,9 +298,9 @@ const Intro = () => {
               {isScrapped && <FaBookmark style={{ color: '68568E' }} />}
             </div>
           </div>
-          <div style={{display:'flex', justifyContent:'flex-end', fontSize:'30px', marginRight:'10px'}}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', fontSize: '30px', marginRight: '10px' }}>
             <Dropdown overlay={menu} trigger={['click']} placement="bottomRight" arrow>
-                    <IoMdMore style={{ cursor: 'pointer'}} />
+              <IoMdMore style={{ cursor: 'pointer' }} />
             </Dropdown>
           </div>  
         </div>
@@ -246,13 +316,14 @@ const Intro = () => {
       </div>
 
       <div className={style.reaction}>
-        <div className={style.like} onClick={handleScrapClick} >
-          {isScrapped ? <FaBookmark style={{ color: '68568E' }} /> : <FaRegBookmark />} <span style={{ marginLeft: "10px", marginRight: "10px", color: isScrapped ? '#68568E' : 'gray' }}>스크랩</span>
+        <div className={style.like} onClick={handleScrapClick}>
+          {isScrapped ? <FaBookmark style={{ color: '68568E' }} /> : <FaRegBookmark />} 
+          <span style={{ marginLeft: "10px", marginRight: "10px", color: isScrapped ? '#68568E' : 'gray' }}>스크랩</span>
         </div>
         {profile.role !== currentUserRole && (
           <>
             <span style={{ opacity: '0.3' }}> | </span>
-            <div className={style.like} onClick={handleApplyClick} >
+            <div className={style.like} onClick={handleApplyClick}>
               <TfiWrite /><span style={{ marginLeft: "10px", marginRight: "10px" }}>과외 신청</span>
             </div>
           </>

@@ -401,7 +401,7 @@ const 내_멘티_프로필_수정 = useMutation({
               }}
             >
               <FilterButton name={"정보 추가"} onClick={showModal} style={{ margin: "10px" }} />
-              <FilterButton name={"다음에"} onClick={goToLoginPage} style={{ margin: "10px" }} />
+              <FilterButton name={"다음에"} onClick={goToMainPage} style={{ margin: "10px" }} />
             </div>
           </div>
 

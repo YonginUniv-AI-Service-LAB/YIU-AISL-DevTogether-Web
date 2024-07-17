@@ -52,9 +52,6 @@ const MainPage = () => {
   const menteeProfiles = (main.mentees || []).filter(mentee => mentee !== null);
   const mentorProfiles = (main.mentors || []).filter(mentor => mentor !== null);
   const subjects = (main.subjects || []).slice(0, 5); // 인기 있는 5개 과목만 표시
-  const menteeProfiles = main.mentees.filter((mentee) => mentee !== null);
-  const mentorProfiles = main.mentors.filter((mentor) => mentor !== null);
-  const subjects = main.subjects.slice(0, 5); // 인기 있는 5개 과목만 표시
 
   const slidesToShow = breakpoints.isMobile
     ? 1
@@ -93,7 +90,6 @@ const MainPage = () => {
 
   return (
     <div>
-      {/* 광고성 영역
       {!isMobile && (
         <div className={styles.banner}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -127,7 +123,7 @@ const MainPage = () => {
             />
           </div>
         </div>
-      )} */}
+      )}
 
 
       {isMobile && (
@@ -170,9 +166,9 @@ const MainPage = () => {
             </div>
           </div>
         </div>
-      )} */}
+      )} 
 
-      {/* <div
+      <div
         style={{
           marginLeft: breakpoints.isMobile
             ? "5%"
@@ -191,7 +187,7 @@ const MainPage = () => {
         }}
 
       >
-        {/* 멘티 프로필 섹션 */}
+        {/* {/* 멘티 프로필 섹션 */}
         <div className={styles.profileSection}>
           <div style={{ fontSize: "25px", fontWeight: "bold" }}>
             학생 프로필 미리보기
@@ -214,10 +210,10 @@ const MainPage = () => {
               </div>
             ))}
           </Carousel>
-        </div> */}
+        </div>
 
       {/* 멘토 프로필 섹션 */}
-      {/* <div style={{ marginTop: "20px" }}>
+      <div style={{ marginTop: "20px" }}>
           <div style={{ fontSize: "25px", fontWeight: "bold" }}>
             선생님 프로필 미리보기
           </div>
@@ -239,10 +235,10 @@ const MainPage = () => {
               </div>
             ))}
           </Carousel>
-        </div> */}
+        </div>
 
       {/* 인기 있는 과목 섹션 */}
-      {/* <div style={{ marginTop: "20px" }}>
+      <div style={{ marginTop: "20px" }}>
           <div
             style={{
               marginBottom: "25px",
@@ -262,7 +258,7 @@ const MainPage = () => {
             ))}
           </Carousel>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };

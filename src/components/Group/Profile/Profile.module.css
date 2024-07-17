@@ -1,3 +1,4 @@
+/* Profile.module.css */
 .background {
     background-color: #f0f0f0;
     margin-top: 80px;
@@ -71,6 +72,7 @@
 .process {
     display: flex;
     justify-content: center;
+    width: 100%; /* 추가: process 클래스의 너비를 100%로 설정 */
 }
 
 .managebg {
@@ -81,6 +83,7 @@
     position: relative;
     margin-left: 10px;
     margin-right: 10px;
+    width: 220px; /* 추가: managebg 클래스의 너비를 220px로 설정 */
 }
 
 .ing {
@@ -93,6 +96,8 @@
     padding-left: 15px;
     padding-right: 15px;
     padding-bottom: 10px; 
+    width: 100%; /* 추가: ing 클래스의 너비를 100%로 설정 */
+    text-align: center; /* 추가: 텍스트 가운데 정렬 */
 }
 
 .end {
@@ -107,6 +112,8 @@
     padding-right: 15px;
     padding-bottom: 10px; 
     cursor: pointer;
+    text-align: center; /* 추가: 텍스트 가운데 정렬 */
+    width: 100%; /* 추가: end 클래스의 너비를 100%로 설정 */
 }
 
 .end:hover {
@@ -130,4 +137,18 @@
 
 .ribbon {
     left: 180px; /* 필요한 만큼의 값으로 조정 */
+}
+
+/* 추가된 one 클래스 */
+.one {
+    width: 100%; /* one 클래스의 너비를 100%로 설정 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 15px;
+    /* padding: 10px 20px; */
+    font-weight: 400;
+    margin-bottom: 10px;
+    text-align: center; /* 텍스트 가운데 정렬 */
 }

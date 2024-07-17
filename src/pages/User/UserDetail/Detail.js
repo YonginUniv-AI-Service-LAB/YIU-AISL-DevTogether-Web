@@ -6,7 +6,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import Studyinfo from "./Studyinfo";
 import Reviewinfo from "./Reviewinfo";
 import FilterButton from "../../../components/Button/FilterButton";
-import { editStateAtom, nameState, imgState, introductionState, subject1State, subject2State, subject3State, subject4State, subject5State, location1State, location2State, location3State, methodState, feeState, careerState, portfolioState, contentState, scheduleState, prState } from "../../../recoil/atoms/mypage";
+import { editStateAtom, nameState, imgState, introductionState, subject1State, subject2State, subject3State, subject4State, subject5State, location1State, location2State, location3State, methodState, feeState, careerState, portfolioState, contentState, scheduleState, prState, genderState, ageState } from "../../../recoil/atoms/mypage";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import axios from "axios";
 import AltImage from "../../../assets/images/devtogether_logo.png";
@@ -45,6 +45,8 @@ const Detail = () => {
   const content = useRecoilValue(contentState);
   const schedule = useRecoilValue(scheduleState);
   const pr = useRecoilValue(prState);
+  const gender = useRecoilValue(genderState);
+  const age = useRecoilValue(ageState);
 
   const setName = useSetRecoilState(nameState);
   const setImg = useSetRecoilState(imgState);
@@ -64,6 +66,8 @@ const Detail = () => {
   const setContent = useSetRecoilState(contentState);
   const setSchedule = useSetRecoilState(scheduleState);
   const setPr = useSetRecoilState(prState);
+  const setGender = useSetRecoilState(genderState);
+  const setAge = useSetRecoilState(ageState);
 
   const [formData, setFormData] = useState(null);
   const [initialData, setInitialData] = useState(null);
@@ -119,9 +123,11 @@ const Detail = () => {
         setFee(mergedData.fee || '');
         setCareer(mergedData.career || []);
         setPortfolio(mergedData.portfolio || '');
-        setContent(mergedData.content || '');
+        setContent(mergedData.contents || '');
         setSchedule(mergedData.schedule || '');
         setPr(mergedData.pr || '');
+        setGender(mergedData.gender || '');
+        setAge(mergedData.age || '');
         setFileList([{
           uid: '-1',
           name: 'image.png',
@@ -135,7 +141,7 @@ const Detail = () => {
     };
 
     fetchUserProfile();
-  }, [setName, setImg, setIntroduction, setSubject1, setSubject2, setSubject3, setSubject4, setSubject5, setLocation1, setLocation2, setLocation3, setMethod, setFee, setCareer, setPortfolio, setContent, setSchedule, setPr]);
+  }, [setName, setImg, setIntroduction, setSubject1, setSubject2, setSubject3, setSubject4, setSubject5, setLocation1, setLocation2, setLocation3, setMethod, setFee, setCareer, setPortfolio, setContent, setSchedule, setPr, setGender, setAge]);
 
   const handleTab = (value) => {
     setTab(value);
@@ -162,6 +168,8 @@ const Detail = () => {
       content,
       schedule,
       pr,
+      gender,
+      age,
     };
 
     console.log('내 정보 수정 시 보내는 데이터:', updatedFormData);

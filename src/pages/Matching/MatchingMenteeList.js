@@ -53,7 +53,8 @@ const fetchMenteeData = async () => {
         portfolio: profile.portfolio,
         contents: profile.contents,
         schedule: profile.schedule,
-        pr: profile.pr
+        pr: profile.pr,
+        scrap: profile.scrap // 추가된 부분
     }));
 };
 
@@ -292,6 +293,7 @@ const MatchingMenteeList = ({ handleSidebarButtonClick }) => {
                                             contents={profile.contents}
                                             schedule={profile.schedule}
                                             pr={profile.pr}
+                                            scrap={profile.scrap} // 추가된 부분
                                         />
 
                                         ))

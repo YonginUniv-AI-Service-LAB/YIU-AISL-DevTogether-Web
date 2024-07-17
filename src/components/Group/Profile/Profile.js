@@ -31,6 +31,7 @@ const Profile = (props) => {
       contents: props.contents,
       pr: props.pr,
       schedule: props.schedule,
+      scrap: props.scrap,
     };
 
     console.log("Profile Data to Store:", profileData);
@@ -88,7 +89,7 @@ const Profile = (props) => {
         <img src={props.imagepath} alt={props.imagetext} />
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginRight: '10px', marginLeft: '10px', marginTop: '25px' }}>
-        <ScrapButton nickname={props.nickname} />
+        <ScrapButton profileId={props.id} isScrapped={props.scrap === 1} />
         <MoreButton onClick={handleMoreButtonClick} />
       </div>
       <div className={style.information}>

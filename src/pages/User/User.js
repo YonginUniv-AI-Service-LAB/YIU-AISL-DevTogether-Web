@@ -12,7 +12,6 @@ import Scraped from "./Scraped";
 import Manager from "./Manager";
 import Detail from "./UserDetail/Detail";
 import Push from "./Push";
-import { data_push } from "../../assets/data/push"; // 알림 데이터
 import Body from "../../components/Group/Body/Body";
 import Userimg from '../../assets/images/PageHeaderImage/user.svg';
 import AltImage from "../../assets/images/devtogether_logo.png";
@@ -28,8 +27,23 @@ const UserPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(null); // 초기 상태를 null로 설정
   const [selectedCategory, setSelectedCategory] = useState("내 정보");
-  const [notifications, setNotifications] = useState(data_push);
+  const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchNotifications = async () => {
+    try {
+      const response = await axios.get('/user/push', {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+        },
+      });
+      setNotifications(response.data);
+      setUnreadCount(response.data.filter(notification => notification.checks === 1).length);
+    } catch (error) {
+      console.error('알림 데이터를 가져오는 데 실패했습니다.', error);
+      message.error('알림 데이터를 가져오는 데 실패했습니다.');
+    }
+  };
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -41,6 +55,8 @@ const UserPage = () => {
         });
         const userData = response.data;
         const role = userData.role; // 사용자의 역할을 가져옴
+
+        console.log('사용자 기본 정보:', userData);
 
         let profileResponse;
         if (role === '멘토') {
@@ -59,6 +75,8 @@ const UserPage = () => {
           throw new Error('Invalid role');
         }
 
+        console.log('역할별 추가 정보:', profileResponse.data);
+
         const profileData = profileResponse.data[0]; // 역할에 맞는 데이터를 가져오기
 
         // 기본 정보와 역할별 데이터를 병합하여 formData 설정
@@ -67,7 +85,7 @@ const UserPage = () => {
 
         setFormData(mergedData);
       } catch (error) {
-        console.error('사용자 정보를 가져오는 데 실패했습니다.', error);
+        console.error('사용자 정보를 가져오는 데 실패했습니다:', error);
         message.error('사용자 정보를 가져오는 데 실패했습니다.');
       }
     };
@@ -76,9 +94,8 @@ const UserPage = () => {
   }, []);
 
   useEffect(() => {
-    // 알림 수를 초기화
-    setUnreadCount(notifications.filter(notification => !notification.read).length);
-  }, [notifications]);
+    fetchNotifications();
+  }, [selectedCategory]);
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
@@ -91,9 +108,10 @@ const UserPage = () => {
   const handleNotificationClick = (notification) => {
     setNotifications((prevNotifications) =>
       prevNotifications.map((item) =>
-        item.id === notification.id ? { ...item, read: true } : item
+        item.pushId === notification.pushId ? { ...item, checks: 0 } : item
       )
     );
+    setUnreadCount(prevCount => Math.max(prevCount - 1, 0));
   };
 
   const renderContent = () => {
@@ -124,8 +142,8 @@ const UserPage = () => {
   const user = formData;
 
   return (
-   <div> 
-    {!isMobile && <div className={style.background2}>
+    <div> 
+      {!isMobile && <div className={style.background2}>
                 <div style={{paddingBottom:'200px'}}></div>
                 <Body
                     sentence1 ="나의 프로필과 정보를 한 눈에"
@@ -134,7 +152,7 @@ const UserPage = () => {
                     imageSrc={Userimg} // 이미지 경로를 전달합니다.
                 />
             </div>}
-            {isMobile && <div className={style.background2}>
+      {isMobile && <div className={style.background2}>
                 <div style={{paddingBottom:'100px'}}></div>
                 <Body
                     sentence1 ="나의 프로필과 정보를 한 눈에"
@@ -154,9 +172,13 @@ const UserPage = () => {
           {!isMobile && (
           <div className={style.user} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <div className={style.bell} onClick={handleBellClick}>
-              <Badge count={unreadCount}>
+              {unreadCount > 0 ? (
+                <Badge count={unreadCount}>
+                  <FaBell size={35} />
+                </Badge>
+              ) : (
                 <FaBell size={35} />
-              </Badge>
+              )}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <div className={`${style.circle} ${style.circleImage}`}>
@@ -195,9 +217,13 @@ const UserPage = () => {
                 </div>
               </div>
               <div className={style.bell} onClick={handleBellClick}>
-                <Badge count={unreadCount}>
+                {unreadCount > 0 ? (
+                  <Badge count={unreadCount}>
+                    <FaBell size={25} />
+                  </Badge>
+                ) : (
                   <FaBell size={25} />
-                </Badge>
+                )}
               </div>
             </div>
           )}

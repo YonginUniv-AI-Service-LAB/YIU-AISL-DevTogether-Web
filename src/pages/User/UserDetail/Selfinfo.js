@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import style from "./UserDetail.module.css";
 import { useMediaQuery } from "react-responsive";
 import { Select, Input } from 'antd';
@@ -6,18 +6,18 @@ import EditSelect from "../../../components/Select/EditSelect";
 import { data_location } from "../../../assets/data/location";
 import { data_subject } from "../../../assets/data/subject";
 import { useRecoilState } from "recoil";
-import { nameState, imgState, introductionState, subject1State, subject2State, subject3State, subject4State, subject5State, location1State, location2State, location3State, methodState, feeState, careerState, portfolioState } from "../../../recoil/atoms/mypage";
+import { nameState, imgState, introductionState, subject1State, subject2State, subject3State, subject4State, subject5State, location1State, location2State, location3State, methodState, feeState, careerState, portfolioState, genderState, ageState } from "../../../recoil/atoms/mypage";
 
 const { TextArea } = Input;
 
-const Selfinfo = ({ isEditing }) => {
+const Selfinfo = ({ isEditing, handleSubjectChange, handleLocationChange, handleMethodChange, handleFeeChange, handlePortfolioChange }) => {
   const ismiddle = useMediaQuery({ maxWidth: 1226, minWidth: 768 });
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const isNotMobile = useMediaQuery({ minWidth: 768 });
 
-  const [name, setName] = useRecoilState(nameState);
+  const [name] = useRecoilState(nameState);
   const [img, setImg] = useRecoilState(imgState);
   const [introduction, setIntroduction] = useRecoilState(introductionState);
   const [subject1, setSubject1] = useRecoilState(subject1State);
@@ -32,40 +32,13 @@ const Selfinfo = ({ isEditing }) => {
   const [fee, setFee] = useRecoilState(feeState);
   const [career, setCareer] = useRecoilState(careerState);
   const [portfolio, setPortfolio] = useRecoilState(portfolioState);
+  const [gender] = useRecoilState(genderState);
+  const [age] = useRecoilState(ageState);
 
   const formatCurrency = (amount) => {
     if (!amount) return '';
     const numericAmount = Number(String(amount).replace(/[^0-9]/g, ''));
     return new Intl.NumberFormat('ko-KR').format(numericAmount);
-  };
-
-  const handleSubjectChange = (value) => {
-    if (value.length <= 5) {
-      setSubject1(value[0] || '');
-      setSubject2(value[1] || '');
-      setSubject3(value[2] || '');
-      setSubject4(value[3] || '');
-      setSubject5(value[4] || '');
-    }
-  };
-
-  const handleLocationChange = (value) => {
-    setLocation1(value[0] || '');
-    setLocation2(value[1] || '');
-    setLocation3(value[2] || '');
-  };
-
-  const handleFeeChange = (e) => {
-    const inputValue = e.target.value.replace(/\D/g, '');
-    setFee(inputValue ? formatCurrency(inputValue) : '');
-  };
-
-  const handleMethodChange = (value) => {
-    setMethod(value);
-  };
-
-  const handlePortfolioChange = (e) => {
-    setPortfolio(e.target.value);
   };
 
   return (
@@ -79,11 +52,7 @@ const Selfinfo = ({ isEditing }) => {
                 <span style={{ fontSize: '15px', fontWeight: '600', color: '#666666' }}>이름</span>
               </div>
               <div style={{ flex: '4' }}>
-                {isEditing ? (
-                  <Input value={name} onChange={(e) => setName(e.target.value)} />
-                ) : (
-                  name || '이름 정보가 없습니다.'
-                )}
+                {name || '이름 정보가 없습니다.'}
               </div>
             </div>
 
@@ -92,7 +61,7 @@ const Selfinfo = ({ isEditing }) => {
                 <span style={{ fontSize: '15px', fontWeight: '600', color: '#666666' }}>성별</span>
               </div>
               <div style={{ flex: '4' }}>
-                성별 정보가 없습니다.
+                {gender === "남" ? "남자" : gender === "여" ? "여자" : "성별 정보가 없습니다."}
               </div>
             </div>
 
@@ -101,7 +70,7 @@ const Selfinfo = ({ isEditing }) => {
                 <span style={{ fontSize: '15px', fontWeight: '600', color: '#666666' }}>나이</span>
               </div>
               <div style={{ flex: '4' }}>
-                나이 정보가 없습니다.
+                {age || '나이 정보가 없습니다.'}
               </div>
             </div>
 
@@ -125,7 +94,7 @@ const Selfinfo = ({ isEditing }) => {
                       value: subject,
                       label: subject,
                     }))}
-                    onChange={(value) => handleSubjectChange(value)}
+                    onChange={handleSubjectChange}
                     maxTags={5}
                   />
                 ) : (
@@ -153,7 +122,7 @@ const Selfinfo = ({ isEditing }) => {
                       value: location,
                       label: location,
                     }))}
-                    onChange={(newValue) => handleLocationChange(newValue)}
+                    onChange={handleLocationChange}
                     maxTags={3}
                   />
                 ) : (
@@ -176,14 +145,14 @@ const Selfinfo = ({ isEditing }) => {
                       { value: '1', label: '비대면' },
                       { value: '2', label: '블렌딩' }
                     ]}
-                    onChange={(newValue) => handleMethodChange(newValue)}
+                    onChange={handleMethodChange}
                     maxTags={1}
                   />
                 ) : (
                   <div>
                     {Array.isArray(method) 
-                      ? method.map(m => (m === '대면' ? '대면' : m === '비대면' ? '비대면' : '블렌딩')).join(', ') 
-                      : (method === '대면' ? '대면' : method === '비대면' ? '비대면' : '블렌딩')}
+                      ? method.map(m => (m === '0' ? '대면' : m === '1' ? '비대면' : '블렌딩')).join(', ') 
+                      : (method === '0' ? '대면' : method === '1' ? '비대면' : '블렌딩')}
                   </div>
                 )}
               </div>
