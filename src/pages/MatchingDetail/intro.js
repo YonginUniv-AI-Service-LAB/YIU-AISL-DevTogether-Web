@@ -1,3 +1,4 @@
+// Intro.js
 import React, { useEffect, useState } from "react";
 import style from "./MatchingDetail.module.css";
 import { useMediaQuery } from "react-responsive";
@@ -12,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { MessageReceiverAtom, MessageReceiveridAtom, MessageViewStatusAtom } from "../../recoil/atoms/message";
 import { IoMdMore } from "react-icons/io";
+import ReportModal from "../../components/Modal/ReportFormModal"; // 경로 맞게 설정
 
 const { TextArea } = Input;
 
@@ -173,6 +175,11 @@ const Intro = () => {
   const [tab, setTab] = useState('1');
   const [isScrapped, setIsScrapped] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isReportModalVisible, setIsReportModalVisible] = useState(false); // 신고 모달 상태 추가
+  const [form, setForm] = useState({
+    category: { value: null },
+    contents: { value: '' },
+  });
 
   // 세션 스토리지에서 프로필 데이터 가져오기
   const [profile, setProfile] = useState(() => {
@@ -285,9 +292,41 @@ const Intro = () => {
     navigate('/message');
   };
 
+  const handleReportClick = () => {
+    setIsReportModalVisible(true);
+  };
+
+  const handleReportCancel = () => {
+    setIsReportModalVisible(false);
+  };
+
+  const handleCategoryChange = (value) => {
+    setForm((prevState) => ({
+      ...prevState,
+      category: { value },
+    }));
+  };
+
+  const handleContentsChange = (e) => {
+    setForm((prevState) => ({
+      ...prevState,
+      contents: { value: e.target.value },
+    }));
+  };
+
+  const handleReportOk = () => {
+    if (form.category.value == null || (form.category.value === 0 && form.contents.value.trim() === '')) {
+      message.error('신고 사유를 선택하거나 입력해주세요');
+    } else {
+      // 신고 처리 로직 추가
+      message.success('신고가 성공적으로 처리되었습니다.');
+      setIsReportModalVisible(false);
+    }
+  };
+
   const menu = (
     <Menu>
-      <Menu.Item key="1" style={{ borderBottom: "none" }}>
+      <Menu.Item key="1" style={{ borderBottom: "none" }} onClick={handleReportClick}>
         신고
       </Menu.Item>
     </Menu>
@@ -359,6 +398,15 @@ const Intro = () => {
         onCancel={handleModalCancel}
         onApply={handleModalApply}
         profile={profile}
+      />
+
+      <ReportModal
+        isModalOpen={isReportModalVisible}
+        form={form}
+        onCategoryChange={handleCategoryChange}
+        onContentsChange={handleContentsChange}
+        handleOk={handleReportOk}
+        handleCancel={handleReportCancel}
       />
     </div>
   );

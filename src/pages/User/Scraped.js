@@ -170,30 +170,37 @@ const Scraped = () => {
         )}
         {selectedTab === '1' && (
           <div style={{ marginTop: '40px' }}>
-            {sortedPosts.map((post, index) => (
-              <Post
-                key={post.board}
-                id={post.board}
-                num={index + 1}
-                category={post.category}
-                title={post.title}
-                contents={post.contents.length > maxCombinedLength - post.title.length
-                  ? post.contents.substring(0, maxCombinedLength - post.title.length) + '...'
-                  : post.contents}
-                createdAt={dayjs(post.createdAt).format("YYYY.MM.DD")}
-                likes={post.likes}
-                views={post.views}
-                comment={post.countComment}
-                img={post.img}
-                nickname={post.userProfileId["nickname"]}
-                userImage={post.userImage}
-                introduction={post.userProfileId["introduction"]}
-                scraped={true}
-                onClick={() => handlePostClick(post.boardId)}
-                showBookmark={true}
-                showMenu={false}
-              />
-            ))}
+            {sortedPosts.map((post, index) => {
+              // Base64 디코딩
+              const userImage = post.userProfileId.filesResponseDto.fileData
+                ? `data:image/png;base64,${post.userProfileId.filesResponseDto.fileData}`
+                : AltImage;
+
+              return (
+                <Post
+                  key={post.board}
+                  id={post.board}
+                  num={index + 1}
+                  category={post.category}
+                  title={post.title}
+                  contents={post.contents.length > maxCombinedLength - post.title.length
+                    ? post.contents.substring(0, maxCombinedLength - post.title.length) + '...'
+                    : post.contents}
+                  createdAt={dayjs(post.createdAt).format("YYYY.MM.DD")}
+                  likes={post.likes}
+                  views={post.views}
+                  comment={post.countComment}
+                  img={post.img}
+                  nickname={post.userProfileId["nickname"]}
+                  userImage={userImage}
+                  introduction={post.userProfileId["introduction"]}
+                  scraped={true}
+                  onClick={() => handlePostClick(post.boardId)}
+                  showBookmark={true}
+                  showMenu={false}
+                />
+              );
+            })}
           </div>
         )}
       </div>
