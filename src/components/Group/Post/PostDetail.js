@@ -7,14 +7,8 @@ import {
   FaBookmark,
 } from "react-icons/fa";
 import { CiShare1 } from "react-icons/ci";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  ExclamationCircleOutlined,
-  MoreOutlined,
-} from "@ant-design/icons";
 import { IoMdMore } from "react-icons/io";
-import { Button, Popconfirm, message, Dropdown, Menu } from "antd";
+import { Button, message, Dropdown, Menu } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
@@ -185,6 +179,11 @@ const PostDetail = (props) => {
     </Menu>
   );
 
+  // Base64 디코딩
+  const userImage = props.post.userProfileId.filesResponseDto && props.post.userProfileId.filesResponseDto.fileData
+    ? `data:image/png;base64,${props.post.userProfileId.filesResponseDto.fileData}`
+    : AltImage;
+
   return (
     <div>
       <div className={style.head}>
@@ -203,11 +202,7 @@ const PostDetail = (props) => {
         <div className={style.horizon}>
           <div className={`${style.circle} ${style.circleImage}`}>
             <img
-              src={
-                props.post.userProfileId.files == null
-                  ? AltImage
-                  : props.post.userProfileId.filesResponseDto
-              }
+              src={userImage}
               alt="유저이미지"
             />
           </div>

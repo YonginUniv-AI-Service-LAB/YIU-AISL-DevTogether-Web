@@ -46,6 +46,7 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
     queryKey: ["post", id], // id를 queryKey에 포함
     queryFn: async () => {
       const res = await defaultAPI.get(`/board/post?boardId=${id}`); // id를 사용하여 API 요청
+      console.log("Fetched post data:", res.data); // API로 가져온 데이터 콘솔에 출력
       return res.data;
     },
   });
@@ -303,6 +304,10 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
                       <div style={{ paddingRight: "10px" }}>
                         {currentComments.map((comment) => {
                           const liked = comment.likePeople.includes(userId); // liked 상태 계산
+                          // Base64 디코딩
+                          const userImage = comment.userProfileId.filesResponseDto && comment.userProfileId.filesResponseDto.fileData
+                            ? `data:image/png;base64,${comment.userProfileId.filesResponseDto.fileData}`
+                            : null;
                           return (
                             <Comment
                               key={comment.commentId}
@@ -313,9 +318,9 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
                               likes={comment.likeCount}
                               liked={liked} // 계산된 liked 상태 전달
                               nickname={comment.userProfileId.nickname}
-                              userImage={comment.userProfileId.files}
+                              userImage={userImage} // 디코딩된 이미지 설정
                               introduction={comment.userProfileId.introduction}
-                              userid = {comment.userProfileId.id}
+                              userid={comment.userProfileId.id}
                               onEdit={handleEditComment}
                               onDelete={handleDeleteComment}
                               edited={comment.createAt !== comment.updatedAt}
