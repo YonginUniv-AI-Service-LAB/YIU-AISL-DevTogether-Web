@@ -6,7 +6,7 @@ import EditSelect from "../../../components/Select/EditSelect";
 import { data_location } from "../../../assets/data/location";
 import { data_subject } from "../../../assets/data/subject";
 import { useRecoilState } from "recoil";
-import { nameState, imgState, introductionState, subject1State, subject2State, subject3State, subject4State, subject5State, location1State, location2State, location3State, methodState, feeState, careerState, portfolioState, genderState, ageState } from "../../../recoil/atoms/mypage";
+import { nameState, imgState, introductionState, subject1State, subject2State, subject3State, subject4State, subject5State, location1State, location2State, location3State, methodState, feeState, portfolioState, genderState, ageState } from "../../../recoil/atoms/mypage";
 
 const { TextArea } = Input;
 
@@ -30,7 +30,6 @@ const Selfinfo = ({ isEditing, handleSubjectChange, handleLocationChange, handle
   const [location3, setLocation3] = useRecoilState(location3State);
   const [method, setMethod] = useRecoilState(methodState);
   const [fee, setFee] = useRecoilState(feeState);
-  const [career, setCareer] = useRecoilState(careerState);
   const [portfolio, setPortfolio] = useRecoilState(portfolioState);
   const [gender] = useRecoilState(genderState);
   const [age] = useRecoilState(ageState);
@@ -141,9 +140,9 @@ const Selfinfo = ({ isEditing, handleSubjectChange, handleLocationChange, handle
                     value={method}
                     placeholder="과외 방식"
                     options={[
-                      { value: '0', label: '대면' },
-                      { value: '1', label: '비대면' },
-                      { value: '2', label: '블렌딩' }
+                      { value: '대면', label: '대면' },
+                      { value: '비대면', label: '비대면' },
+                      { value: '블렌딩', label: '블렌딩' }
                     ]}
                     onChange={handleMethodChange}
                     maxTags={1}
@@ -151,8 +150,8 @@ const Selfinfo = ({ isEditing, handleSubjectChange, handleLocationChange, handle
                 ) : (
                   <div>
                     {Array.isArray(method) 
-                      ? method.map(m => (m === '0' ? '대면' : m === '1' ? '비대면' : '블렌딩')).join(', ') 
-                      : (method === '0' ? '대면' : method === '1' ? '비대면' : '블렌딩')}
+                      ? method.map(m => (m === '대면' ? '대면' : m === '비대면' ? '비대면' : '블렌딩')).join(', ') 
+                      : (method === '대면' ? '대면' : method === '비대면' ? '비대면' : '블렌딩')}
                   </div>
                 )}
               </div>

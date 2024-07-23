@@ -32,7 +32,7 @@ const Manager = () => {
             Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
           },
         });
-        console.log("Fetched profiles:", response.data);
+        console.log("관리 프로필:", response.data);
         // 거절된 프로필을 제외하고 상태가 거절되지 않은 프로필만 설정
         const filteredProfiles = response.data.filter(profile => profile.status !== "거절");
         setProfiles(filteredProfiles);
@@ -64,17 +64,17 @@ const Manager = () => {
 
   const indexOfLastProfile = currentProfilePage * profilePerPage;
   const indexOfFirstProfile = indexOfLastProfile - profilePerPage;
-  const currentProfiles = profiles.slice(indexOfFirstProfile, indexOfLastProfile);
+  const currentProfiles = profiles.slice(indexOfFirstProfile, indexOfFirstProfile + profilePerPage);
 
   const formatDate = (dateString) => {
-    const d = new Date(dateString);
-    if (isNaN(d.getTime())) {
+    const date = new Date(dateString);
+    if (isNaN(date)) {
       console.error("Invalid date:", dateString);
       return "Invalid Date";
     }
-    const year = d.getFullYear().toString().slice(-2);
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    const day = d.getDate().toString().padStart(2, '0');
+    const year = date.getFullYear().toString().slice(-2); // 년도 뒤 두자리
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월 (1월은 0이므로 +1)
+    const day = date.getDate().toString().padStart(2, '0'); // 일
     return `${year}.${month}.${day}`;
   };
 
@@ -86,9 +86,7 @@ const Manager = () => {
         <div style={{ marginTop: '40px', display: 'flex', flexWrap: 'wrap' }}>
           {currentProfiles.map(profile => {
             const subjects = [profile.subject1, profile.subject2, profile.subject3, profile.subject4, profile.subject5].filter(Boolean);
-            // 콘솔 로그 추가
-            console.log("Profile createdAt:", profile.createdAt);
-            console.log("Profile endedAt:", profile.endedAt);
+            const imagepath = profile.imgDto && profile.imgDto.fileData ? `data:image/png;base64,${profile.imgDto.fileData}` : AltImage;
             return (
               <ProfileManager
                 key={profile.matchingId} // key를 matchingId로 설정
@@ -100,12 +98,10 @@ const Manager = () => {
                 location={profile.location1}
                 fee={profile.fee}
                 method={profile.method === 0 ? "대면" : profile.method === 1 ? "비대면" : "블렌딩"}
-                imagepath={profile.img}
+                imagepath={imagepath}
                 imagetext="프로필 이미지"
-                // startDate={formatDate(profile.createAt)}
-                startDate='24.07.17'
-                // endDate={formatDate(profile.endedAt)}
-                endDate='24.07.17'
+                startDate={formatDate(profile.createAt)}
+                endDate={formatDate(profile.endedAt)}
                 status={profile.status}
                 onStatusChange={handleStatusChange}
               />

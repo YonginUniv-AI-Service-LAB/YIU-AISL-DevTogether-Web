@@ -1,5 +1,3 @@
-// Post.js
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
@@ -7,8 +5,13 @@ import style from "./Post.module.css";
 import { CiRead } from "react-icons/ci";
 import { GoComment } from "react-icons/go";
 import { BiLike } from "react-icons/bi";
-import { FaBookmark } from "react-icons/fa";
-import { FaRegBookmark } from "react-icons/fa";
+import {
+  FaCommentAlt,
+  FaRegHeart,
+  FaHeart,
+  FaRegBookmark,
+  FaBookmark,
+} from "react-icons/fa";
 import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { posterScrapState } from "../../../recoil/atoms/scrap";
 import { postLikesState } from "../../../recoil/atoms/likes";
@@ -123,7 +126,7 @@ const Post = (props) => {
             </div>
             {props.showBookmark && (
               <div className={style.bookmarked}>
-                {/* {scraped && <FaBookmark />} */}
+                {props.scraped && <FaBookmark />}
               </div>
             )}
             {props.showMenu && (
@@ -152,7 +155,7 @@ const Post = (props) => {
           </div>
           <div style={{ marginTop: "20px" }}>
             {/* <CiRead /> {views} */}
-            <BiLike /> {props.likes}
+            <FaRegHeart /> {props.likes}
             <span style={{ opacity: "0.3" }}> | </span> <GoComment />{" "}
             {props.comment}
             <span style={{ opacity: "0.3" }}> | </span> {props.createdAt}

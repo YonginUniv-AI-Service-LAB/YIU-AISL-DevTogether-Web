@@ -19,6 +19,18 @@ export const MessageReceiverAtom = atom({
   default: {},
 });
 
+// 현재 쪽지 수신자 닉네임
+export const MessageReceivernickAtom = atom({
+  key: "MessageReceivernickAtom",
+  default: null,
+});
+
+// 현재 쪽지 수신자 id
+export const MessageReceiveridAtom = atom({
+  key: "MessageReceiveridAtom",
+  default: null,
+});
+
 // 현재 선택된 쪽지 내용
 export const MessageAtom = atom({
   key: "MessageAtom",

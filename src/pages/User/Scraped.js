@@ -6,6 +6,8 @@ import { Tabs, Pagination } from 'antd';
 import axios from 'axios';
 import Profile from "../../components/Group/Profile/Profile";
 import AltImage from "../../assets/images/devtogether_logo.png";
+import Post from "../../components/Group/Post/Post";
+import dayjs from "dayjs";
 
 const Scraped = () => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -13,7 +15,13 @@ const Scraped = () => {
   const [profilePerPage] = useState(30); // 한 페이지에 최대 30개의 프로필 표시
   const [currentProfile, setCurrentProfile] = useState([]);
   const [selectedTab, setSelectedTab] = useState('1'); // 현재 선택된 탭 상태
+  const [scrapedPosts, setScrapedPosts] = useState([]); // 스크랩한 게시물 상태 추가
+  const [sortedPosts, setSortedPosts] = useState([]);
   const role = parseInt(sessionStorage.getItem('role'), 10); // 세션 스토리지에서 role 가져오기
+
+  const maxCombinedLength = isMobile ? 20 : 50;
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchScrappedProfiles = async () => {
@@ -52,11 +60,43 @@ const Scraped = () => {
       }
     };
 
+    const fetchScrapedPosts = async () => {
+      try {
+        const response = await axios.get(`/user/scrap/board/${role === 2 ? 'mentee' : 'mentor'}`, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          },
+        });
+        console.log("Fetched scraped posts:", response.data);
+        setScrapedPosts(response.data);
+      } catch (error) {
+        console.error("Failed to fetch scraped posts:", error);
+      }
+    };
+
     fetchScrappedProfiles();
+    fetchScrapedPosts();
   }, [role]);
+
+  useEffect(() => {
+    // 게시물을 최신순으로 정렬하는 함수
+    const sortLatest = (data) => {
+      return data.slice().sort((a, b) => {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+    };
+
+    // 초기 데이터 로드 및 정렬
+    const sortedData = sortLatest(scrapedPosts);
+    setSortedPosts(sortedData);
+  }, [scrapedPosts]);
 
   const handlePage = (key) => {
     setSelectedTab(key); // 선택된 탭 변경
+  };
+
+  const handlePostClick = (postId) => {
+    navigate(`/board/detail/${postId}`);
   };
 
   const indexOfLastProfile = currentProfilePage * profilePerPage;
@@ -83,33 +123,37 @@ const Scraped = () => {
           <div>
             <div style={{ marginTop: '40px', display: 'flex', flexWrap: 'wrap' }}>
               {currentProfiles.map((profile, index) => {
+                const imagepath = profile.imgDto && profile.imgDto.fileData
+                  ? `data:image/png;base64,${profile.imgDto.fileData}`
+                  : AltImage; // 이미지 경로 설정
+
                 return (
                   <Profile
-                  key={profile.id}
-                  id={profile.userProfileId}
-                  name={profile.name}
-                  nickname={profile.nickname}
-                  subject1={profile.subject1}
-                  subject2={profile.subject2}
-                  subject3={profile.subject3}
-                  subject4={profile.subject4}
-                  subject5={profile.subject5}
-                  gender={profile.gender}
-                  age={profile.age}
-                  role={profile.role}
-                  location1={profile.location1}
-                  location2={profile.location2}
-                  location3={profile.location3}
-                  fee={profile.fee}
-                  method={profile.method}
-                  imagetext="프로필 이미지"
-                  imagepath={profile.img || AltImage} // profile.img가 없으면 기본 이미지를 사용
-                  introduction={profile.introduction}
-                  portfolio={profile.portfolio}
-                  contents={profile.contents}
-                  schedule={profile.schedule}
-                  pr={profile.pr}
-                  scrap={profile.scrap} // 추가된 부분
+                    key={profile.id}
+                    id={profile.userProfileId}
+                    name={profile.name}
+                    nickname={profile.nickname}
+                    subject1={profile.subject1}
+                    subject2={profile.subject2}
+                    subject3={profile.subject3}
+                    subject4={profile.subject4}
+                    subject5={profile.subject5}
+                    gender={profile.gender}
+                    age={profile.age}
+                    role={profile.role}
+                    location1={profile.location1}
+                    location2={profile.location2}
+                    location3={profile.location3}
+                    fee={profile.fee}
+                    method={profile.method}
+                    imagetext="프로필 이미지"
+                    imagepath={imagepath} // 이미지 경로 설정
+                    introduction={profile.introduction}
+                    portfolio={profile.portfolio}
+                    contents={profile.contents}
+                    schedule={profile.schedule}
+                    pr={profile.pr}
+                    scrap={profile.scrap} // 추가된 부분
                   />
                 );
               })}
@@ -122,6 +166,34 @@ const Scraped = () => {
                 onChange={(page) => setCurrentProfilePage(page)}
               />
             </div>
+          </div>
+        )}
+        {selectedTab === '1' && (
+          <div style={{ marginTop: '40px' }}>
+            {sortedPosts.map((post, index) => (
+              <Post
+                key={post.board}
+                id={post.board}
+                num={index + 1}
+                category={post.category}
+                title={post.title}
+                contents={post.contents.length > maxCombinedLength - post.title.length
+                  ? post.contents.substring(0, maxCombinedLength - post.title.length) + '...'
+                  : post.contents}
+                createdAt={dayjs(post.createdAt).format("YYYY.MM.DD")}
+                likes={post.likes}
+                views={post.views}
+                comment={post.countComment}
+                img={post.img}
+                nickname={post.userProfileId["nickname"]}
+                userImage={post.userImage}
+                introduction={post.userProfileId["introduction"]}
+                scraped={true}
+                onClick={() => handlePostClick(post.boardId)}
+                showBookmark={true}
+                showMenu={false}
+              />
+            ))}
           </div>
         )}
       </div>

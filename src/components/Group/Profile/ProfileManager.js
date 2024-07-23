@@ -26,8 +26,10 @@ const ProfileManager = ({ matchingId, nickname, subject, startDate, endDate, sta
   const [modalTitle, setModalTitle] = useState('');
   const [modalContent, setModalContent] = useState('');
   const [isReviewMode, setIsReviewMode] = useState(false);
+  const [isViewOnlyMode, setIsViewOnlyMode] = useState(false);
   const [subjectText, setSubjectText] = useState(subject);
   const [user, setUser] = useState(null); 
+  const [reviewData, setReviewData] = useState(null);
   const role = parseInt(sessionStorage.getItem('role'), 10);
 
   useEffect(() => {
@@ -55,9 +57,6 @@ const ProfileManager = ({ matchingId, nickname, subject, startDate, endDate, sta
           matchedUserProfileId = matchingResponse.data.find(match => match.matchingId === matchingId)?.mentor;
         }
   
-        console.log("Fetched profiles:", matchingResponse.data);
-        console.log("Matched user profile ID:", matchedUserProfileId);
-  
         if (matchedUserProfileId) {
           let userResponse;
           if (role === 1) {
@@ -74,11 +73,7 @@ const ProfileManager = ({ matchingId, nickname, subject, startDate, endDate, sta
             });
           }
   
-          console.log("Fetched user data:", userResponse.data);
-  
-          // matchedUserProfileId와 user.userProfileId를 비교하기 전에 타입을 동일하게 변환
           const matchedUser = userResponse.data.find(user => parseInt(user.userProfileId) === parseInt(matchedUserProfileId, 10));
-          console.log("Matched user data:", matchedUser);
           setUser(matchedUser);
         }
       } catch (error) {
@@ -121,7 +116,7 @@ const ProfileManager = ({ matchingId, nickname, subject, startDate, endDate, sta
     setSubjectText(truncateText(subject, maxWidth, font));
   }, [subject, isMobile]);
 
-  const handleFunction = () => {
+  const handleFunction = async () => {
     if (status === "신청") {
       setModalTitle('신청 취소');
       setModalContent('정말 신청을 취소하시겠습니까?');
@@ -141,6 +136,29 @@ const ProfileManager = ({ matchingId, nickname, subject, startDate, endDate, sta
       setModalTitle('리뷰 작성');
       setIsReviewMode(true);
       setIsModalOpen(true);
+      setIsViewOnlyMode(false);
+    } else if (status === "종료됨") {
+      setModalTitle('리뷰 보기');
+      setIsReviewMode(true);
+      setIsModalOpen(true);
+      setIsViewOnlyMode(true);
+      await fetchReviewData(); // 종료된 상태에서는 리뷰 데이터를 가져옴
+    }
+  };
+
+  const fetchReviewData = async () => {
+    try {
+      const endpoint = role === 1 ? '/review/send/mentor' : '/review/send/mentee';
+      const response = await axios.get(endpoint, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+        },
+      });
+
+      const review = response.data.find(review => review.matchingId === matchingId);
+      setReviewData(review);
+    } catch (error) {
+      console.error("리뷰 조회 중 오류 발생:", error);
     }
   };
 
@@ -190,15 +208,44 @@ const ProfileManager = ({ matchingId, nickname, subject, startDate, endDate, sta
     }
   };
 
+  const handleReviewSubmit = async (reviewData) => {
+    const { attitudeRating, focusRating, punctualityRating, reviewContent } = reviewData;
+    
+    try {
+      const endpoint = role === 1 ? '/review/mentor' : '/review/mentee';
+      const response = await axios.post(endpoint, new URLSearchParams({
+        matchingId: matchingId,
+        contents: reviewContent,
+        star1: attitudeRating,
+        star2: focusRating,
+        star3: punctualityRating,
+      }), {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+      });
+  
+      console.log("리뷰 작성 API 응답:", response.data);
+  
+      setStatus('종료됨');
+      onStatusChange(matchingId, '종료됨');
+    } catch (error) {
+      console.error("리뷰 작성 중 오류 발생:", error);
+    }
+  };
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  const imagePath = user && user.imgDto && user.imgDto.fileData ? `data:image/png;base64,${user.imgDto.fileData}` : AltImage;
 
   return (
     <div>
       <div className={style.managebg} style={{ width: isMobile ? '176px' : '220px' }}>
         <div className={`${style.managercircle} ${style.managercircleImage}`}>
-          <img src={imagepath || AltImage} alt="프로필 이미지" />
+          <img src={imagePath} alt="프로필 이미지" />
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '15px' }}>
           <Badge style={{ marginTop: '50px' }} color={
@@ -213,23 +260,22 @@ const ProfileManager = ({ matchingId, nickname, subject, startDate, endDate, sta
             status === "완료" ? "완료" : "종료됨"
           } />
         </div>
-        <div className={style.information}>
+        <div style={{fontSize: isMobile ? '12px' : '15px'}} className={style.information}>
           <span style={{ fontWeight: '900' }}>{user?.nickname || nickname}</span><br />
-          <span>{user?.name} | {user?.gender === '남' ? "남자" : "여자"} | {user?.age}세</span><br />
+          <span>{user?.name}</span> <span style={{ opacity: '0.3' }}>|</span> <span> {user?.gender === '남' ? "남자" : "여자"} </span> <span style={{ opacity: '0.3' }}>|</span> <span>{user?.age}세</span> <br />
           <span style={{ fontSize: isMobile ? '12px' : '15px' }}>{subjectText}</span><br />
           {status !== '신청' && (
             <span style={{ fontSize: isMobile ? '12px' : '15px' }}>
-              {/* {formatDate(startDate)} ~ {status === "진행" ? "" : formatDate(endDate)} */}
               {(startDate)} ~ {status === "진행" ? "" : (endDate)}
             </span>
           )}<br />
         </div>
       </div>
-      <div className={`${style.process} ${status === "진행" && role !== 1 ? style.one : ""}`}>
+      <div style={{fontSize: isMobile ? '12px' : '15px'}} className={style.process}>
         <div className={`${style.ing} ${status === "진행" ? style.one : ""}`}>
           {status === "신청" ? "신청중" : status === "성사됨" ? "확정대기" : status === "진행" ? "진행중" : "종료됨"}
         </div>
-        {status !== "종료됨" && status !== "성사됨" && (
+        {status !== "성사됨" && (
           <>
             {status === "신청" && (
               <div className={style.end} onClick={handleFunction}>
@@ -246,6 +292,11 @@ const ProfileManager = ({ matchingId, nickname, subject, startDate, endDate, sta
                 리뷰 작성
               </div>
             )}
+            {status === "종료됨" && (
+              <div className={style.end} onClick={handleFunction}>
+                리뷰 보기
+              </div>
+            )}
           </>
         )}
       </div>
@@ -256,8 +307,10 @@ const ProfileManager = ({ matchingId, nickname, subject, startDate, endDate, sta
         isModalOpen={isModalOpen}
         handleOk={handleOk}
         handleCancel={handleCancel}
-        role={user?.role}
         isReviewMode={isReviewMode}
+        isViewOnlyMode={isViewOnlyMode}
+        onReviewSubmit={handleReviewSubmit} // 리뷰 제출 핸들러 추가
+        reviewData={reviewData}
       />
     </div>
   );

@@ -28,6 +28,7 @@ import QuestionBoard from "./pages/Board/QuestionBoard";
 import EmployedmentBoard from "./pages/Board/EmployedmentBoard";
 import MarketBoard from "./pages/Board/MarketBoard";
 import BoardForm from "./pages/Board/BoardForm";
+import BoardEdit from "./pages/Board/BoardEdit";
 
 import FAQFormPage from "./pages/FAQForm/FAQForm";
 import FAQListPage from "./pages/FAQList/FAQList";
@@ -49,11 +50,14 @@ import TestPage from "./pages/Test/Test";
 import ScrollToTop from "./ScrollToTop";
 import CompletePage from "./pages/SignUp/Complete";
 
+import TokenRefresh from "./pages/RefreshToken/RefreshToken";
+
 function App(props) {
   return (
     <BrowserRouter>
       <ScrollToTop />
       <Layout>
+        <TokenRefresh />
         <Routes>
           <Route exact path="/test" element={<TestPage />} />
           <Route exact path="/*" element={<MainPage />} />
@@ -107,6 +111,8 @@ function App(props) {
           <Route exact path="/board/market" element={<MarketBoard />} />
           <Route exact path="/board/form" element={<BoardForm />} />
           <Route exact path="/board/form/:id" element={<BoardForm />} />
+          <Route exact path="/board/edit" element={<BoardEdit />} />
+          <Route exact path="/board/edit/:id" element={<BoardEdit />} />
           <Route exact path="/board/detail/:id" element={<BoardDetail />} />
           <Route exact path="/board/post/:id" element={<PostDetailPage />} />
           <Route exact path="/board/post/form" element={<PostFormPage />} />

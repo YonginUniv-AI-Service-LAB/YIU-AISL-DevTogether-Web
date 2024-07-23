@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { Carousel } from "antd";
@@ -45,6 +46,12 @@ const MainPage = () => {
       return res.data;
     },
   });
+
+  useEffect(() => {
+    if (main) {
+      console.log("API로부터 가져온 데이터:", main);
+    }
+  }, [main]);
 
   if (isLoading) return <LoadingSpin />;
   if (error || !main) return <GetDataErrorView />;
@@ -125,7 +132,6 @@ const MainPage = () => {
         </div>
       )}
 
-
       {isMobile && (
         <div className={styles.banner}>
           <div
@@ -166,7 +172,7 @@ const MainPage = () => {
             </div>
           </div>
         </div>
-      )} 
+      )}
 
       <div
         style={{
@@ -185,9 +191,8 @@ const MainPage = () => {
             ? "10%"
             : "15%",
         }}
-
       >
-        {/* {/* 멘티 프로필 섹션 */}
+        {/* 멘티 프로필 섹션 */}
         <div className={styles.profileSection}>
           <div style={{ fontSize: "25px", fontWeight: "bold" }}>
             학생 프로필 미리보기
@@ -200,10 +205,10 @@ const MainPage = () => {
                     id={mentee.id}
                     nickname={mentee.nickname}
                     subject={mergeSubjects(mentee)}
-                    gender={mentee.gender == '남' ? "남자" : "여자"}
+                    gender={mentee.gender == "남" ? "남자" : "여자"}
                     age={mentee.age}
                     location={mergeLocations(mentee)}
-                    imagepath={mentee.img || AltImage}
+                    imagepath={mentee.img ? `data:image/png;base64,${mentee.img}` : AltImage}
                     role={mentee.role}
                   />
                 </div>
@@ -212,8 +217,8 @@ const MainPage = () => {
           </Carousel>
         </div>
 
-      {/* 멘토 프로필 섹션 */}
-      <div style={{ marginTop: "20px" }}>
+        {/* 멘토 프로필 섹션 */}
+        <div style={{ marginTop: "20px" }}>
           <div style={{ fontSize: "25px", fontWeight: "bold" }}>
             선생님 프로필 미리보기
           </div>
@@ -225,10 +230,10 @@ const MainPage = () => {
                     id={mentor.id}
                     nickname={mentor.nickname}
                     subject={mergeSubjects(mentor)}
-                    gender={mentor.gender === '남' ? "남자" : "여자"}
+                    gender={mentor.gender === "남" ? "남자" : "여자"}
                     age={mentor.age}
                     location={mergeLocations(mentor)}
-                    imagepath={mentor.img || AltImage}
+                    imagepath={mentor.img ? `data:image/png;base64,${mentor.img}` : AltImage}
                     role={mentor.role}
                   />
                 </div>
@@ -237,8 +242,8 @@ const MainPage = () => {
           </Carousel>
         </div>
 
-      {/* 인기 있는 과목 섹션 */}
-      <div style={{ marginTop: "20px" }}>
+        {/* 인기 있는 과목 섹션 */}
+        <div style={{ marginTop: "20px" }}>
           <div
             style={{
               marginBottom: "25px",

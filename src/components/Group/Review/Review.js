@@ -11,14 +11,18 @@ const Review = (props) => {
   const navigate = useNavigate();
   const [edit] = useRecoilState(editStateAtom);
   const [isHidden, setIsHidden] = useState(props.isHidden);
-  const [buttonText, setButtonText] = useState(props.isHidden ? '보이기' : '숨기기');
+  // const [buttonText, setButtonText] = useState(props.isHidden ? '보이기' : '숨기기');
 
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
-  useEffect(() => {
-    setIsHidden(props.isHidden);
-    setButtonText(props.isHidden ? '보이기' : '숨기기');
-  }, [props.isHidden]);
+  const role = sessionStorage.getItem('role');
+  const title1 = role === '1' ? '수업 내용' : '참여 태도';
+  const title2 = role === '1' ? '준비성' : '과제 수행';
+
+  // useEffect(() => {
+  //   setIsHidden(props.isHidden);
+  //   setButtonText(props.isHidden ? '보이기' : '숨기기');
+  // }, [props.isHidden]);
 
   const renderStars = (rating) => {
     let stars = [];
@@ -42,10 +46,10 @@ const Review = (props) => {
 
   const totalMonths = calculateMonths(props.startDate, props.endDate);
 
-  const handleToggleHide = () => {
-    setIsHidden(!isHidden);
-    setButtonText(isHidden ? '숨기기' : '보이기');
-  };
+  // const handleToggleHide = () => {
+  //   setIsHidden(!isHidden);
+  //   setButtonText(isHidden ? '숨기기' : '보이기');
+  // };
 
   const handleSave = () => {
     props.onHide(props.id, isHidden);
@@ -77,7 +81,7 @@ const Review = (props) => {
             {edit && (
               <div>
                 <div onClick={(e) => e.stopPropagation()}>
-                  <NormalButton name={buttonText} onClick={handleToggleHide} style={{ fontSize: '12px', paddingLeft: '10px', paddingRight: '10px' }} />
+                  {/* <NormalButton name={buttonText} onClick={handleToggleHide} style={{ fontSize: '12px', paddingLeft: '10px', paddingRight: '10px' }} /> */}
                 </div>
                 <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#444444', marginRight: '10px' }}>
                   <span style={{ marginRight: '5px', opacity: '0.5' }}>작성일</span> {props.createdAt}
@@ -90,14 +94,14 @@ const Review = (props) => {
               <span style={{ fontWeight: '500' }}>{props.contents}</span>
             </div>
             <div className={`${style.rating} ${isMobile ? style.mobileRating : ''}`}>
-              <div style={{ marginRight: '10px', fontWeight: 'bold', fontSize: '14px' }}>참여태도 {renderStars(props.preparerating)}</div>
-              <div style={{ marginRight: '10px', fontWeight: 'bold', fontSize: '14px' }}>집중력 {renderStars(props.studyrating)}</div>
+              <div style={{ marginRight: '10px', fontWeight: 'bold', fontSize: '14px' }}>{title1} {renderStars(props.preparerating)}</div>
+              <div style={{ marginRight: '10px', fontWeight: 'bold', fontSize: '14px' }}>{title2} {renderStars(props.studyrating)}</div>
               <div style={{ fontWeight: 'bold', fontSize: '14px' }}>시간준수 {renderStars(props.timerating)}</div>
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div style={{ marginTop: '20px', fontSize: '12px', fontWeight: 'bold', color: '#444444' }}>
-              <span style={{ marginRight: '5px', opacity: '0.5' }}>과외기간</span> {props.startDate} ~ {props.endDate} ({totalMonths}개월)
+              <span style={{ marginRight: '5px', opacity: '0.5' }}>과외기간</span> {props.startDate} ~ {props.endDate} {totalMonths > 1 ? `(${totalMonths}개월)` : ''}
             </div>
           </div>
         </div>

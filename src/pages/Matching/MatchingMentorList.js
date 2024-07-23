@@ -14,7 +14,6 @@ import MobFilterTag from '../../components/Group/Filtertag/MobFiltertag';
 import { useRecoilState } from 'recoil';
 import { selectedgenderStateAtom, selectedsubjectStateAtom, selectedlocationStateAtom, selectedminageStateAtom, selectedmaxageStateAtom, 
     selectedminfeeStateAtom, selectedmaxfeeStateAtom, selectedmethodStateAtom } from '../../recoil/atoms/matchingAtom';
-import NavigateButton from '../../components/Button/NavigateButton';
 import PageHeader from '../../components/Group/PageHeader/PageHeader';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -29,7 +28,6 @@ const fetchMentorData = async () => {
             Authorization: `Bearer ${accessToken}`
         }
     });
-
 
     console.log('API Response Data:', response.data);
     
@@ -50,7 +48,7 @@ const fetchMentorData = async () => {
         location3: profile.location3,
         fee: profile.fee,
         method: profile.method === '비대면' ? "비대면" : profile.method === '대면' ? "대면" : "블렌딩",
-        img: profile.img,
+        img: profile.imgDto ? `data:image/png;base64,${profile.imgDto.fileData}` : null,
         introduction: profile.introduction,
         portfolio: profile.portfolio,
         contents: profile.contents,

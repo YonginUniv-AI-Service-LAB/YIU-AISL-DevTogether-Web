@@ -39,6 +39,32 @@
   .filterApplied {
     background-color: #a499bb;
   }
+
+  .role {
+    display: flex;
+    background-color: #68568E;
+    color: #ffffff;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 20px;
+    padding-left: 20px;
+    border-radius: 15px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    margin-left: 10px;
+  }
+  
+  .role:hover {
+    background-color: #A499BB;
+    color: #ffffff;
+  }
+  
+  .roleApplied {
+    background-color: #a499bb;
+  }
   
 
 .more{

@@ -10,7 +10,7 @@ import Reviewintro from "./reviewintro";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
-import { MessageReceiverAtom } from "../../recoil/atoms/message";
+import { MessageReceiverAtom, MessageReceiveridAtom, MessageViewStatusAtom } from "../../recoil/atoms/message";
 import { IoMdMore } from "react-icons/io";
 
 const { TextArea } = Input;
@@ -167,6 +167,8 @@ const Intro = () => {
 
   const navigate = useNavigate();
   const setMessageReceiver = useSetRecoilState(MessageReceiverAtom);
+  const setMessageReceiverid = useSetRecoilState(MessageReceiveridAtom)
+  const setMessageViewStatus =  useSetRecoilState(MessageViewStatusAtom )  
 
   const [tab, setTab] = useState('1');
   const [isScrapped, setIsScrapped] = useState(false);
@@ -276,7 +278,10 @@ const Intro = () => {
   };
 
   const handleSendMessageClick = () => {
-    setMessageReceiver(profile.nickname);
+    console.log("쪽지 수신자:", profile.nickname);
+    setMessageViewStatus(false);
+    setMessageReceiver(profile);
+    setMessageReceiverid(profile.id)
     navigate('/message');
   };
 

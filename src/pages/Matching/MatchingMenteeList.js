@@ -48,7 +48,7 @@ const fetchMenteeData = async () => {
         location3: profile.location3,
         fee: profile.fee,
         method: profile.method === '비대면' ? "비대면" : profile.method === '대면' ? "대면" : "블렌딩",
-        img: profile.img,
+        img: `data:image/png;base64,${profile.imgDto?.fileData}` || AltImage,
         introduction: profile.introduction,
         portfolio: profile.portfolio,
         contents: profile.contents,

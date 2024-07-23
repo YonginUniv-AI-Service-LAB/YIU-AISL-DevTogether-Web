@@ -34,6 +34,13 @@
     cursor: pointer;
 }
 
+.rolebutton {
+    position: absolute; /* 수정 */
+    top: 22px;
+    left: 10px;
+    cursor: pointer;
+}
+
 .side {
     margin-top: 50px;
 }

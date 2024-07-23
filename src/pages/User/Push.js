@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
-import { Tabs, List, Typography, Skeleton, Card, Badge, Avatar, Pagination, message } from "antd";
+import { Tabs, List, Typography, Skeleton, Card, Badge, Avatar, Pagination, message, Button } from "antd";
 import axios from "axios";
 import FilterButton from "../../components/Button/FilterButton";
 import style from "./UserInfo.module.css";
@@ -100,11 +100,11 @@ const Push = ({ notifications, onNotificationClick }) => {
 
   const handleAcceptClick = async () => {
     try {
-      // `selectedNotification.contents`에서 이름 추출
-      const notificationName = selectedNotification.contents.split("님")[0];
+      // `selectedNotification.contents`에서 닉네임 추출
+      const notificationNickname = selectedNotification.contents.split("님")[0];
   
-      // `userData`에서 이름이 같은 사용자 찾기
-      const matchedUser = userData.find(user => user.name === notificationName);
+      // `userData`에서 닉네임이 같은 사용자 찾기
+      const matchedUser = userData.find(user => user.nickname === notificationNickname);
   
       if (!matchedUser) {
         console.error("No matching user found.");
@@ -141,11 +141,11 @@ const Push = ({ notifications, onNotificationClick }) => {
 
   const handleRejectClick = async () => {
     try {
-      // `selectedNotification.contents`에서 이름 추출
-      const notificationName = selectedNotification.contents.split("님")[0];
+      // `selectedNotification.contents`에서 닉네임 추출
+      const notificationNickname = selectedNotification.contents.split("님")[0];
   
-      // `userData`에서 이름이 같은 사용자 찾기
-      const matchedUser = userData.find(user => user.name === notificationName);
+      // `userData`에서 닉네임이 같은 사용자 찾기
+      const matchedUser = userData.find(user => user.nickname === notificationNickname);
   
       if (!matchedUser) {
         console.error("No matching user found.");
@@ -182,11 +182,11 @@ const Push = ({ notifications, onNotificationClick }) => {
 
   const handleConfirmClick = async () => {
     try {
-      // `selectedNotification.contents`에서 이름 추출
-      const notificationName = selectedNotification.contents.split("님")[0];
+      // `selectedNotification.contents`에서 닉네임 추출
+      const notificationNickname = selectedNotification.contents.split("님")[0];
   
-      // `userData`에서 이름이 같은 사용자 찾기
-      const matchedUser = userData.find(user => user.name === notificationName);
+      // `userData`에서 닉네임이 같은 사용자 찾기
+      const matchedUser = userData.find(user => user.nickname === notificationNickname);
   
       if (!matchedUser) {
         console.error("No matching user found.");
@@ -220,21 +220,51 @@ const Push = ({ notifications, onNotificationClick }) => {
       message.error('과외 확정에 실패했습니다.');
     }
   };
-  
+
+  const handleViewPostClick = () => {
+    navigate(`/board/detail/${selectedNotification.typeId}`);
+  };
+
+  const handleViewCommentClick = () => {
+    navigate(`/board/detail/${selectedNotification.typeId}`);
+  };
+
+  const handleViewMessageClick = () => {
+    navigate(`/message`);
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return isNaN(date) ? "Invalid Date" : date.toISOString().split('T')[0];
   };
 
-  const renderNotificationContent = (notification) => {
-    const notificationName = notification.contents.split("님")[0];
-    const matchedUser = userData.find(user => user.name === notificationName);
+  const groupNotificationsByTypeAndId = (notifications) => {
+    const grouped = {};
+    notifications.forEach(notification => {
+      const key = `${notification.type}-${notification.typeId}`;
+      if (!grouped[key]) {
+        grouped[key] = [];
+      }
+      grouped[key].push(notification);
+    });
+    return grouped;
+  };
+
+  const getLatestStatus = (notifications) => {
+    return notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0].status;
+  };
+
+  const renderMatchingNotificationContent = (notification) => {
+    const notificationNickname = notification.contents.split("님")[0];
+    const matchedUser = userData.find(user => user.nickname === notificationNickname);
     const matchedData = matchingData.find(match => match.mentor === matchedUser?.userProfileId || match.mentee === matchedUser?.userProfileId);
     const user = userData.find(user => user.userProfileId === (role === 2 ? matchedData?.mentor : matchedData?.mentee));
 
     if (!matchedUser || !matchedData || !user) {
       return <div>일치하는 데이터를 찾을 수 없습니다.</div>;
     }
+
+    const imagepath = user.imgDto && user.imgDto.fileData ? `data:image/png;base64,${user.imgDto.fileData}` : AltImage;
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
@@ -243,9 +273,9 @@ const Push = ({ notifications, onNotificationClick }) => {
             <Title level={3}>{getTitleByContent(notification.contents)}</Title>
             <Text type="secondary">{formatDate(notification.createdAt)}</Text>
           </div>
-          <div>{notificationName}님이 과외를 {notification.contents.includes("신청") ? "신청" : notification.contents.includes("수락") ? "수락" : "거절"}했습니다.</div>
+          <div>{notificationNickname}님이 과외를 {notification.contents.includes("신청") ? "신청" : notification.contents.includes("수락") ? "수락" : notification.contents.includes("거절") ? "거절": notification.contents.includes("확정") ? "확정" : notification.contents.includes("종료") ? "종료" : "완료"}했습니다.</div>
           <div style={{ display: 'flex', alignItems: 'center', marginTop: '30px' }}>
-            <Avatar src={user.profileImage || AltImage} size="large" />
+            <Avatar src={imagepath} size="large" />
             <div style={{ marginLeft: '10px' }}>
               <Text strong>{user.nickname}</Text>
               <br />
@@ -265,6 +295,20 @@ const Push = ({ notifications, onNotificationClick }) => {
     );
   };
 
+  const renderGeneralNotificationContent = (notification) => {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginRight: '10px', marginBottom:'15px' }}>
+            <Title level={3}>{getTitleByContent(notification.contents)}</Title>
+            <Text type="secondary">{formatDate(notification.createdAt)}</Text>
+          </div>
+          <div>{notification.contents}</div>
+        </div>
+      </div>
+    );
+  };
+
   const getBorderColor = (item) => {
     console.log("Item:", item);
     console.log("Selected Notification:", selectedNotification);
@@ -279,13 +323,27 @@ const Push = ({ notifications, onNotificationClick }) => {
     if (content.includes("과외를 신청했습니다")) return "과외 신청";
     if (content.includes("과외를 수락했습니다")) return "과외 수락";
     if (content.includes("과외를 거절했습니다")) return "과외 거절";
+    if (content.includes("과외가 확정되었습니다")) return "과외 확정";
+    if (content.includes("과외를 종료했습니다")) return "과외 종료";
+    if (content.includes("쪽지")) return "쪽지";
+    if (content.includes("좋아요")) return "게시글 좋아요";
+    if (content.includes("댓글")) return "댓글";
     return content;
   };
 
+  const getNicknameFromContent = (content) => {
+    return content.split("님")[0];
+  };
+
   const sortedNotifications = notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const groupedNotifications = groupNotificationsByTypeAndId(sortedNotifications);
 
   if (loading) return <Skeleton active />;
   if (error) return <div>알림을 불러오는 중 오류가 발생했습니다.</div>;
+
+  const latestStatus = selectedNotification 
+    ? getLatestStatus(groupedNotifications[`${selectedNotification.type}-${selectedNotification.typeId}`])
+    : null;
 
   return (
     <div style={{ marginLeft: !isMobile ? '30px' : '20px' }}>
@@ -295,20 +353,30 @@ const Push = ({ notifications, onNotificationClick }) => {
     <div style={{ marginTop: '20px' }}>
       {selectedNotification && (
         <div style={{ paddingBottom: '50px' }}>
-          <Card style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '15px', marginBottom: '40px', height: '600px' }}>
-            {renderNotificationContent(selectedNotification)}
+          <Card style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '15px', marginBottom: '40px', height: selectedNotification.type === "매칭" ? '600px' : 'auto' }}>
+            {selectedNotification.type === "매칭" ? renderMatchingNotificationContent(selectedNotification) : renderGeneralNotificationContent(selectedNotification)}
           </Card>
-          <div style={{display:'flex', justifyContent:'flex-end'}}>
-            {selectedNotification.contents.includes("신청") && !actionMessage && (
-              <div style={{display:'flex'}}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            {selectedNotification.type === "매칭" && latestStatus === '신청' && selectedNotification.contents.includes("신청") && !actionMessage && (
+              <div style={{ display: 'flex' }}>
                 <FilterButton name={'수락'} onClick={handleAcceptClick} />
                 <FilterButton name={'거절'} onClick={handleRejectClick} />
               </div>
             )}
-            {selectedNotification.contents.includes("수락") && !actionMessage && (
-              <div style={{display:'flex'}}>
+            {selectedNotification.type === "매칭" && latestStatus === '성사됨' && selectedNotification.contents.includes("수락") && !actionMessage && (
+              <div style={{ display: 'flex' }}>
                 <FilterButton name={'확정'} onClick={handleConfirmClick} />
+                <FilterButton name={'거절'} onClick={handleRejectClick} />
               </div>
+            )}
+            {selectedNotification.type === "게시판" && (
+              <FilterButton name={'게시글 가기'} onClick={handleViewPostClick} />
+            )}
+            {selectedNotification.type === "댓글" && (
+              <FilterButton name={'댓글 보기'} onClick={handleViewCommentClick}/>
+            )}
+            {selectedNotification.type === "쪽지" && (
+              <FilterButton name={'쪽지함 가기'} onClick={handleViewMessageClick}/>
             )}
           </div>
         </div>
@@ -325,12 +393,13 @@ const Push = ({ notifications, onNotificationClick }) => {
                 style: { display: 'flex', justifyContent: 'center' },
               }}
               renderItem={(item) => {
-                const notificationName = item.contents.split("님")[0];
-                const matchedUser = userData.find(user => user.name === notificationName);
+                const notificationNickname = getNicknameFromContent(item.contents);
+                const matchedUser = userData.find(user => user.nickname === notificationNickname);
                 const matchedData = matchingData.find(match => match.mentor === matchedUser?.userProfileId || match.mentee === matchedUser?.userProfileId);
                 console.log("Notification:", item);
                 console.log("Matched User in List:", matchedUser);
                 console.log("Matched Data in List:", matchedData);
+                const imagepath = matchedUser?.imgDto && matchedUser.imgDto.fileData ? `data:image/png;base64,${matchedUser.imgDto.fileData}` : AltImage;
                 return (
                   <List.Item
                     onClick={() => handleNotificationClick(item)}
@@ -356,7 +425,7 @@ const Push = ({ notifications, onNotificationClick }) => {
                         }
                         description={
                           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span>{matchedUser ? matchedUser.nickname : item.user_id}</span>
+                            <span>{notificationNickname}</span>
                             <span>{formatDate(item.createdAt)}</span>
                           </div>
                         }
@@ -396,13 +465,13 @@ const Push = ({ notifications, onNotificationClick }) => {
                     <List.Item.Meta
                       title={
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Text strong>{item.contents}</Text>
+                          <Text strong>{getTitleByContent(item.contents)}</Text>
                           {item.checks === 1 && <Badge color="#f50" />}
                         </div>
                       }
                       description={
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span>{item.user_id}</span>
+                          <span>{getNicknameFromContent(item.contents)}</span>
                           <span>{formatDate(item.createdAt)}</span>
                         </div>
                       }
@@ -415,46 +484,50 @@ const Push = ({ notifications, onNotificationClick }) => {
           <TabPane tab="게시글" key="0">
             <List
               itemLayout="horizontal"
-              dataSource={sortedNotifications.filter(item => item.type === "게시글")}
+              dataSource={sortedNotifications.filter(item => item.type === "게시판")}
               pagination={{
                 pageSize,
                 current: currentPage,
                 onChange: page => setCurrentPage(page),
                 style: { display: 'flex', justifyContent: 'center' },
               }}
-              renderItem={(item) => (
-                <List.Item
-                  onClick={() => handleNotificationClick(item)}
-                  style={{
-                    cursor: "pointer",
-                    padding: '12px 0',
-                    backgroundColor: getBackgroundColor(item),
-                    borderLeft: `10px solid ${getBorderColor(item)}`,
-                    paddingLeft: '20px',
-                    paddingRight: '10px',
-                    borderRadius: '5px',
-                    marginBottom: '5px',
-                    minWidth: '300px'
-                  }}
-                >
-                  <Skeleton avatar title={false} loading={false} active>
-                    <List.Item.Meta
-                      title={
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Text strong>{item.contents}</Text>
-                          {item.checks === 1 && <Badge color="#f50" />}
-                        </div>
-                      }
-                      description={
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span>{item.user_id}</span>
-                          <span>{formatDate(item.createdAt)}</span>
-                        </div>
-                      }
-                    />
-                  </Skeleton>
-                </List.Item>
-              )}
+              renderItem={(item) => {
+                const notificationNickname = getNicknameFromContent(item.contents);
+                const texts = item.texts; // Extract the text between quotes
+                return (
+                  <List.Item
+                    onClick={() => handleNotificationClick(item)}
+                    style={{
+                      cursor: "pointer",
+                      padding: '12px 0',
+                      backgroundColor: getBackgroundColor(item),
+                      borderLeft: `10px solid ${getBorderColor(item)}`,
+                      paddingLeft: '20px',
+                      paddingRight: '10px',
+                      borderRadius: '5px',
+                      marginBottom: '5px',
+                      minWidth: '300px'
+                    }}
+                  >
+                    <Skeleton avatar title={false} loading={false} active>
+                      <List.Item.Meta
+                        title={
+                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Text strong>{getTitleByContent(item.contents)}</Text>
+                            {item.checks === 1 && <Badge color="#f50" />}
+                          </div>
+                        }
+                        description={
+                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span>{getNicknameFromContent(item.contents)}</span>
+                            <span>{formatDate(item.createdAt)}</span>
+                          </div>
+                        }
+                      />
+                    </Skeleton>
+                  </List.Item>
+                );
+              }}
             />
           </TabPane>
           <TabPane tab="댓글" key="1">
@@ -486,58 +559,13 @@ const Push = ({ notifications, onNotificationClick }) => {
                     <List.Item.Meta
                       title={
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Text strong>{item.contents}</Text>
+                          <Text strong>{getTitleByContent(item.contents)}</Text>
                           {item.checks === 1 && <Badge color="#f50" />}
                         </div>
                       }
                       description={
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span>{item.user_id}</span>
-                          <span>{formatDate(item.createdAt)}</span>
-                        </div>
-                      }
-                    />
-                  </Skeleton>
-                </List.Item>
-              )}
-            />
-          </TabPane>
-          <TabPane tab="문의" key="4">
-            <List
-              itemLayout="horizontal"
-              dataSource={sortedNotifications.filter(item => item.type === "문의")}
-              pagination={{
-                pageSize,
-                current: currentPage,
-                onChange: page => setCurrentPage(page),
-                style: { display: 'flex', justifyContent: 'center' },
-              }}
-              renderItem={(item) => (
-                <List.Item
-                  onClick={() => handleNotificationClick(item)}
-                  style={{
-                    cursor: "pointer",
-                    padding: '12px 0',
-                    backgroundColor: getBackgroundColor(item),
-                    borderLeft: `10px solid ${getBorderColor(item)}`,
-                    paddingLeft: '20px',
-                    paddingRight: '10px',
-                    borderRadius: '5px',
-                    marginBottom: '5px',
-                    minWidth: '300px'
-                  }}
-                >
-                  <Skeleton avatar title={false} loading={false} active>
-                    <List.Item.Meta
-                      title={
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Text strong>{item.contents}</Text>
-                          {item.checks === 1 && <Badge color="#f50" />}
-                        </div>
-                      }
-                      description={
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span>{item.user_id}</span>
+                          <span>{getNicknameFromContent(item.contents)}</span>
                           <span>{formatDate(item.createdAt)}</span>
                         </div>
                       }
