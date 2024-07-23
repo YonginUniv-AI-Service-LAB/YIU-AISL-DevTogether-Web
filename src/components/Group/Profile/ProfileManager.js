@@ -18,7 +18,7 @@ const formatDate = (dateString) => {
   return `${year}.${month}.${day}`;
 };
 
-const ProfileManager = ({ matchingId, nickname, subject, startDate, endDate, status: initialStatus, onStatusChange, imagepath }) => {
+const ProfileManager = ({ matchingId, nickname, subject, startDate, endDate, status: initialStatus, onStatusChange, imagepath, check }) => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
   const [status, setStatus] = useState(initialStatus);
@@ -31,6 +31,12 @@ const ProfileManager = ({ matchingId, nickname, subject, startDate, endDate, sta
   const [user, setUser] = useState(null); 
   const [reviewData, setReviewData] = useState(null);
   const role = parseInt(sessionStorage.getItem('role'), 10);
+
+  useEffect(() => {
+    if ((role === 1 && (check === 1 || check === 3)) || (role === 2 && (check === 2 || check === 3))) {
+      setStatus('종료됨');
+    }
+  }, [role, check]);
 
   useEffect(() => {
     const fetchData = async () => {

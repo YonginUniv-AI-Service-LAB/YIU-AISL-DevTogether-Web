@@ -73,6 +73,18 @@ const Header = (props) => {
     setRole(storedRole);
   }, []);
 
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const storedRole = parseInt(sessionStorage.getItem('role'), 10);
+      setRole(storedRole);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
   // Drawer 오픈 여부
   const [open, setOpen] = useState(false);
   const showDrawer = () => {
@@ -100,6 +112,7 @@ const Header = (props) => {
     sessionStorage.removeItem("name");
     sessionStorage.removeItem("nickname");
     sessionStorage.removeItem("role");
+    setRole(null);
     navigate("/", { replace: true });
   };
 

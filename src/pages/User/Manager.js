@@ -104,6 +104,7 @@ const Manager = () => {
                 endDate={formatDate(profile.endedAt)}
                 status={profile.status}
                 onStatusChange={handleStatusChange}
+                check={profile.checkReview}
               />
             );
           })}

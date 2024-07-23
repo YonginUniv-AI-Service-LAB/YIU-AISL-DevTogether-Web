@@ -207,7 +207,7 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
                         {!isMobile && 
                         <div>
                             <div className={style.fix_left}>
-                                <Sidebar titles={["학생 찾기", "선생님 찾기"]} onCategoryClick={handleCategoryClick} />
+                                {/* <Sidebar titles={["학생 찾기", "선생님 찾기"]} onCategoryClick={handleCategoryClick} /> */}
                                 <div className={style.situation}>
                                     <FilterTag selectedSubjects={selectedSubjects} selectedLocations={selectedLocations} selectedGenders={selectedGenders} 
                                     selectedMinAges={selectedMinAges} selectedMaxAges={selectedMaxAges} selectedMethods={selectedMethods} selectedMinFees={selectedMinFees} selectedMaxFees={selectedMaxFees}/>
