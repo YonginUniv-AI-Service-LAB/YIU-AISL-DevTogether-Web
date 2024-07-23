@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Post from "../../components/Group/Post/Post";
 import dayjs from "dayjs";
+import AltImage from "../../assets/images/devtogether_logo.png";
 
 const Write = () => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -20,20 +21,6 @@ const Write = () => {
   const role = sessionStorage.getItem("role"); // 세션 스토리지에서 role 가져오기
 
   useEffect(() => {
-    // const fetchUserData = async () => {
-    //   try {
-    //     const userResponse = await axios.get("/user", {
-    //       headers: {
-    //         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-    //       },
-    //     });
-    //     setNickname(userResponse.data.nickname);
-    //     setIntroduction(userResponse.data.introduction);
-    //   } catch (error) {
-    //     console.error("Failed to fetch user data:", error);
-    //   }
-    // };
-
     const fetchUserPosts = async () => {
       try {
         const endpoint = role === "1" ? "/user/board/mentor" : "/user/board/mentee"; // 역할에 따라 엔드포인트 선택
@@ -51,7 +38,6 @@ const Write = () => {
       }
     };
 
-    // fetchUserData();
     fetchUserPosts();
   }, [userId, role]);
 
@@ -86,9 +72,18 @@ const Write = () => {
     navigate(`/board/detail/${postId}`);
   };
 
-  const handleDelete = (postId) => {
-    // postId에 해당하는 게시물을 userPosts 상태에서 제거합니다.
-    setUserPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+  const handleDelete = async (postId) => {
+    try {
+      await axios.delete(`/board/${postId}`, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      });
+      // postId에 해당하는 게시물을 userPosts 상태에서 제거합니다.
+      setUserPosts(prevPosts => prevPosts.filter(post => post.boardId !== postId));
+    } catch (error) {
+      console.error("Failed to delete post:", error);
+    }
   };
 
   const indexOfLastPost = currentPage * postPerPage;
@@ -101,31 +96,38 @@ const Write = () => {
         <div style={{ fontSize: '25px', fontWeight: '600', marginTop: '20px' }}>내가 작성한 글</div>
       </div>
       <div style={{ marginTop: '40px'}}>
-        {currentPosts.map((post, index) => (
-          <Post
-            key={post.boardId}
-            id={post.boardId}
-            num={index + 1}
-            category={post.category}
-            title={post.title}
-            contents={post.contents.length > maxCombinedLength - post.title.length
-              ? post.contents.substring(0, maxCombinedLength - post.title.length) + '...'
-              : post.contents}
-            createdAt={dayjs(post.createdAt).format("YYYY.MM.DD")}
-            likes={post.likeCount}
-            views={post.views}
-            comment={post.countComment}
-            img={post.img}
-            nickname={post.userProfileId["nickname"]}
-            userImage={post.userImage}
-            introduction={post.userProfileId["introduction"]}
-            scraped={post.scraped}
-            onClick={() => handlePostClick(post.boardId)}
-            onDelete={handleDelete}
-            showBookmark={false}
-            showMenu={true}
-          />
-        ))}
+        {currentPosts.map((post, index) => {
+          // Base64 디코딩
+          const userImage = post.userProfileId.filesResponseDto && post.userProfileId.filesResponseDto.fileData
+            ? `data:image/png;base64,${post.userProfileId.filesResponseDto.fileData}`
+            : AltImage;
+
+          return (
+            <Post
+              key={post.boardId}
+              id={post.boardId}
+              num={index + 1}
+              category={post.category}
+              title={post.title}
+              contents={post.contents.length > maxCombinedLength - post.title.length
+                ? post.contents.substring(0, maxCombinedLength - post.title.length) + '...'
+                : post.contents}
+              createdAt={dayjs(post.createdAt).format("YYYY.MM.DD")}
+              likes={post.likeCount}
+              views={post.views}
+              comment={post.countComment}
+              img={post.img}
+              nickname={post.userProfileId["nickname"]}
+              userImage={userImage}
+              introduction={post.userProfileId["introduction"]}
+              scraped={post.scraped}
+              onClick={() => handlePostClick(post.boardId)}
+              onDelete={() => handleDelete(post.boardId)}
+              showBookmark={false}
+              showMenu={true}
+            />
+          );
+        })}
       </div>
     </div>
   );

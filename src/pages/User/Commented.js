@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Comment from "../../components/Group/Comment/Comment";
 import { message } from "antd";
 import { defaultAPI } from "../../api";
+import AltImage from "../../assets/images/devtogether_logo.png";
 
 const Commented = () => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -28,6 +29,7 @@ const Commented = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.data;
+        console.log("Fetched user comments:", data); // API로 가져온 데이터 콘솔에 출력
         setUserComments(data);
       } catch (error) {
         console.error('Error fetching user comments:', error);
@@ -62,26 +64,32 @@ const Commented = () => {
         <div style={{ fontSize: '25px', fontWeight: '600', marginTop: '20px' }}>내가 댓글단 글</div>
       </div>
       <div style={{ marginTop: '40px' }}>
-        {currentComments.map((comment, index) => (
-          <Comment
-            key={comment.commentId}
-            id={comment.commentId}
-            num={index + 1}
-            contents={comment.contents}
-            createAt={comment.createAt}
-            updatedAt={comment.updatedAt}
-            nickname={comment.userProfileId.nickname}
-            userImage={comment.userProfileId.userImage}
-            introduction={comment.userProfileId.introduction}
-            likes={comment.likeCount}
-            liked={comment.liked}
-            userid={comment.userProfileId.id}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onClick={handleCommentClick} // 여기서 클릭 핸들러를 추가합니다.
-            postId={comment.boardId} // 댓글에서 게시물 ID를 가져옵니다.
-          />
-        ))}
+        {currentComments.map((comment, index) => {
+          const userImage = comment.userProfileId.filesResponseDto && comment.userProfileId.filesResponseDto.fileData
+            ? `data:image/png;base64,${comment.userProfileId.filesResponseDto.fileData}`
+            : AltImage;
+
+          return (
+            <Comment
+              key={comment.commentId}
+              id={comment.commentId}
+              num={index + 1}
+              contents={comment.contents}
+              createAt={comment.createAt}
+              updatedAt={comment.updatedAt}
+              nickname={comment.userProfileId.nickname}
+              userImage={userImage}
+              introduction={comment.userProfileId.introduction}
+              likes={comment.likeCount}
+              liked={comment.liked}
+              userid={comment.userProfileId.id}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onClick={handleCommentClick} // 여기서 클릭 핸들러를 추가합니다.
+              postId={comment.boardId} // 댓글에서 게시물 ID를 가져옵니다.
+            />
+          );
+        })}
       </div>
     </div>
   );

@@ -23,6 +23,7 @@ const Reviewinfo = ({ isEditing }) => {
 
         if (response.ok) {
           const data = await response.json();
+          console.log("Fetched reviews:", data); // API로 가져온 데이터 콘솔에 출력
           setReviews(data);
         } else {
           console.error('리뷰 조회 실패:', response.status);
@@ -65,7 +66,9 @@ const Reviewinfo = ({ isEditing }) => {
             createdAt={formatDateString(review.reviewCreatedAt)}
             img={review.img}
             nickname={review.userProfileId.nickname}
-            userImage={review.userProfileId.files ? '/path/to/user/image' : null}
+            userImage={review.userProfileId.filesResponseDto && review.userProfileId.filesResponseDto.fileData
+              ? `data:image/png;base64,${review.userProfileId.filesResponseDto.fileData}`
+              : null}
             introduction={review.userProfileId.introduction}
             preparerating={review.star1}
             studyrating={review.star2}

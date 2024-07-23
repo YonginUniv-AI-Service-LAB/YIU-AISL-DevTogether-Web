@@ -317,6 +317,8 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
                     .filter(post => currentCategory === "전체" || post.category === currentCategory)
                     .map((post, index) => {
                       const isScraped = post.scrapPeople.includes(parseInt(sessionStorage.getItem("user_profile_id")));
+                      // Base64 디코딩
+                      const userImage = post.userProfileId.filesResponseDto.fileData ? `data:image/png;base64,${post.userProfileId.filesResponseDto.fileData}` : null;
                       return (
                         <Post
                           key={post.boardId}
@@ -338,7 +340,7 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
                           comment={post.countComment}
                           img={post.img}
                           nickname={post.userProfileId["nickname"]}
-                          userImage={post.userImage}
+                          userImage={userImage}
                           introduction={post.userProfileId["introduction"]}
                           scraped={isScraped}
                           onClick={() => {
