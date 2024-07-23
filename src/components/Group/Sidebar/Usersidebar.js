@@ -13,7 +13,7 @@ const Usersidebar = ({ titles, onCategoryClick }) => {
 
   
   return (
-    <div className={style.background}>
+    <div className={style.backgrounduser}>
      <div className={style.fix}>
       {titles &&
         titles.map((title, index) => (

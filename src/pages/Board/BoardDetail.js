@@ -4,14 +4,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import PageHeader from "../../components/Group/PageHeader/PageHeader";
 import boardimg from "../../assets/images/PageHeaderImage/board.svg";
 import Body from "../../components/Group/Body/Body";
-import { Input, Button } from "antd";
+import { Input, Button, message } from "antd";
 import "react-quill/dist/quill.snow.css";
 import style from "../Board/Board.module.css";
 import Sidebar from "../../components/Group/Sidebar/Sidebar";
 import PostDetail from "../../components/Group/Post/PostDetail";
 import Comment from "../../components/Group/Comment/Comment";
-import { data_board } from "../../assets/data/board"; // data_board import
-import { data_comment } from "../../assets/data/comment"; // data_comment import
 import LoadingSpin from "../../components/Spin/LoadingSpin";
 import GetDataErrorView from "../../components/Result/GetDataError";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -27,20 +25,16 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
 
   const navigate = useNavigate();
   const { TextArea } = Input;
-  const { id } = useParams();
-  // const post = data_board.find((item) => item.id === parseInt(id));
-  // const postRef = useRef(null);
+  const { id } = useParams(); // URL에서 id 파라미터를 가져옴
+  const postRef = useRef(null);
 
-  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태 추가
-  const [commentsPerPage] = useState(10); // 페이지당 댓글 수 상태 추가
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [commentsPerPage] = useState(5);
   const [filteredComments, setFilteredComments] = useState([]);
-  const [editedComment, setEditedComment] = useState(null); // 수정할 댓글 정보 상태
-  const [isEditMode, setIsEditMode] = useState(false); // 수정 모드 여부 상태
-  const [commentText, setCommentText] = useState(""); // 댓글 입력 칸 텍스트 상태
-  const [postHeight, setPostHeight] = useState(0); // 게시글 영역의 높이 상태 추가
-
-  const curBoardId = useRecoilValue(CurrentBoardIdAtom);
+  const [editedComment, setEditedComment] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [commentText, setCommentText] = useState("");
+  const [postHeight, setPostHeight] = useState(0);
 
   const queryClient = useQueryClient();
 
@@ -49,117 +43,142 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["post"],
+    queryKey: ["post", id], // id를 queryKey에 포함
     queryFn: async () => {
-      const res = await defaultAPI.get(`/board/post?boardId=${curBoardId}`);
+      const res = await defaultAPI.get(`/board/post?boardId=${id}`); // id를 사용하여 API 요청
       return res.data;
     },
   });
 
-  // useEffect(() => {
-  //   // 게시글 ID에 해당하는 댓글 필터링
-  //   const comments = data_comment.filter(
-  //     (comment) => comment.post_id === parseInt(id)
-  //   );
-  //   setFilteredComments(comments);
-  //   // 게시글 영역의 높이 측정
-  //   if (postRef.current) {
-  //     setPostHeight(postRef.current.offsetHeight);
-  //   }
-  // }, [id]); // id가 변경될 때마다 댓글 필터링
+  useEffect(() => {
+    if (postRef.current) {
+      setPostHeight(postRef.current.offsetHeight);
+    }
+  }, [post]);
 
   const handleListback = () => {
-    navigate(-1); // 이전 페이지로 이동
+    navigate(-1);
   };
 
-  const handleCommentSubmit = () => {
-    // 등록 버튼을 클릭했을 때 호출되는 함수
-    const currentDate = new Date();
-    const formattedDate = `${currentDate.getFullYear()}.${String(
-      currentDate.getMonth() + 1
-    ).padStart(2, "0")}.${String(currentDate.getDate()).padStart(2, "0")}`;
+  const handleCommentSubmit = async () => {
+    if (commentText.trim() === "") {
+      message.warning("댓글 내용을 입력해주세요.");
+      return;
+    }
 
-    const newComment = {
-      id: data_comment.length + 1, // 새로운 댓글 ID를 생성합니다.
-      post_id: parseInt(id),
-      role: 1,
-      gender: 0,
-      contents: commentText,
-      createdAt: formattedDate,
-      likes: 0,
-      file: [],
-      nickname: "댓글 작성자",
-      userImage: "/default_user_image.png",
-      introduction: "댓글 작성자의 소개",
-    };
-    // 하드 데이터에 새로운 댓글 정보를 추가합니다.
-    data_comment.push(newComment);
-    // 댓글 입력 칸 텍스트를 초기화합니다.
-    setCommentText("");
-    // 필터링된 댓글 배열을 업데이트합니다.
-    setFilteredComments([...filteredComments, newComment]);
-  };
+    try {
+      const role = sessionStorage.getItem("role");
+      const endpoint = role === "1" ? "/board/comment/mentor" : "/board/comment/mentee";
 
-  const handleEditComment = (commentId) => {
-    // 수정 버튼을 클릭했을 때 호출되는 함수
-    const commentToEdit = filteredComments.find(
-      (comment) => comment.id === commentId
-    );
-    setEditedComment(commentToEdit);
-    setIsEditMode(true);
-    setCommentText(commentToEdit.contents); // 수정할 댓글의 내용을 commentText 상태로 설정
-  };
+      const newComment = {
+        boardId: id, // curBoardId 대신 id 사용
+        contents: commentText,
+      };
 
-  const handleDeleteComment = (commentId) => {
-    // 삭제 버튼을 클릭했을 때 호출되는 함수
-    const updatedComments = filteredComments.filter(
-      (comment) => comment.id !== commentId
-    );
-    setFilteredComments(updatedComments);
-  };
+      console.log("댓글 등록 데이터:", newComment);
 
-  // 댓글 페이지 변경 함수
-  const paginateComments = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  // 현재 페이지의 댓글 가져오기
-  const indexOfLastComment = currentPage * commentsPerPage;
-  const indexOfFirstComment = indexOfLastComment - commentsPerPage;
-  const currentComments = filteredComments.slice(
-    indexOfFirstComment,
-    indexOfLastComment
-  );
-
-  const handleSaveEdit = () => {
-    if (editedComment) {
-      const updatedComments = filteredComments.map((comment) => {
-        if (comment.id === editedComment.id) {
-          return {
-            ...comment,
-            contents: commentText,
-            edited: true, // 수정됨 플래그 설정
-          };
+      await defaultAPI.post(
+        endpoint,
+        new URLSearchParams(newComment),
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
         }
-        return comment;
-      });
-      setFilteredComments(updatedComments);
-      setIsEditMode(false);
-      setEditedComment(null);
+      );
+
+      message.success("댓글이 등록되었습니다.");
       setCommentText("");
+      queryClient.invalidateQueries(["post", id]);
+    } catch (error) {
+      console.error("댓글 등록 실패:", error);
+      message.error("댓글 등록에 실패했습니다.");
+    }
+  };
+
+  const handleEditComment = (commentId, commentContents) => {
+    setEditedComment({ id: commentId, contents: commentContents });
+    setIsEditMode(true);
+    setCommentText(commentContents);
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const endpoint = "/board/comment";
+
+      await defaultAPI.delete(endpoint, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: new URLSearchParams({ commentId }),
+      });
+
+      message.success("댓글이 삭제되었습니다.");
+      queryClient.invalidateQueries(["post", id]);
+    } catch (error) {
+      console.error("댓글 삭제 실패:", error);
+      message.error("댓글 삭제에 실패했습니다.");
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (editedComment) {
+      try {
+        const role = sessionStorage.getItem("role");
+        const endpoint = role === "1" ? "/board/comment/mentor" : "/board/comment/mentee";
+
+        const updatedComment = {
+          commentId: editedComment.id,
+          contents: commentText,
+        };
+
+        await defaultAPI.put(
+          endpoint,
+          new URLSearchParams(updatedComment),
+          {
+            headers: {
+              Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+          }
+        );
+
+        message.success("댓글이 수정되었습니다.");
+        setIsEditMode(false);
+        setEditedComment(null);
+        setCommentText("");
+        queryClient.invalidateQueries(["post", id]);
+      } catch (error) {
+        console.error("댓글 수정 실패:", error);
+        message.error("댓글 수정에 실패했습니다.");
+      }
     }
   };
 
   const handleCancelEdit = () => {
-    // 수정 취소 버튼을 클릭했을 때 호출되는 함수
-    // 수정 상태 및 수정할 댓글 정보 초기화
     setIsEditMode(false);
     setEditedComment(null);
     setCommentText("");
   };
 
+  const paginateComments = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // 댓글을 최신순으로 정렬
+  const sortedComments = post?.comments?.slice().sort((a, b) => new Date(b.createAt) - new Date(a.createAt)) || [];
+
+  const indexOfLastComment = currentPage * commentsPerPage;
+  const indexOfFirstComment = indexOfLastComment - commentsPerPage;
+  const currentComments = sortedComments.slice(indexOfFirstComment, indexOfLastComment);
+
+  const userId = parseInt(sessionStorage.getItem("user_profile_id")); // 세션에서 사용자 ID를 가져옵니다.
+
   if (isLoading) return <LoadingSpin />;
   if (error) return <GetDataErrorView />;
+  if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
 
   return (
     <div>
@@ -170,7 +189,7 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
             sentence1="나와 같은 꿈을 가진 사람들과의 대화"
             sentence2="일상적인 얘기부터 필요한 정보까지"
             title="커뮤니티"
-            imageSrc={boardimg} // 이미지 경로를 전달합니다.
+            imageSrc={boardimg}
           />
         </div>
       )}
@@ -206,24 +225,9 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
                           ? { flex: 1, marginRight: "20px" }
                           : { marginBottom: "30px" }
                       }
-                      // ref={postRef}
+                      ref={postRef}
                     >
-                      <PostDetail
-                        post={post}
-                        userProfileId={post.userProfileId["id"]}
-                        id={post.boardId}
-                        title={post.title}
-                        contents={post.contents}
-                        createdAt={dayjs(post.createdAt).format("YYYY.MM.DD")}
-                        likes={post.likeCount}
-                        views={post.views}
-                        comment={post.countComment}
-                        img={post.img}
-                        nickname={post.userProfileId["nickname"]}
-                        userImage={post.userImage}
-                        introduction={post.introduction}
-                        scraped={post.scraped}
-                      />
+                      <PostDetail post={post} />
                       <div className={style.button} onClick={handleListback}>
                         목록으로
                       </div>
@@ -276,6 +280,7 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
                                   color: "white",
                                 }}
                                 onClick={handleSaveEdit}
+                                disabled={commentText.trim() === ""}
                               >
                                 수정 완료
                               </Button>
@@ -288,6 +293,7 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
                                 color: "white",
                               }}
                               onClick={handleCommentSubmit}
+                              disabled={commentText.trim() === ""}
                             >
                               등록
                             </Button>
@@ -295,30 +301,31 @@ const BoardDetail = ({ handleSidebarButtonClick }) => {
                         </div>
                       </div>
                       <div style={{ paddingRight: "10px" }}>
-                        {post.comments.map((comment) => (
-                          <Comment
-                            key={comment.commentId}
-                            id={comment.commentId}
-                            contents={comment.contents}
-                            createdAt={dayjs(comment.createdAt).format(
-                              "YYYY.MM.DD"
-                            )}
-                            likes={comment.likeCount}
-                            nickname={comment.userProfileId.nickname}
-                            userImage={comment.userProfileId.files}
-                            introduction={comment.userProfileId.introduction}
-                            onEdit={handleEditComment} // 수정 버튼 클릭 시 호출될 함수 전달
-                            onDelete={handleDeleteComment} // 삭제 버튼 클릭 시 호출될 함수 전달
-                            edited={comment.edited} // 수정 여부를 전달합니다.
-                          />
-                        ))}
-                        {/* 댓글 페이지네이션 */}
+                        {currentComments.map((comment) => {
+                          const liked = comment.likePeople.includes(userId); // liked 상태 계산
+                          return (
+                            <Comment
+                              key={comment.commentId}
+                              id={comment.commentId}
+                              contents={comment.contents}
+                              createAt={(comment.createAt)}
+                              updatedAt={(comment.updatedAt)}
+                              likes={comment.likeCount}
+                              liked={liked} // 계산된 liked 상태 전달
+                              nickname={comment.userProfileId.nickname}
+                              userImage={comment.userProfileId.files}
+                              introduction={comment.userProfileId.introduction}
+                              userid = {comment.userProfileId.id}
+                              onEdit={handleEditComment}
+                              onDelete={handleDeleteComment}
+                              edited={comment.createAt !== comment.updatedAt}
+                            />
+                          );
+                        })}
                         <div className={style.foot}>
                           {[
                             ...Array(
-                              Math.ceil(
-                                filteredComments.length / commentsPerPage
-                              )
+                              Math.ceil(post?.comments?.length / commentsPerPage) || 0
                             ).keys(),
                           ].map((number) => (
                             <div

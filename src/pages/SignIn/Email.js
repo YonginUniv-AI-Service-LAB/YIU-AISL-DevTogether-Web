@@ -162,33 +162,39 @@ const Email = () => {
         setShowconfirmPassword(!showconfirmPassword);
     };
 
-    const 이메일_찾기 = useMutation({
-        mutationFn: async (data) => {
-            console.log("이메일 찾기 API 호출 데이터:", data); 
-            return await defaultAPI.post("/email", {
-                name: data.name,
-                birth: data.birth,
-                question: Number(data.question),
-                answer: data.answer,
-            });
-        },
-        onSuccess: (res) => {
-            setFoundEmail(res.data.email);
-            setNoMemberFound(false);
-        },
-        onError: (e) => {
-            if (e.response.status === 400) {
-                message.error("데이터가 없습니다. 한 개라도 입력하지 않았습니다.");
-            } else if (e.response.status === 401) {
-                message.error("정보가 일치하지 않습니다. 질문과 답변을 확인해주세요.");
-            } else if (e.response.status === 404) {
-                message.error("회원 정보가 존재하지 않습니다. 이름과 생년월일을 확인해주세요.");
-            } else {
-                message.error("오류가 발생했습니다. 다시 시도해주세요.");
-            }
-            setNoMemberFound(true);
-        },
-    });
+    // 이메일 찾기 useMutation
+const 이메일_찾기 = useMutation({
+    mutationFn: async (data) => {
+        console.log("이메일 찾기 API 호출 데이터:", data); 
+        const response = await defaultAPI.post("/email", {
+            name: data.name,
+            birth: data.birth,
+            question: Number(data.question),
+            answer: data.answer,
+        });
+        console.log("이메일 찾기 API 응답 데이터:", response.data);
+        return response;
+    },
+    onSuccess: (res) => {
+        console.log("이메일 찾기 성공:", res.data);
+        setFoundEmail(res.data);
+        setNoMemberFound(false);
+    },
+    onError: (e) => {
+        console.log("이메일 찾기 오류:", e.response);
+        if (e.response.status === 400) {
+            message.error("데이터를 모두 입력해주세요.");
+        } else if (e.response.status === 401) {
+            message.error("정보가 일치하지 않습니다. 질문과 답변을 확인해주세요.");
+        } else if (e.response.status === 404) {
+            message.error("회원 정보가 존재하지 않습니다. 이름과 생년월일을 확인해주세요.");
+        } else {
+            message.error("오류가 발생했습니다. 다시 시도해주세요.");
+        }
+        setNoMemberFound(true);
+        setFoundEmail(false);
+    },
+});
 
     const 비밀번호_변경_이메일_인증 = useMutation({
         mutationFn: async (email) =>

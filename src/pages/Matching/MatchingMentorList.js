@@ -14,12 +14,12 @@ import MobFilterTag from '../../components/Group/Filtertag/MobFiltertag';
 import { useRecoilState } from 'recoil';
 import { selectedgenderStateAtom, selectedsubjectStateAtom, selectedlocationStateAtom, selectedminageStateAtom, selectedmaxageStateAtom, 
     selectedminfeeStateAtom, selectedmaxfeeStateAtom, selectedmethodStateAtom } from '../../recoil/atoms/matchingAtom';
-import NavigateButton from '../../components/Button/NavigateButton';
 import PageHeader from '../../components/Group/PageHeader/PageHeader';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import LoadingSpin from '../../components/Spin/LoadingSpin';
 import GetDataErrorView from '../../components/Result/GetDataError';
+import AltImage from "../../assets/images/devtogether_logo.png";
 
 const fetchMentorData = async () => {
     const accessToken = sessionStorage.getItem('accessToken');
@@ -28,7 +28,6 @@ const fetchMentorData = async () => {
             Authorization: `Bearer ${accessToken}`
         }
     });
-
 
     console.log('API Response Data:', response.data);
     
@@ -49,12 +48,13 @@ const fetchMentorData = async () => {
         location3: profile.location3,
         fee: profile.fee,
         method: profile.method === '비대면' ? "비대면" : profile.method === '대면' ? "대면" : "블렌딩",
-        img: profile.img,
+        img: profile.imgDto ? `data:image/png;base64,${profile.imgDto.fileData}` : null,
         introduction: profile.introduction,
         portfolio: profile.portfolio,
         contents: profile.contents,
         schedule: profile.schedule,
-        pr: profile.pr
+        pr: profile.pr,
+        scrap: profile.scrap,
     }));
 };
 
@@ -287,13 +287,15 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
                                             fee={profile.fee}
                                             method={profile.method}
                                             imagetext="프로필 이미지"
-                                            imagepath={profile.img} // 이미지 경로 추가
-                                            introduction={profile.introduction} // 소개 추가
-                                            portfolio={profile.portfolio} // 포트폴리오 추가
-                                            contents={profile.contents} // 과외 소개 추가
-                                            schedule={profile.schedule} // 과외 일정 추가
-                                            pr={profile.pr} // 어필 추가
-                                            />
+                                            imagepath={profile.img || AltImage} // profile.img가 없으면 기본 이미지를 사용
+                                            introduction={profile.introduction}
+                                            portfolio={profile.portfolio}
+                                            contents={profile.contents}
+                                            schedule={profile.schedule}
+                                            pr={profile.pr}
+                                            scrap={profile.scrap} // 추가된 부분
+                                        />
+
                                         ))
                                     )}
                                 </div>

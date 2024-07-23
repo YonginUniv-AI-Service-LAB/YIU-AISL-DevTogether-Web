@@ -1,10 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Button } from "antd";
 import style from "./Footer.module.css";
 import { colors } from "../../../assets/colors";
-import { RiCodeView } from "react-icons/ri";
-import styled from "styled-components";
 import LogoTitle_Footer from "../LOGO/LogoTitle_Footer";
 import { useNavigate } from "react-router-dom";
 import FooterNavBtn from "./FooterNavBtn";
@@ -16,6 +14,12 @@ const Footer = (props) => {
   const isNotMobile = useMediaQuery({ minWidth: 768 });
 
   const navigate = useNavigate();
+  const [role, setRole] = useState(null);
+
+  useEffect(() => {
+    const storedRole = parseInt(sessionStorage.getItem('role'), 10);
+    setRole(storedRole);
+  }, []);
 
   return (
     <div
@@ -32,7 +36,6 @@ const Footer = (props) => {
       <LogoTitle_Footer />
       <div
         style={{
-          // width: isMobile || isTablet ? "90%" : "50%",
           display: "flex",
           justifyContent: "flex-start",
           gap: isMobile ? 10 : 30,
@@ -40,14 +43,18 @@ const Footer = (props) => {
           marginBottom: 30,
         }}
       >
-        <FooterNavBtn
-          text={"학생 찾기"}
-          onClick={() => navigate("/matching:mentee")}
-        />
-        <FooterNavBtn
-          text={"선생님 찾기"}
-          onClick={() => navigate("/matching:mento")}
-        />
+        {role === 1 && (
+          <FooterNavBtn
+            text={"학생 찾기"}
+            onClick={() => navigate("/matching:mentee")}
+          />
+        )}
+        {role === 2 && (
+          <FooterNavBtn
+            text={"선생님 찾기"}
+            onClick={() => navigate("/matching:mento")}
+          />
+        )}
         <FooterNavBtn text={"커뮤니티"} onClick={() => navigate("/board")} />
         <FooterNavBtn text={"공지사항"} onClick={() => navigate("/notice")} />
         <FooterNavBtn

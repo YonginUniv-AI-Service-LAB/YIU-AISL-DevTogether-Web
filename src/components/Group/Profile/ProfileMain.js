@@ -12,8 +12,11 @@ const ProfileMain = (props) => {
   const navigate = useNavigate();
 
   const handleMoreButtonClick = () => {
-    console.log('Profile props:', props.role);
-    const detailPagePath = props.role === 2 ? `/matching/mentor/${props.id}` : `/matching/mentee/${props.id}`;
+    console.log("Profile props:", props.role);
+    const detailPagePath =
+      props.role === 2
+        ? `/matching/mentor/${props.id}`
+        : `/matching/mentee/${props.id}`;
     navigate(detailPagePath); // 프로필 상세 페이지로 이동
   };
 
@@ -33,7 +36,9 @@ const ProfileMain = (props) => {
       for (let i = 0; i < words.length; i++) {
         const word = words[i];
         const newTruncated = truncated ? `${truncated}, ${word}` : word;
-        const newWidth = context.measureText(newTruncated + ellipsis + (words.length - i - 1) + "개").width;
+        const newWidth = context.measureText(
+          newTruncated + ellipsis + (words.length - i - 1) + "개"
+        ).width;
 
         if (newWidth > maxWidth) {
           return truncated + ellipsis + (words.length - i) + "개";
@@ -54,19 +59,41 @@ const ProfileMain = (props) => {
   }, [props.subject, props.location, isMobile]);
 
   return (
-    <div className={style.background} style={{ width: isMobile ? '176px' : '200px' }}>
+    <div
+      className={style.background}
+      style={{ width: isMobile ? "176px" : "200px" }}
+    >
       <div className={`${style.circle} ${style.circleImage}`}>
         <img src={props.imagepath} alt={props.imagetext} />
       </div>
-      <div className={style.information} style={{ marginTop: '60px' }}>
-        <div style={{ fontWeight: '900' }}>{props.nickname}</div>
-        <div className={style.subject} style={{ fontSize: isMobile ? '12px' : '15px' }}>{subjectText}</div>
-        <div style={{ display: 'flex' }}>
-          <div style={{ fontSize: isMobile ? '12px' : '15px' }}>{props.gender}</div>
-          <div style={{ opacity: '0.3', marginLeft: '10px', marginRight: '10px' }}> | </div>
-          <div style={{ fontSize: isMobile ? '12px' : '15px' }}>{props.age}세</div>
+      <div className={style.information} style={{ marginTop: "60px" }}>
+        <div style={{ fontWeight: "900" }}>{props.nickname}</div>
+        <div
+          className={style.subject}
+          style={{ fontSize: isMobile ? "12px" : "15px" }}
+        >
+          {subjectText}
         </div>
-        <div className={style.location} style={{ fontSize: isMobile ? '12px' : '15px' }}>{locationText}</div>
+        <div style={{ display: "flex" }}>
+          <div style={{ fontSize: isMobile ? "12px" : "15px" }}>
+            {props.gender}
+          </div>
+          <div
+            style={{ opacity: "0.3", marginLeft: "10px", marginRight: "10px" }}
+          >
+            {" "}
+            |{" "}
+          </div>
+          <div style={{ fontSize: isMobile ? "12px" : "15px" }}>
+            {props.age}세
+          </div>
+        </div>
+        <div
+          className={style.location}
+          style={{ fontSize: isMobile ? "12px" : "15px" }}
+        >
+          {locationText}
+        </div>
       </div>
     </div>
   );

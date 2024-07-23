@@ -10,11 +10,9 @@ import NavigateSelect from "../../components/Select/NavigateSelect";
 import Searchbar from "../../components/Group/Searchbar/Searchbar";
 import SortButton from "../../components/Button/SortButton";
 import SortSelect from "../../components/Select/SortSelect";
-import { data_board } from "../../assets/data/board"; // data_board import
 import Post from "../../components/Group/Post/Post";
-import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
-import { scrollPositionState } from "../../recoil/atoms/board";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRecoilState } from "recoil";
+import { useQuery } from "@tanstack/react-query";
 import { defaultAPI } from "../../api";
 import LoadingSpin from "../../components/Spin/LoadingSpin";
 import GetDataErrorView from "../../components/Result/GetDataError";
@@ -33,8 +31,8 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
   const [sortedPosts, setSortedPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postPerPage] = useState(20);
+  const [currentCategory, setCurrentCategory] = useState("전체");
 
-  const queryClient = useQueryClient();
   const [curBoardId, setBoardId] = useRecoilState(CurrentBoardIdAtom);
 
   const {
@@ -49,6 +47,16 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
     },
   });
 
+  useEffect(() => {
+    if (board) {
+      console.log("Fetched board data:", board);
+      const filteredData = filterByCategory(board, currentCategory);
+      console.log("Filtered data based on current category:", filteredData);
+      const sortedData = sortLatest(filteredData);
+      setSortedPosts(sortedData);
+    }
+  }, [board, currentCategory]);
+
   const sortLatest = (data) => {
     return data.slice().sort((a, b) => {
       return new Date(b.createdAt) - new Date(a.createdAt);
@@ -62,15 +70,15 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
   };
 
   const handleSort = (sortType) => {
-    if (!board) return;
+    if (!sortedPosts) return;
     let sortedData = [];
 
     switch (sortType) {
       case "0":
-        sortedData = sortLatest(board);
+        sortedData = sortLatest(sortedPosts);
         break;
       case "1":
-        sortedData = sortPopular(board);
+        sortedData = sortPopular(sortedPosts);
         break;
       default:
         break;
@@ -89,16 +97,18 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
   useEffect(() => {
     if (searchText.trim() === "") {
       if (board) {
-        setSortedPosts(sortLatest(board));
+        const filteredData = filterByCategory(board, currentCategory);
+        setSortedPosts(sortLatest(filteredData));
       }
     } else {
       if (board) {
         const filteredData = filterPosts(board, searchText);
-        const sortedData = sortLatest(filteredData);
+        const filteredByCategoryData = filterByCategory(filteredData, currentCategory);
+        const sortedData = sortLatest(filteredByCategoryData);
         setSortedPosts(sortedData);
       }
     }
-  }, [searchText, board]);
+  }, [searchText, board, currentCategory]);
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -111,33 +121,26 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
     );
   };
 
+  const filterByCategory = (posts, category) => {
+    if (category === "전체") return posts;
+    return posts.filter(post => post.category === category);
+  };
+
   const handleSearch = (searchValue) => {
     setSearchText(searchValue);
   };
 
   const handleCategoryClick = (category) => {
-    switch (category) {
-      case "전체":
-        navigate("/board");
-        break;
-      case "자유":
-        navigate("/board/free");
-        break;
-      case "뉴스":
-        navigate("/board/news");
-        break;
-      case "질문 / 공부":
-        navigate("/board/question");
-        break;
-      case "취업 / 기술":
-        navigate("/board/employedment");
-        break;
-      case "플리마켓":
-        navigate("/board/market");
-        break;
-      default:
-        break;
-    }
+    const categoryMapping = {
+      "전체": "전체",
+      "자유": "자유",
+      "뉴스": "뉴스",
+      "질문 / 공부": "질문공부",
+      "취업 / 기술": "취업기술",
+      "플리마켓": "플리마켓"
+    };
+    setCurrentCategory(categoryMapping[category]);
+    console.log("Selected category:", categoryMapping[category]);
   };
 
   const handlePostClick = (postId) => {
@@ -155,6 +158,15 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
   };
 
   const maxCombinedLength = isMobile ? 20 : isTablet ? 50 : 80;
+
+  const categoryTitle = {
+    "전체": "전체 글 목록",
+    "자유": "자유 글 목록",
+    "뉴스": "뉴스 글 목록",
+    "질문공부": "질문 글 목록",
+    "취업기술": "취업 글 목록",
+    "플리마켓": "마켓 글 목록"
+  };
 
   if (isLoading) return <LoadingSpin />;
   if (error) return <GetDataErrorView />;
@@ -229,7 +241,7 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
                             marginBottom: "10px",
                           }}
                         >
-                          전체 글 목록
+                          {categoryTitle[currentCategory]}
                         </div>
                         <Searchbar
                           defaultSearchText="제목 및 내용으로 검색"
@@ -245,7 +257,7 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
                             fontSize: isDesktopOrLaptop ? "25px" : "20px",
                           }}
                         >
-                          전체 글 목록
+                          {categoryTitle[currentCategory]}
                         </div>
                         <Searchbar
                           defaultSearchText="제목 및 내용으로 검색"
@@ -274,8 +286,8 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
                               { value: "전체", label: "전체" },
                               { value: "자유", label: "자유" },
                               { value: "뉴스", label: "뉴스" },
-                              { value: "질문 / 공부", label: "질문" },
-                              { value: "취업 / 기술", label: "취업" },
+                              { value: "질문공부", label: "질문" },
+                              { value: "취업기술", label: "취업" },
                               { value: "플리마켓", label: "플리마켓" },
                             ]}
                             onChange={(newValue) =>
@@ -301,39 +313,44 @@ const BoardPage = ({ handleSidebarButtonClick }) => {
                       ) : null}
                     </div>
                   </div>
-                  {currentPosts.map((post, index) => (
-                    <Post
-                      key={post.boardId}
-                      id={post.boardId}
-                      num={index + 1}
-                      category={post.category}
-                      title={post.title}
-                      contents={
-                        post.contents.length >
-                        maxCombinedLength - post.title.length
-                          ? post.contents.substring(
-                              0,
-                              maxCombinedLength - post.title.length
-                            ) + "..."
-                          : post.contents
-                      }
-                      createdAt={dayjs(post.createdAt).format("YYYY.MM.DD")}
-                      likes={post.likeCount}
-                      comment={post.countComment}
-                      img={post.img}
-                      nickname={post.userProfileId["nickname"]}
-                      userImage={post.userImage}
-                      introduction={post.introduction}
-                      scraped={post.scraped}
-                      onClick={() => {
-                        console.log("post: ", post);
-                        // setBoardId(post.boardId);
-                        // navigate(`/board/detail/${post.boardId}`);
-                      }}
-                      showBookmark={true}
-                      showMenu={false}
-                    />
-                  ))}
+                  {currentPosts
+                    .filter(post => currentCategory === "전체" || post.category === currentCategory)
+                    .map((post, index) => {
+                      const isScraped = post.scrapPeople.includes(parseInt(sessionStorage.getItem("user_profile_id")));
+                      return (
+                        <Post
+                          key={post.boardId}
+                          id={post.boardId}
+                          num={index + 1}
+                          category={post.category}
+                          title={post.title}
+                          contents={
+                            post.contents.length >
+                            maxCombinedLength - post.title.length
+                              ? post.contents.substring(
+                                  0,
+                                  maxCombinedLength - post.title.length
+                                ) + "..."
+                              : post.contents
+                          }
+                          createdAt={dayjs(post.createdAt).format("YYYY.MM.DD")}
+                          likes={post.likeCount}
+                          comment={post.countComment}
+                          img={post.img}
+                          nickname={post.userProfileId["nickname"]}
+                          userImage={post.userImage}
+                          introduction={post.userProfileId["introduction"]}
+                          scraped={isScraped}
+                          onClick={() => {
+                            console.log("post: ", post);
+                            setBoardId(post.boardId);
+                            navigate(`/board/detail/${post.boardId}`);
+                          }}
+                          showBookmark={true}
+                          showMenu={false}
+                        />
+                      );
+                    })}
                 </div>
                 <div className={style.foot}>
                   {[

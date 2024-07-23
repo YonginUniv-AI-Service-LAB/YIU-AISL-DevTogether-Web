@@ -1,20 +1,10 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
-import { RecoilRoot, atom, useRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import { pageState } from "../../../recoil/atoms/login";
-import {
-  Button,
-  Dropdown,
-  Space,
-  ConfigProvider,
-  Col,
-  Row,
-  Drawer,
-  theme,
-  Menu,
-} from "antd";
-import styles from "./Header.module.css";
+import { Button, Dropdown, ConfigProvider, Menu, Badge, Drawer } from "antd";
+import { FaBell } from "react-icons/fa";
 import {
   MenuOutlined,
   AppstoreOutlined,
@@ -26,11 +16,12 @@ import {
   ReadOutlined,
   CommentOutlined,
 } from "@ant-design/icons";
-
+import axios from "axios";
 import HeaderNavBtn from "./HeaderNavBtn";
 import LogoTitle from "../LOGO/LogoTitle";
 import LogoTitle_Drawer from "../LOGO/LogoTitle_Drawer";
 import { colors } from "../../../assets/colors";
+import styles from "./Header.module.css";
 
 const DropdownItemStyle = {
   padding: 10,
@@ -40,11 +31,12 @@ const Header = (props) => {
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
   const isMobile = useMediaQuery({ maxWidth: 767 });
-  const isNotMobile = useMediaQuery({ minWidth: 768 });
 
   const navigate = useNavigate();
-
   const [page, setPage] = useRecoilState(pageState);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [role, setRole] = useState(null);
 
   const goToLoginPage = () => {
     setPage("signin");
@@ -61,7 +53,25 @@ const Header = (props) => {
     navigate("/user");
   };
 
-  const { token } = theme.useToken();
+  const fetchNotifications = async () => {
+    try {
+      const response = await axios.get('/user/push', {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+        },
+      });
+      setNotifications(response.data);
+      setUnreadCount(response.data.filter(notification => notification.checks === 1).length);
+    } catch (error) {
+      console.error('알림 데이터를 가져오는 데 실패했습니다.', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+    const storedRole = parseInt(sessionStorage.getItem('role'), 10);
+    setRole(storedRole);
+  }, []);
 
   // Drawer 오픈 여부
   const [open, setOpen] = useState(false);
@@ -76,6 +86,10 @@ const Header = (props) => {
   const onClick = (e) => {
     onClose();
     navigate(e.key);
+  };
+
+  const handleBellClick = () => {
+    navigate("/user", { state: { selectedCategory: "알림" } });
   };
 
   const Logout = () => {
@@ -96,7 +110,6 @@ const Header = (props) => {
       label: "자주 묻는 질문",
       style: DropdownItemStyle,
       onClick: () => {
-        // setMembers("professors");
         navigate("/faq");
       },
     },
@@ -105,7 +118,6 @@ const Header = (props) => {
       label: "문의하기",
       style: DropdownItemStyle,
       onClick: () => {
-        // setMembers("professors");
         navigate("/inquiry");
       },
     },
@@ -113,14 +125,16 @@ const Header = (props) => {
 
   const DrawerMenuItems = [
     {
-      key: "/matching/:mentee",
+      key: "/matching/menteelist",
       icon: <ReadOutlined />,
       label: "학생 찾기",
+      style: { display: role === 1 ? "block" : "none" },
     },
     {
-      key: "/matching/:mento",
+      key: "/matching/mentorlist",
       icon: <SignatureOutlined />,
       label: "선생님 찾기",
+      style: { display: role === 2 ? "block" : "none" },
     },
     {
       key: "/board",
@@ -198,7 +212,6 @@ const Header = (props) => {
               >
                 <Menu
                   onClick={onClick}
-                  // defaultSelectedKeys={["1"]}
                   mode="inline"
                   items={DrawerMenuItems}
                   style={{
@@ -211,7 +224,14 @@ const Header = (props) => {
             </Drawer>
           </>
         ) : (
-          <div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {sessionStorage.getItem("name") && (
+              <div style={{marginRight:'10px'}}>
+                <Badge count={unreadCount}>
+                  <FaBell size={15} onClick={handleBellClick} style={{ cursor: 'pointer' }} />
+                </Badge>
+              </div>
+            )}
             <HeaderNavBtn
               type={"text"}
               text={sessionStorage.getItem("name") ? "마이페이지" : "로그인"}
@@ -229,12 +249,12 @@ const Header = (props) => {
       </div>
 
       <div>
-        <HeaderNavBtn type={"text"} text="학생 찾기" href="/matching/:mentee" />
-        <HeaderNavBtn
-          type={"text"}
-          text="선생님 찾기"
-          href="/matching/:mento"
-        />
+        {role === 1 && (
+          <HeaderNavBtn type={"text"} text="학생 찾기" href="/matching/menteelist" />
+        )}
+        {role === 2 && (
+          <HeaderNavBtn type={"text"} text="선생님 찾기" href="/matching/mentorlist" />
+        )}
         <HeaderNavBtn type={"text"} text="커뮤니티" href="/board" />
         <HeaderNavBtn type={"text"} text="공지사항" href="/notice" />
         {isMobile ? null : (
@@ -258,7 +278,7 @@ const Header = (props) => {
               </Dropdown>
             </ConfigProvider>
             {sessionStorage.getItem("name") &&
-            sessionStorage.getItem("role") != 0 ? (
+            sessionStorage.getItem("role") !== "0" ? (
               <HeaderNavBtn type={"text"} text="쪽지" href="/message" />
             ) : null}
           </>

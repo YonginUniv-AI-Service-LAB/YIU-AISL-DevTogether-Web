@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { Carousel } from "antd";
@@ -8,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { defaultAPI } from "../../api";
 import LoadingSpin from "../../components/Spin/LoadingSpin";
 import GetDataErrorView from "../../components/Result/GetDataError";
+import AltImage from "../../assets/images/devtogether_logo.png";
 
 // Custom arrow component
 const CustomArrow = ({ direction, onClick }) => (
@@ -45,12 +47,18 @@ const MainPage = () => {
     },
   });
 
-  if (isLoading) return <LoadingSpin />;
-  if (error) return <GetDataErrorView />;
+  useEffect(() => {
+    if (main) {
+      console.log("API로부터 가져온 데이터:", main);
+    }
+  }, [main]);
 
-  const menteeProfiles = main.mentees.filter((mentee) => mentee !== null);
-  const mentorProfiles = main.mentors.filter((mentor) => mentor !== null);
-  const subjects = main.subjects.slice(0, 5); // 인기 있는 5개 과목만 표시
+  if (isLoading) return <LoadingSpin />;
+  if (error || !main) return <GetDataErrorView />;
+
+  const menteeProfiles = (main.mentees || []).filter(mentee => mentee !== null);
+  const mentorProfiles = (main.mentors || []).filter(mentor => mentor !== null);
+  const subjects = (main.subjects || []).slice(0, 5); // 인기 있는 5개 과목만 표시
 
   const slidesToShow = breakpoints.isMobile
     ? 1
@@ -79,9 +87,16 @@ const MainPage = () => {
     ],
   };
 
+  const mergeSubjects = (profile) => {
+    return [profile.subject1, profile.subject2, profile.subject3, profile.subject4, profile.subject5].filter(Boolean).join(", ");
+  };
+
+  const mergeLocations = (profile) => {
+    return [profile.location1, profile.location2, profile.location3].filter(Boolean).join(", ");
+  };
+
   return (
     <div>
-      {/* 광고성 영역
       {!isMobile && (
         <div className={styles.banner}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -115,8 +130,7 @@ const MainPage = () => {
             />
           </div>
         </div>
-      )} */}
-
+      )}
 
       {isMobile && (
         <div className={styles.banner}>
@@ -158,9 +172,9 @@ const MainPage = () => {
             </div>
           </div>
         </div>
-      )} */}
+      )}
 
-      {/* <div
+      <div
         style={{
           marginLeft: breakpoints.isMobile
             ? "5%"
@@ -177,7 +191,6 @@ const MainPage = () => {
             ? "10%"
             : "15%",
         }}
-
       >
         {/* 멘티 프로필 섹션 */}
         <div className={styles.profileSection}>
@@ -191,21 +204,21 @@ const MainPage = () => {
                   <ProfileMain
                     id={mentee.id}
                     nickname={mentee.nickname}
-                    subject={(mentee.subject || []).join(", ")}
-                    gender={mentee.gender === 0 ? "남자" : "여자"}
+                    subject={mergeSubjects(mentee)}
+                    gender={mentee.gender == "남" ? "남자" : "여자"}
                     age={mentee.age}
-                    location={mentee.location1}
-                    imagepath={mentee.img}
+                    location={mergeLocations(mentee)}
+                    imagepath={mentee.img ? `data:image/png;base64,${mentee.img}` : AltImage}
                     role={mentee.role}
                   />
                 </div>
               </div>
             ))}
           </Carousel>
-        </div> */}
+        </div>
 
-      {/* 멘토 프로필 섹션 */}
-      {/* <div style={{ marginTop: "20px" }}>
+        {/* 멘토 프로필 섹션 */}
+        <div style={{ marginTop: "20px" }}>
           <div style={{ fontSize: "25px", fontWeight: "bold" }}>
             선생님 프로필 미리보기
           </div>
@@ -216,21 +229,21 @@ const MainPage = () => {
                   <ProfileMain
                     id={mentor.id}
                     nickname={mentor.nickname}
-                    subject={(mentor.subject || []).join(", ")}
-                    gender={mentor.gender === 0 ? "남자" : "여자"}
+                    subject={mergeSubjects(mentor)}
+                    gender={mentor.gender === "남" ? "남자" : "여자"}
                     age={mentor.age}
-                    location={mentor.location1}
-                    imagepath={mentor.img}
+                    location={mergeLocations(mentor)}
+                    imagepath={mentor.img ? `data:image/png;base64,${mentor.img}` : AltImage}
                     role={mentor.role}
                   />
                 </div>
               </div>
             ))}
           </Carousel>
-        </div> */}
+        </div>
 
-      {/* 인기 있는 과목 섹션 */}
-      {/* <div style={{ marginTop: "20px" }}>
+        {/* 인기 있는 과목 섹션 */}
+        <div style={{ marginTop: "20px" }}>
           <div
             style={{
               marginBottom: "25px",
@@ -250,7 +263,7 @@ const MainPage = () => {
             ))}
           </Carousel>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };

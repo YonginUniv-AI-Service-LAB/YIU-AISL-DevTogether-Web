@@ -31,6 +31,7 @@ const Profile = (props) => {
       contents: props.contents,
       pr: props.pr,
       schedule: props.schedule,
+      scrap: props.scrap,
     };
 
     console.log("Profile Data to Store:", profileData);
@@ -39,8 +40,8 @@ const Profile = (props) => {
     sessionStorage.setItem('selectedProfile', JSON.stringify(profileData));
 
     const detailPagePath = props.role === '멘토' ? `/matching/mentor/${props.id}` : `/matching/mentee/${props.id}`;
-  console.log("Navigating to:", detailPagePath);
-  navigate(detailPagePath); // 프로필 상세 페이지로 이동
+    console.log("Navigating to:", detailPagePath);
+    navigate(detailPagePath); // 프로필 상세 페이지로 이동
   };
 
   const [subjectText, setSubjectText] = useState("");
@@ -88,7 +89,7 @@ const Profile = (props) => {
         <img src={props.imagepath} alt={props.imagetext} />
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginRight: '10px', marginLeft: '10px', marginTop: '25px' }}>
-        <ScrapButton nickname={props.nickname} />
+        <ScrapButton profileId={props.id} isScrapped={props.scrap === 1} />
         <MoreButton onClick={handleMoreButtonClick} />
       </div>
       <div className={style.information}>
