@@ -1,4 +1,3 @@
-// Intro.js
 import React, { useEffect, useState } from "react";
 import style from "./MatchingDetail.module.css";
 import { useMediaQuery } from "react-responsive";
@@ -24,10 +23,9 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
     form.validateFields().then(values => {
       const subjects = values.subject || [];
       const locations = values.location || [];
-
       const formattedValues = {
         ...values,
-        tutoringFee: values.tutoringFee.replace(/,/g, ''), // 쉼표 제거 후 숫자로 변환하여 저장
+        tutoringFee: values.tutoringFee.replace(/,/g, ''),
         subject1: subjects[0] || '',
         subject2: subjects[1] || '',
         subject3: subjects[2] || '',
@@ -38,7 +36,6 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
         location3: locations[2] || ''
       };
 
-      // subject와 location 배열 제거
       delete formattedValues.subject;
       delete formattedValues.location;
 
@@ -53,10 +50,7 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
     form.setFieldsValue({ tutoringFee: formattedValue });
   };
 
-  const methodOptions = [];
-  if (profile.method === "대면") methodOptions.push("대면");
-  if (profile.method === "비대면") methodOptions.push("비대면");
-  if (profile.method === "블렌딩") methodOptions.push("블렌딩");
+  const methodOptions = ["대면", "비대면", "블렌딩"].filter(option => profile.method.includes(option));
 
   return (
     <Modal
@@ -64,12 +58,8 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
       title="과외 신청하기"
       onCancel={onCancel}
       footer={[
-        <Button key="cancel" onClick={onCancel}>
-          취소
-        </Button>,
-        <Button key="apply" type="primary" onClick={handleApply}>
-          신청
-        </Button>
+        <Button key="cancel" onClick={onCancel}>취소</Button>,
+        <Button key="apply" type="primary" onClick={handleApply}>신청</Button>
       ]}
     >
       <Form form={form} layout="vertical" style={{ marginTop: '20px' }}>
@@ -78,14 +68,9 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
           label="과목"
           rules={[{ required: true, message: '원하는 과목을 선택해주세요.' }]}
         >
-          <Select
-            placeholder="과목을 선택하세요"
-            mode="multiple"
-          >
+          <Select placeholder="과목을 선택하세요" mode="multiple">
             {[profile.subject1, profile.subject2, profile.subject3, profile.subject4, profile.subject5].filter(Boolean).map(sub => (
-              <Select.Option key={sub} value={sub}>
-                {sub}
-              </Select.Option>
+              <Select.Option key={sub} value={sub}>{sub}</Select.Option>
             ))}
           </Select>
         </Form.Item>
@@ -94,14 +79,9 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
           label="지역"
           rules={[{ required: true, message: '원하는 지역을 선택해주세요.' }]}
         >
-          <Select
-            placeholder="지역을 선택하세요"
-            mode="multiple"
-          >
+          <Select placeholder="지역을 선택하세요" mode="multiple">
             {[profile.location1, profile.location2, profile.location3].filter(Boolean).map(loc => (
-              <Select.Option key={loc} value={loc}>
-                {loc}
-              </Select.Option>
+              <Select.Option key={loc} value={loc}>{loc}</Select.Option>
             ))}
           </Select>
         </Form.Item>
@@ -110,29 +90,17 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
           label="과외 방식"
           rules={[{ required: true, message: '원하는 과외 방식을 선택해주세요.' }]}
         >
-          <Select
-            placeholder="과외 방식을 선택하세요"
-          >
+          <Select placeholder="과외 방식을 선택하세요">
             {methodOptions.map(method => (
-              <Select.Option key={method} value={method}>
-                {method}
-              </Select.Option>
+              <Select.Option key={method} value={method}>{method}</Select.Option>
             ))}
           </Select>
         </Form.Item>
-        <Form.Item
-          name="schedule"
-          label="과외일정"
-        >
+        <Form.Item name="schedule" label="과외일정">
           <TextArea 
-              placeholder={`원하는 과외 일정을 입력해주세요\n\n예1 ) 1주일에 2번 2시간씩\n예2 )월요일, 수요일, 금요일 18:00~21:00\n`} 
-              rows={4}
-              showCount
-              maxLength={100}
-              style={{
-                height: 100,
-                resize: 'none',
-              }} />
+            placeholder={`원하는 과외 일정을 입력해주세요\n\n예1 ) 1주일에 2번 2시간씩\n예2 )월요일, 수요일, 금요일 18:00~21:00\n`} 
+            rows={4} showCount maxLength={100} style={{ height: 100, resize: 'none' }} 
+          />
         </Form.Item>
         <Form.Item
           name="tutoringFee"
@@ -141,20 +109,11 @@ const ApplyModal = ({ visible, onCancel, onApply, profile }) => {
         >
           <Input placeholder="과외비를 입력하세요" onChange={handleFeeChange} suffix="원"/>
         </Form.Item>
-        <Form.Item
-          name="contents"
-          label="추가 요구 사항"
-        >
+        <Form.Item name="contents" label="추가 요구 사항">
           <TextArea 
-              placeholder={`추가 요구 사항을 입력해주세요\n\n예) 과외 방식 및 위치, 과외비 등 과외와 관련된 자세한 내용을 입력해주세요`}  
-              rows={4}
-              showCount
-              maxLength={100}
-              style={{
-                height: 100,
-                resize: 'none',
-                marginBottom: '20px'
-              }} />
+            placeholder={`추가 요구 사항을 입력해주세요\n\n예) 과외 방식 및 위치, 과외비 등 과외와 관련된 자세한 내용을 입력해주세요`}  
+            rows={4} showCount maxLength={100} style={{ height: 100, resize: 'none', marginBottom: '20px' }} 
+          />
         </Form.Item>
       </Form>
     </Modal>
@@ -169,49 +128,37 @@ const Intro = () => {
 
   const navigate = useNavigate();
   const setMessageReceiver = useSetRecoilState(MessageReceiverAtom);
-  const setMessageReceiverid = useSetRecoilState(MessageReceiveridAtom)
-  const setMessageViewStatus =  useSetRecoilState(MessageViewStatusAtom )  
+  const setMessageReceiverid = useSetRecoilState(MessageReceiveridAtom);
+  const setMessageViewStatus = useSetRecoilState(MessageViewStatusAtom);
 
   const [tab, setTab] = useState('1');
   const [isScrapped, setIsScrapped] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isReportModalVisible, setIsReportModalVisible] = useState(false); // 신고 모달 상태 추가
-  const [form, setForm] = useState({
-    category: { value: null },
-    contents: { value: '' },
-  });
+  const [isReportModalVisible, setIsReportModalVisible] = useState(false);
+  const [form, setForm] = useState({ category: { value: null }, contents: { value: '' } });
 
-  // 세션 스토리지에서 프로필 데이터 가져오기
   const [profile, setProfile] = useState(() => {
     const storedProfile = sessionStorage.getItem('selectedProfile');
     return storedProfile ? JSON.parse(storedProfile) : {};
   });
 
-  // 세션 스토리지에서 현재 사용자 데이터 가져오기
   const currentUserId = sessionStorage.getItem('user_profile_id');
   const currentUserRole = sessionStorage.getItem('role');
   const accessToken = sessionStorage.getItem('accessToken');
-  
+
   useEffect(() => {
-    console.log("Intro Profile Data:", profile);
-    console.log("Profile Role:", profile.role); // 프로필 역할 출력
-    console.log("Current User Role:", currentUserRole); // 현재 사용자 역할 출력
-    setIsScrapped(profile.scrap === 1); // 스크랩 여부 초기화
-  }, [profile, currentUserRole]);
-  
-  const handleTab = (value) => {
-    setTab(value);
-  };
-  
+    setIsScrapped(profile.scrap === 1);
+  }, [profile]);
+
+  const handleTab = (value) => setTab(value);
+
   const handleScrapClick = () => {
     const scrapId = profile.id;
     const apiEndpoint = currentUserRole === '2' ? '/scrap/mentor' : '/scrap/mentee';
     const data = new URLSearchParams({
-      scrapId: scrapId,
-      requesterId: currentUserId, // 현재 사용자 ID
+      scrapId,
+      requesterId: currentUserId,
     });
-
-    console.log('스크랩 API 요청 데이터:', data.toString()); // 스크랩 API 요청 데이터 출력
 
     axios.post(apiEndpoint, data, {
       headers: {
@@ -219,40 +166,29 @@ const Intro = () => {
         Authorization: `Bearer ${accessToken}`
       }
     })
-    .then(response => {
+    .then(() => {
       setIsScrapped(!isScrapped);
       message.success('스크랩이 성공적으로 처리되었습니다.');
     })
     .catch(error => {
-      console.error('스크랩 실패:', error.response ? error.response.data : error.message);
+      console.error('스크랩 실패:', error);
       message.error('스크랩 중 오류가 발생했습니다.');
     });
   };
 
-  const handleApplyClick = () => {
-    setIsModalVisible(true);
-  };
-  
-  const handleModalCancel = () => {
-    setIsModalVisible(false);
-  };
-  
+  const handleApplyClick = () => setIsModalVisible(true);
+  const handleModalCancel = () => setIsModalVisible(false);
+
   const handleModalApply = (values) => {
-    console.log('과외 신청 데이터:', values);
-  
-    // 현재 사용자의 역할을 기반으로 mentor 또는 mentee 설정
     const requestData = {
       ...values,
       mentor: currentUserRole === '2' ? profile.id : null,
       mentee: currentUserRole === '1' ? profile.id : null,
-      profileId: profile.id, // 신청 대상 프로필의 ID
-      requesterId: currentUserId, // 신청자의 ID
-      user_profile_id: profile.id // 상대방의 user_profile_id 추가
+      profileId: profile.id,
+      requesterId: currentUserId,
+      user_profile_id: profile.id
     };
 
-    console.log('API 요청 데이터:', requestData); // 콘솔에 데이터 출력
-
-    // 데이터를 URL 인코딩된 형식으로 변환
     const params = new URLSearchParams();
     for (const key in requestData) {
       if (requestData[key] !== null && requestData[key] !== undefined) {
@@ -260,12 +196,10 @@ const Intro = () => {
       }
     }
 
-    // 적절한 API 엔드포인트 선택
     const apiEndpoint = currentUserRole === '2' 
-      ? '/matching/application/mentor'  // 멘티가 멘토에게 신청
-      : '/matching/application/mentee'; // 멘토가 멘티에게 신청
+      ? '/matching/application/mentor'
+      : '/matching/application/mentee';
 
-    // 서버에 데이터 전송
     axios.post(apiEndpoint, params, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -273,11 +207,10 @@ const Intro = () => {
       }
     })
     .then(response => {
-      console.log('과외 신청 성공:', response.data);
       message.success('과외 신청이 성공적으로 전송되었습니다.');
     })
     .catch(error => {
-      console.error('과외 신청 실패:', error.response ? error.response.data : error.message);
+      console.error('과외 신청 실패:', error);
       message.error('과외 신청 중 오류가 발생했습니다.');
     });
 
@@ -285,55 +218,63 @@ const Intro = () => {
   };
 
   const handleSendMessageClick = () => {
-    console.log("쪽지 수신자:", profile.nickname);
     setMessageViewStatus(false);
     setMessageReceiver(profile);
-    setMessageReceiverid(profile.id)
+    setMessageReceiverid(profile.id);
     navigate('/message');
   };
 
-  const handleReportClick = () => {
-    setIsReportModalVisible(true);
-  };
+  const handleReportClick = () => setIsReportModalVisible(true);
+  const handleReportCancel = () => setIsReportModalVisible(false);
 
-  const handleReportCancel = () => {
-    setIsReportModalVisible(false);
-  };
-
-  const handleCategoryChange = (value) => {
-    setForm((prevState) => ({
-      ...prevState,
-      category: { value },
-    }));
-  };
-
-  const handleContentsChange = (e) => {
-    setForm((prevState) => ({
-      ...prevState,
-      contents: { value: e.target.value },
-    }));
-  };
-
-  const handleReportOk = () => {
-    if (form.category.value == null || (form.category.value === 0 && form.contents.value.trim() === '')) {
+  const handleReportSubmit = async ({ category, contents }) => {
+    if (category == null || (category === 0 && contents.trim() === '')) {
       message.error('신고 사유를 선택하거나 입력해주세요');
-    } else {
-      // 신고 처리 로직 추가
-      message.success('신고가 성공적으로 처리되었습니다.');
+      return;
+    }
+
+    const options = {
+      1: '욕설/인신공격',
+      2: '같은 내용 도배',
+      3: '불법 정보',
+      4: '개인 정보 노출',
+      5: '부적절한 거래',
+      6: '음란성/선정성',
+      7: '업데이트',
+      0: contents
+    };
+
+    const data = new URLSearchParams({
+      toUserId: profile.id,
+      type: 1,
+      typeId: profile.id,
+      category,
+      contents: options[category]
+    });
+
+    try {
+      await axios.post('http://localhost:8080/report', data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+      message.success('신고가 성공적으로 접수되었습니다.');
       setIsReportModalVisible(false);
+    } catch (error) {
+      message.error('신고 중 오류가 발생했습니다.');
+      console.error('신고 오류:', error);
     }
   };
 
   const menu = (
     <Menu>
-      <Menu.Item key="1" style={{ borderBottom: "none" }} onClick={handleReportClick}>
-        신고
-      </Menu.Item>
+      <Menu.Item key="1" style={{ borderBottom: "none" }} onClick={handleReportClick}>신고</Menu.Item>
     </Menu>
   );
 
   return (
-    <div style={{ marginLeft: !isMobile ? '30px' : '', marginTop: '20px' }}>
+    <div style={{ marginTop: '20px', marginBottom: '20px' }}>
       <div className={style.head}>
         <div style={{ fontSize: '25px', fontWeight: '600' }}>프로필 상세보기</div>
         <div style={{ display: 'flex' }}>
@@ -391,7 +332,7 @@ const Intro = () => {
       />
 
       {tab === '1' && <Studyintro />}
-      {tab === '2' && <Reviewintro profile={profile} />}
+      {tab === '2' && <Reviewintro profile={profile} reviews={profile.reviews} />}
 
       <ApplyModal
         visible={isModalVisible}
@@ -402,10 +343,7 @@ const Intro = () => {
 
       <ReportModal
         isModalOpen={isReportModalVisible}
-        form={form}
-        onCategoryChange={handleCategoryChange}
-        onContentsChange={handleContentsChange}
-        handleOk={handleReportOk}
+        onSubmit={handleReportSubmit}
         handleCancel={handleReportCancel}
       />
     </div>

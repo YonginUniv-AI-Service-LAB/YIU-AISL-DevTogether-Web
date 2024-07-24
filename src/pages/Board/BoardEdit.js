@@ -47,6 +47,7 @@ const BoardEdit = ({ handleSidebarButtonClick }) => {
   );
   const [img, setImg] = useState("");
   const [showPlaceholder, setShowPlaceholder] = useState(true);
+  const boardId = formData.boardId;
 
   // 파일 관련 상태 변수
   const [formFiles, setFormFiles] = useRecoilState(BoardFormFilesAtom); // 전체 파일 데이터
@@ -57,54 +58,30 @@ const BoardEdit = ({ handleSidebarButtonClick }) => {
   // 리프레시 진행 여부(액세스 토큰 재발급)
   const [refresh, setRefresh] = useState(false);
 
-  const create_post = useMutation({
-    mutationFn: async () => {
-      // FormData 형식에 데이터를 넣어줘야 함!
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("contents", contents);
-      formData.append("category", category);
-
-      if (newFiles.length > 0)
-        newFiles.forEach((file) => {
-          formData.append("file", file.originFileObj); // 새로 추가한 파일 추가
-        });
-      else formData.append("file", new Blob()); // 빈 Blob 객체를 파일로 추가
-
-      await authFileAPI.post(
-        `/board/${sessionStorage.getItem("role") == 1 ? "mentor" : "mentee"}`,
-        formData,
-        {
-          transformRequest: [
-            function () {
-              return formData;
-            },
-          ],
-        }
-      );
-    },
-    onSuccess: (data, variables) => {
-      message.success("게시글이 등록되었습니다.");
-      queryClient.invalidateQueries("board");
-      navigate(-1);
-    },
-    onError: (e) => handleMutationError(e),
-  });
-
   const update_post = useMutation({
     mutationFn: async () => {
       // FormData 형식에 데이터를 넣어줘야 함!
       const formData = new FormData();
-      // formData.append("boardId", boardId);
+      formData.append("boardId", boardId ); // boardId 추가
       formData.append("title", title);
       formData.append("contents", contents);
       formData.append("category", category);
+      formData.append("deletedId", JSON.stringify(deleteFiles)); // 삭제할 파일 ID 추가
 
       if (newFiles.length > 0)
         newFiles.forEach((file) => {
           formData.append("file", file.originFileObj); // 새로 추가한 파일 추가
         });
       else formData.append("file", new Blob()); // 빈 Blob 객체를 파일로 추가
+
+      console.log("API 요청 데이터:", {
+        boardId: formData.boardId,
+        title,
+        contents,
+        category,
+        deletedId: JSON.stringify(deleteFiles),
+        files: newFiles,
+      }); // 콘솔에 데이터 출력
 
       await authFileAPI.put(
         `/board/${sessionStorage.getItem("role") == 1 ? "mentor" : "mentee"}`,
@@ -153,24 +130,6 @@ const BoardEdit = ({ handleSidebarButtonClick }) => {
       message.error("잠시 후에 다시 시도해주세요.");
     }
   };
-
-  // useEffect(() => {
-  //   // 전달된 게시글 데이터가 있는 경우, 해당 데이터로 상태를 설정
-  //   if (location.state) {
-  //     setTitle(location.state.title || "");
-  //     setValue(location.state.contents || "");
-  //     setCategory(location.state.category || "");
-  //     setImg(location.state.img || "");
-  //   } else {
-  //     const tempPost = JSON.parse(localStorage.getItem("tempPost"));
-  //     if (tempPost) {
-  //       setTitle(tempPost.title);
-  //       setValue(tempPost.contents);
-  //       setCategory(tempPost.category);
-  //       setImg(tempPost.img);
-  //     }
-  //   }
-  // }, [location.state]);
 
   const handleChange = (content, delta, source, editor) => {
     setValue(content);
@@ -351,7 +310,7 @@ const BoardEdit = ({ handleSidebarButtonClick }) => {
                           className={style.head}
                           style={{ fontSize: "25px", marginLeft: "30px" }}
                         >
-                          게시글 작성하기
+                          게시글 수정하기
                         </div>
                         <div style={{ display: "flex", marginRight: "35px" }}>
                           <div className={style.save} onClick={handleTempSave}>

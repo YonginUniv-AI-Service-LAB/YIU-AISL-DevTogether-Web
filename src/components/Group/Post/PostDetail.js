@@ -21,6 +21,7 @@ import {
   BoardFormTypeAtom,
 } from "../../../recoil/atoms/board";
 import { refreshAccessToken } from "../../../api";
+import ReportModal from "../../Modal/ReportFormModal"; // 경로 맞게 설정
 
 const PostDetail = (props) => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ const PostDetail = (props) => {
   const [formFiles, setFormFiles] = useRecoilState(BoardFormFilesAtom);
 
   const [refresh, setRefresh] = useState(false);
+  const [isReportModalVisible, setIsReportModalVisible] = useState(false); // 신고 모달 상태 추가
 
   const [likeCount, setLikeCount] = useState(props.post.likeCount);
   const [isLiked, setIsLiked] = useState(
@@ -49,7 +51,7 @@ const PostDetail = (props) => {
     setFormType("update");
     setFormData(props.post);
     setFormFiles(props.post.filesList);
-    navigate("/board/edit");
+    navigate(`/board/edit/${props.post.boardId}`);
   };
 
   const deleteConfirm = async (e) => {
@@ -172,7 +174,7 @@ const PostDetail = (props) => {
           </Menu.Item>
         </>
       ) : (
-        <Menu.Item key="report" onClick={() => message.info("신고가 접수되었습니다.")}>
+        <Menu.Item key="report" onClick={() => setIsReportModalVisible(true)}>
           신고
         </Menu.Item>
       )}
@@ -183,6 +185,33 @@ const PostDetail = (props) => {
   const userImage = props.post.userProfileId.filesResponseDto && props.post.userProfileId.filesResponseDto.fileData
     ? `data:image/png;base64,${props.post.userProfileId.filesResponseDto.fileData}`
     : AltImage;
+
+  const handleReportSubmit = async ({ category, contents }) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/report",
+        new URLSearchParams({
+          toUserId: props.post.userProfileId.id,
+          type: 2,
+          typeId: props.post.boardId,
+          category,
+          contents,
+        }),
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+      console.log(response.data);
+      message.success("신고가 성공적으로 접수되었습니다.");
+      setIsReportModalVisible(false);
+    } catch (error) {
+      console.error("신고 중 오류가 발생했습니다:", error);
+      message.error("신고 중 오류가 발생했습니다.");
+    }
+  };
 
   return (
     <div>
@@ -284,6 +313,12 @@ const PostDetail = (props) => {
           </span>
         </div>
       </div>
+
+      <ReportModal
+        isModalOpen={isReportModalVisible}
+        handleCancel={() => setIsReportModalVisible(false)}
+        onSubmit={handleReportSubmit}
+      />
     </div>
   );
 };

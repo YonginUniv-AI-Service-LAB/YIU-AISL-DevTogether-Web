@@ -55,6 +55,7 @@ const fetchMentorData = async () => {
         schedule: profile.schedule,
         pr: profile.pr,
         scrap: profile.scrap,
+        reviews: profile.reviewResponseDto
     }));
 };
 
@@ -294,6 +295,7 @@ const MatchingMentorList = ({ handleSidebarButtonClick }) => {
                                             schedule={profile.schedule}
                                             pr={profile.pr}
                                             scrap={profile.scrap} // 추가된 부분
+                                            reviews={profile.reviews}
                                         />
 
                                         ))

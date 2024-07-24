@@ -13,7 +13,7 @@ import { IoMdMore } from "react-icons/io";
 import NavigateSelect from '../../components/Select/NavigateSelect';
 import ListButton from '../../components/Button/ListButton';
 
-const MenteeDetailPage = () => {
+const MentorDetailPage = () => {
 
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
@@ -73,27 +73,11 @@ const handleListback = () => {
         <div className={style.line}></div>
         <div className={style.color}>
           <div className={style.background}>
-          {!isMobile &&  <div style={{marginTop:'30px'}}>
-              <div className={style.fix_left}>
-                <ListButton name="목록으로" onClick={handleListback}/>
-                <Sidebar titles={["학생 찾기", "선생님 찾기"]} onCategoryClick={handleCategoryClick} />
-              </div>
-            </div> }
-            <div style={{ flex: '1',marginTop:'10px', marginLeft: '10px' }}>
+          
+            <div style={{ flex: '1',marginTop:'10px' }}>
               <div>
-                {isMobile && ( <div style={{display:'flex', justifyContent:'space-between', alignContent:'center', alignItems:'center' }}>
-                  <NavigateSelect
-                    placeholder="목록"
-                    style={{marginTop:'10px'}}
-                    options={[
-                        { value: '학생 찾기', label: '학생' },
-                        { value: '선생님 찾기', label: '선생님' },
-                            ]}
-                    onChange={(newValue) => handleCategoryClick(newValue)}
-                  />
-                  <FilterButton name="목록으로"/>
-                </div>)}
                 <Intro profile={profile} />
+                <ListButton name="목록으로" onClick={handleListback} style={{marginTop:'10px'}}/>
               </div>
             </div>
           </div>
@@ -103,4 +87,4 @@ const handleListback = () => {
   );
 };
 
-export default MenteeDetailPage;
+export default MentorDetailPage;
