@@ -89,38 +89,48 @@ const ManagerModal = ({ modalTitle, modalContent, isModalOpen, handleOk, handleC
       visible={isModalOpen}
       onCancel={handleCancel}
       style={{ opacity: opacity }}  // 투명도 스타일 적용
-      footer={[
-        <Button key="cancel" onClick={handleCancel}>
-          취소
-        </Button>,
-        isViewOnlyMode && (
-          <Button 
-            key="hide" 
-            type="primary" 
-            onClick={handleHideReview}
-            style={{
-              backgroundColor: '#68568E',
-              borderColor: '#68568E',
-              color: '#FFFFFF',
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = '#A499BB';
-              e.target.style.borderColor = '#A499BB';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = '#68568E';
-              e.target.style.borderColor = '#68568E';
-            }}
-          >
-            {buttonText}
-          </Button>
-        ),
-        !isViewOnlyMode && (
-          <Button key="ok" type="primary" onClick={isReviewMode ? handleReviewSubmit : handleOk}>
-            확인
-          </Button>
-        ),
-      ]}
+      footer={
+        <div style={{ display: 'flex', justifyContent: isViewOnlyMode ? 'flex-end' : 'space-between', alignItems: 'center', width: '100%' }}>
+          {!isViewOnlyMode && (
+            <div style={{ color: 'red', marginRight: 'auto' }}>
+              <span>*</span> <span style={{ opacity: '0.7', marginLeft: '5px' }}>리뷰는 수정할 수 없습니다. 신중히 작성해주세요</span>
+            </div>
+          )}
+          <div>
+            <Button key="cancel" onClick={handleCancel}>
+              취소
+            </Button>
+            {isViewOnlyMode && (
+              <Button 
+                key="hide" 
+                type="primary" 
+                onClick={handleHideReview}
+                style={{
+                  backgroundColor: '#68568E',
+                  borderColor: '#68568E',
+                  color: '#FFFFFF',
+                  marginLeft: '10px'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#A499BB';
+                  e.target.style.borderColor = '#A499BB';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = '#68568E';
+                  e.target.style.borderColor = '#68568E';
+                }}
+              >
+                {buttonText}
+              </Button>
+            )}
+            {!isViewOnlyMode && (
+              <Button key="ok" type="primary" onClick={isReviewMode ? handleReviewSubmit : handleOk} style={{ marginLeft: '10px' }}>
+                확인
+              </Button>
+            )}
+          </div>
+        </div>
+      }
     >
       {isReviewMode ? (
         <>
@@ -133,6 +143,7 @@ const ManagerModal = ({ modalTitle, modalContent, isModalOpen, handleOk, handleC
             style={{
               height: 120,
               resize: 'none',
+              marginTop: '10px'
             }}
             onChange={(e) => setReviewContent(e.target.value)}
             disabled={isViewOnlyMode}

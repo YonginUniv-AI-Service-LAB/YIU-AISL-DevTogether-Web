@@ -5,10 +5,12 @@ import { IoMdMore } from "react-icons/io";
 import { Dropdown, Menu, message } from "antd";
 import { defaultAPI } from "../../../api";
 import dayjs from "dayjs";
+import ReportModal from "../../Modal/ReportFormModal"; // 경로 맞게 설정
 
 const Comment = (props) => {
   const [liked, setLiked] = useState(props.liked);
   const [likes, setLikes] = useState(props.likes);
+  const [isReportModalVisible, setIsReportModalVisible] = useState(false); // 신고 모달 상태 추가
 
   const handleLike = async () => {
     try {
@@ -70,6 +72,33 @@ const Comment = (props) => {
   const userId = parseInt(sessionStorage.getItem("user_profile_id"));
   const isOwnComment = userId === props.userid;
 
+  const handleReportSubmit = async ({ category, contents }) => {
+    try {
+      const response = await defaultAPI.post(
+        "http://localhost:8080/report",
+        new URLSearchParams({
+          toUserId: props.userid,
+          type: 0,
+          typeId: props.id,
+          category,
+          contents,
+        }),
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+      console.log(response.data);
+      message.success("신고가 성공적으로 접수되었습니다.");
+      setIsReportModalVisible(false);
+    } catch (error) {
+      console.error("신고 중 오류가 발생했습니다:", error);
+      message.error("신고 중 오류가 발생했습니다.");
+    }
+  };
+
   const menu = (
     <Menu>
       {isOwnComment ? (
@@ -82,7 +111,7 @@ const Comment = (props) => {
           </Menu.Item>
         </>
       ) : (
-        <Menu.Item key="report" style={{ borderBottom: "none" }}>
+        <Menu.Item key="report" style={{ borderBottom: "none" }} onClick={() => setIsReportModalVisible(true)}>
           신고
         </Menu.Item>
       )}
@@ -134,6 +163,12 @@ const Comment = (props) => {
           </div>
         </div>
       </div>
+
+      <ReportModal
+        isModalOpen={isReportModalVisible}
+        handleCancel={() => setIsReportModalVisible(false)}
+        onSubmit={handleReportSubmit}
+      />
     </div>
   );
 };

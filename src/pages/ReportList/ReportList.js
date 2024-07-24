@@ -1,14 +1,13 @@
 import { Table } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
-import { data_report } from "../../assets/data/report";
+import axios from "axios";
 
 import PageHeader from "../../components/Group/PageHeader/PageHeader";
 import styles from "./ReportList.module.css";
 import Column from "antd/es/table/Column";
 import ReportCategoryTag from "../../components/Tag/ReportCategoryTag";
-// import PageHeaderImage from "../../assets/images/PageHeaderImage/Report.svg";
 
 const InquriyListPage = () => {
   // 반응형 화면
@@ -19,6 +18,27 @@ const InquriyListPage = () => {
 
   // 페이지 이동
   const navigate = useNavigate();
+
+  // 신고 내역 데이터 상태
+  const [reportData, setReportData] = useState([]);
+
+  useEffect(() => {
+    const fetchReportData = async () => {
+      try {
+        const response = await axios.get('/report', {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          },
+        });
+        console.log("Fetched report data:", response.data); // 콘솔에 데이터 출력
+        setReportData(response.data);
+      } catch (error) {
+        console.error('신고 내역을 가져오는 중 오류 발생:', error);
+      }
+    };
+
+    fetchReportData();
+  }, []);
 
   return (
     <div>
@@ -33,7 +53,7 @@ const InquriyListPage = () => {
       >
         <Table
           size={"middle"}
-          dataSource={data_report}
+          dataSource={reportData}
           onRow={(record, rowIndex) => {
             return {
               onClick: (event) => {

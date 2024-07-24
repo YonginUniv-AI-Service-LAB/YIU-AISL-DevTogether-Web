@@ -32,6 +32,7 @@ const Profile = (props) => {
       pr: props.pr,
       schedule: props.schedule,
       scrap: props.scrap,
+      reviews: props.reviews, // reviews 데이터 추가
     };
 
     console.log("Profile Data to Store:", profileData);
